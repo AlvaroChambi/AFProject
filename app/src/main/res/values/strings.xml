@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AFProject</string>
+    <string name="overview_activity">Overview</string>
 </resources>
