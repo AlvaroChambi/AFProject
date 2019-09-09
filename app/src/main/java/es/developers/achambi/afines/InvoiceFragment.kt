@@ -39,7 +39,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
         view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.setType("application/pdf")
+            intent.setType("*/*")
             startActivityForResult( intent,
                 MEDIA_SEARCH_RESULT_CODE )
         }
@@ -80,6 +80,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             }?.addOnSuccessListener {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 // ...
+                presenter.invoiceAdded()
                 Log.i("UPLOAD", "success")
             }
         }

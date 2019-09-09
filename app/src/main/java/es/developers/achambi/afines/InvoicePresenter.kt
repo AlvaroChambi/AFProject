@@ -21,7 +21,22 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<ArrayList<Invoice>>{
             override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices()
+                return invoiceUseCase.queryUserInvoices(refresh = false)
+            }
+
+        }
+        request(request , responseHandler)
+    }
+
+    fun invoiceAdded() {
+        val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
+            override fun onSuccess(response: ArrayList<Invoice>) {
+                screen.onInvoicesRetrieved( invoicePresentationBuilder.build(response) )
+            }
+        }
+        val request = object : Request<ArrayList<Invoice>>{
+            override fun perform(): ArrayList<Invoice> {
+                return invoiceUseCase.queryUserInvoices(refresh = true)
             }
 
         }
