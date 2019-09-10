@@ -4,17 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
-import java.io.File
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var adapter: Adapter
@@ -45,6 +41,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
     }
 
+    override fun onInvoiceUploaded() {
+        presenter.invoiceAdded()
+    }
+
     override fun onInvoicesRetrieved(invoices: ArrayList<InvoicePresentation>) {
         adapter.data = invoices
         presentAdapterData()
@@ -63,29 +63,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if( requestCode == MEDIA_SEARCH_RESULT_CODE && resultCode == Activity.RESULT_OK ) {
-            val storage = FirebaseStorage.getInstance()
             val resultData: Uri? = data?.data
-
-            val storageReference = storage.reference
-
-            val file = Uri.fromFile(File(resultData?.path))
-            val user = FirebaseAuth.getInstance().currentUser
-            val riversRef = storageReference.child("invoices/${user?.uid}/${file.lastPathSegment}")
-
-            val uploadTask = resultData?.let { riversRef.putFile(it) }
-
-// Register observers to listen for when the download is done or if it fails
-            uploadTask?.addOnFailureListener {
-                Log.i("UPLOAD", it.message)
-            }?.addOnSuccessListener {
-                // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-                // ...
-                presenter.invoiceAdded()
-                Log.i("UPLOAD", "success")
-            }
+            activity?.let { resultData?.let { it1 -> presenter.uploadFile(it, it1) } }
         }
-    }
-}
+    } }
 
 class Holder(val binding: InvoiceItemLayoutBinding): RecyclerView.ViewHolder(binding.root)
 
