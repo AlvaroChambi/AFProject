@@ -18,7 +18,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
     private val invoiceUseCase = InvoiceUseCase(FirebaseRepository())
 
-    fun uploadFile(context: Context, uri: Uri) {
+    fun uploadFile(context: Context, uriMetadata: URIMetadata) {
         val responseHandler = object: ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
                 screen.onInvoiceUploaded()
@@ -30,7 +30,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<Any> {
             override fun perform(): Any {
-                return invoiceUseCase.uploadUserFiles(uri, URIUtils.retrieveFileMetadata(context,uri))
+                return invoiceUseCase.uploadUserFiles(uriMetadata.uri, uriMetadata)
             }
         }
         request(request, responseHandler)
