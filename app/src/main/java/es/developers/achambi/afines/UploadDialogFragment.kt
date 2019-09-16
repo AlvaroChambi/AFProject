@@ -66,7 +66,7 @@ class UploadDialogFragment: BaseFragment() {
             val resultData: Uri? = data?.data
             metadata = resultData?.let { activity?.let { it1 -> URIUtils.retrieveFileMetadata(it1, uri = it) } }
             pick_file_chip.text = metadata?.displayName
-            invoice_name_edit_text.setText( metadata?.displayName )
+            file_name_edit_text.setText( metadata?.displayName )
         }
     }
 }
