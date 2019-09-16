@@ -13,7 +13,6 @@ class FirebaseRepository {
         val storage = FirebaseStorage.getInstance()
         val storageReference = storage.reference
         val user = FirebaseAuth.getInstance().currentUser
-        val userName = user?.displayName?.replace("\\s".toRegex(), "")
         val fileReference = storageReference.child("invoices/${user?.uid}/${fileName}")
 
         val uploadResult = Tasks.await(fileReference.putFile(uri))
@@ -28,7 +27,6 @@ class FirebaseRepository {
     fun userInvoices(): ListResult {
         val user = FirebaseAuth.getInstance().currentUser
         val storage = FirebaseStorage.getInstance()
-        val userName = user?.displayName?.replace("\\s".toRegex(), "")
         val listRef = storage.reference.child("invoices/${user?.uid}")
 
         return Tasks.await(listRef.listAll())

@@ -32,6 +32,10 @@ class UploadDialogFragment: BaseFragment() {
             startActivityForResult( intent,
                 MEDIA_SEARCH_RESULT_CODE )
         }
+        pick_file_chip.setOnCloseIconClickListener {
+            pick_file_chip.text = ""
+            metadata = null
+        }
     }
 
     override val layoutResource: Int
@@ -51,8 +55,9 @@ class UploadDialogFragment: BaseFragment() {
             intent?.putExtra(InvoiceFragment.FILE_EXTRA_CODE, metadata)
             activity?.setResult(Activity.RESULT_OK, intent)
             activity?.finish()
+            return true
         }
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -61,6 +66,7 @@ class UploadDialogFragment: BaseFragment() {
             val resultData: Uri? = data?.data
             metadata = resultData?.let { activity?.let { it1 -> URIUtils.retrieveFileMetadata(it1, uri = it) } }
             pick_file_chip.text = metadata?.displayName
+            invoice_name_edit_text.setText( metadata?.displayName )
         }
     }
 }

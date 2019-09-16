@@ -1,14 +1,13 @@
 package es.developers.achambi.afines
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
@@ -16,6 +15,7 @@ import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
+    private lateinit var progressBar : ProgressBar
     private lateinit var adapter: Adapter
     private lateinit var presenter: InvoicePresenter
 
@@ -33,14 +33,38 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             MainExecutor.buildExecutor(), InvoicePresentationBuilder(activity!!))
     }
 
-
     override fun onViewSetup(view: View) {
         super.onViewSetup(view)
+        progressBar = view.findViewById(R.id.horizontal_progress_bar)
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
         view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
             startActivityForResult(activity?.let { UploadInvoiceActivity.newInstance(it) },
                 INVOICE_UPLOAD_DIALOG_CODE)
         }
+    }
+
+    override fun onInvoicesLoadingError() {
+        showError(Error("Failed to load invoices. Please try again later."))
+    }
+
+    override fun onUploadError() {
+        showSnackBackError(Error("Failed to upload the invoice. Please try again later."))
+    }
+
+    override fun startLoadingInvoices() {
+        startLoading()
+    }
+
+    override fun startUploadingInvoice() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun finishedLoadingInvoices() {
+        hideLoading()
+    }
+
+    override fun finishedUploadingInvoice() {
+        progressBar.visibility = View.GONE
     }
 
     override fun onInvoiceUploaded() {
@@ -57,6 +81,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         presenter.showInvoices()
     }
 
+    override fun onRetry() {
+        super.onRetry()
+        presenter.showInvoices()
+    }
+
     override fun provideAdapter(): SearchAdapterDecorator<InvoicePresentation, Holder> {
         adapter = Adapter()
         return adapter
@@ -66,9 +95,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         super.onActivityResult(requestCode, resultCode, data)
         if( requestCode == INVOICE_UPLOAD_DIALOG_CODE && resultCode == Activity.RESULT_OK ) {
             val resultData: URIMetadata? = data?.getParcelableExtra(FILE_EXTRA_CODE)
-            activity?.let { resultData?.let { it1 -> presenter.uploadFile(it, it1) } }
+            activity?.let { resultData?.let { it1 -> presenter.uploadFile(it1) } }
         }
-    } }
+    }
+}
 
 class Holder(val binding: InvoiceItemLayoutBinding): RecyclerView.ViewHolder(binding.root)
 
