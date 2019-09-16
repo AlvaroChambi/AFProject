@@ -1,4 +1,4 @@
-package es.developers.achambi.afines
+package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -12,7 +12,9 @@ import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developer.achambi.coreframework.utils.URIMetadata
+import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
+import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var progressBar : ProgressBar
@@ -29,8 +31,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = InvoicePresenter(this,lifecycle,
-            MainExecutor.buildExecutor(), InvoicePresentationBuilder(activity!!))
+        presenter = InvoicePresenter(
+            this, lifecycle,
+            MainExecutor.buildExecutor(),
+            InvoicePresentationBuilder(activity!!)
+        )
     }
 
     override fun onViewSetup(view: View) {
@@ -38,8 +43,13 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         progressBar = view.findViewById(R.id.horizontal_progress_bar)
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
         view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
-            startActivityForResult(activity?.let { UploadInvoiceActivity.newInstance(it) },
-                INVOICE_UPLOAD_DIALOG_CODE)
+            startActivityForResult(activity?.let {
+                UploadInvoiceActivity.newInstance(
+                    it
+                )
+            },
+                INVOICE_UPLOAD_DIALOG_CODE
+            )
         }
     }
 

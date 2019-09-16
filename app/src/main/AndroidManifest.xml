@@ -14,7 +14,7 @@
                 </intent-filter>
             </activity>
         <activity android:name=".OverviewActivity"/>
-        <activity android:name=".UploadInvoiceActivity"
+        <activity android:name=".invoices.ui.UploadInvoiceActivity"
             android:parentActivityName=".OverviewActivity">
         </activity>
     </application>

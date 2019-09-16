@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="invoice"
-            type="es.developers.achambi.afines.InvoicePresentation">
+            type="es.developers.achambi.afines.invoices.ui.InvoicePresentation">
         </variable>
     </data>
     <androidx.cardview.widget.CardView

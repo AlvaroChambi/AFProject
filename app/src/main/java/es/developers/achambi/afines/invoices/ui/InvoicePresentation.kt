@@ -1,7 +1,8 @@
-package es.developers.achambi.afines
+package es.developers.achambi.afines.invoices.ui
 
 import android.content.Context
 import es.developer.achambi.coreframework.ui.presentation.SearchListData
+import es.developers.achambi.afines.invoices.model.Invoice
 
 data class InvoicePresentation(val id: Int,
     val name: String): SearchListData {
@@ -11,7 +12,7 @@ data class InvoicePresentation(val id: Int,
 }
 class InvoicePresentationBuilder(private val context: Context) {
     private fun build(invoice: Invoice): InvoicePresentation {
-        return InvoicePresentation( invoice.id, invoice.name )
+        return InvoicePresentation(invoice.id, invoice.name)
     }
 
     fun build(invoices: ArrayList<Invoice>): ArrayList<InvoicePresentation> {

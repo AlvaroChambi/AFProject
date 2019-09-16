@@ -1,10 +1,11 @@
-package es.developers.achambi.afines
+package es.developers.achambi.afines.invoices.ui
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import es.developer.achambi.coreframework.ui.BaseActivity
 import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developers.achambi.afines.R
 
 class UploadInvoiceActivity: BaseActivity() {
     companion object {

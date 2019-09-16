@@ -1,6 +1,8 @@
-package es.developers.achambi.afines
+package es.developers.achambi.afines.invoices.usecase
 
 import es.developer.achambi.coreframework.utils.URIMetadata
+import es.developers.achambi.afines.FirebaseRepository
+import es.developers.achambi.afines.invoices.model.Invoice
 
 class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     private val invoices = ArrayList<Invoice>()
@@ -14,8 +16,12 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         }
         val listResult = firebaseRepository.userInvoices()
         listResult.items.forEach { item ->
-            invoices.add( Invoice(item.hashCode(),
-                item.name) )
+            invoices.add(
+                Invoice(
+                    item.hashCode(),
+                    item.name
+                )
+            )
         }
         return invoices
     }

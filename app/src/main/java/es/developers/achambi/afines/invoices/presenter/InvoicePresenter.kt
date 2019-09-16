@@ -1,7 +1,5 @@
-package es.developers.achambi.afines
+package es.developers.achambi.afines.invoices.presenter
 
-import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.ExecutorInterface
@@ -9,13 +7,20 @@ import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developer.achambi.coreframework.utils.URIMetadata
+import es.developers.achambi.afines.FirebaseRepository
+import es.developers.achambi.afines.invoices.model.Invoice
+import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
+import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
+import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                        lifecycle : Lifecycle,
                        executor: ExecutorInterface,
-                       private val invoicePresentationBuilder: InvoicePresentationBuilder)
+                       private val invoicePresentationBuilder: InvoicePresentationBuilder
+)
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
-    private val invoiceUseCase = InvoiceUseCase(FirebaseRepository())
+    private val invoiceUseCase =
+        InvoiceUseCase(FirebaseRepository())
 
     fun uploadFile(uriMetadata: URIMetadata) {
         screen.startUploadingInvoice()

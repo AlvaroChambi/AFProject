@@ -2,12 +2,10 @@ package es.developers.achambi.afines
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import es.developer.achambi.coreframework.ui.BaseActivity
-import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developer.achambi.coreframework.ui.navigation.BaseNavigationActivity
+import es.developers.achambi.afines.invoices.ui.InvoiceFragment
 
 class OverviewActivity : BaseNavigationActivity(){
     override fun provideMenuResource(): Int {

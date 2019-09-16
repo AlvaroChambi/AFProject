@@ -1,4 +1,4 @@
-package es.developers.achambi.afines
+package es.developers.achambi.afines.invoices.ui
 
 import es.developer.achambi.coreframework.ui.Screen
 

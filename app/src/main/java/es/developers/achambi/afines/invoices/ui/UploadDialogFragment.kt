@@ -1,6 +1,7 @@
-package es.developers.achambi.afines
+package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.view.Menu
@@ -8,12 +9,34 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseFragment
-import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developer.achambi.coreframework.utils.URIUtils
+import es.developers.achambi.afines.R
+import es.developers.achambi.afines.invoices.model.InvoiceUpload
+import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
 
-class UploadDialogFragment: BaseFragment() {
+class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
+    override fun onURIUpdated(uri: Uri?, fileName: String) {
+        pick_file_chip.text = fileName
+        this.uri = uri
+    }
+
+    override fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload) {
+        val intent = activity?.intent
+        intent?.putExtra(InvoiceFragment.FILE_EXTRA_CODE, invoiceUpload)
+        activity?.setResult(Activity.RESULT_OK, intent)
+        activity?.finish()
+    }
+
+    override fun onSaveInvoiceFailed() {
+        AlertDialog.Builder(activity)
+            .setMessage("Antes de guardar la factura tienes que subir un fichero")
+            .setTitle("Nos faltan datos")
+            .create().show()
+    }
+
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
@@ -23,18 +46,20 @@ class UploadDialogFragment: BaseFragment() {
         }
     }
 
-    private var metadata: URIMetadata? = null
+    private var uri: Uri? = null
+    private lateinit var presenter: UploadPresenter
 
     override fun onViewSetup(view: View) {
+        presenter = UploadPresenter(this, lifecycle, MainExecutor.buildExecutor())
         pick_file_chip.setOnClickListener{
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = ANY_FILE
             startActivityForResult( intent,
-                MEDIA_SEARCH_RESULT_CODE )
+                MEDIA_SEARCH_RESULT_CODE
+            )
         }
         pick_file_chip.setOnCloseIconClickListener {
-            pick_file_chip.text = ""
-            metadata = null
+            presenter.userClearedURI()
         }
     }
 
@@ -51,10 +76,10 @@ class UploadDialogFragment: BaseFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.action_save) {
-            val intent = activity?.intent
-            intent?.putExtra(InvoiceFragment.FILE_EXTRA_CODE, metadata)
-            activity?.setResult(Activity.RESULT_OK, intent)
-            activity?.finish()
+            activity?.let { presenter.userSaveSelected(
+                    it, uri, file_name_edit_text.text.toString(),
+                    Trimester.FIRST_TRIMESTER)
+            }
             return true
         }
         return super.onOptionsItemSelected(item)
