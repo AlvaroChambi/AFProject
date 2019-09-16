@@ -1,6 +1,5 @@
 package es.developers.achambi.afines
 
-import android.net.Uri
 import es.developer.achambi.coreframework.utils.URIMetadata
 
 class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
@@ -21,7 +20,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return invoices
     }
 
-    fun uploadUserFiles(uri: Uri, uriMetadata: URIMetadata) {
-        firebaseRepository.uploadUserFile(uri, uriMetadata.displayName)
+    fun uploadUserFiles(uriMetadata: URIMetadata) {
+        firebaseRepository.uploadUserFile(uriMetadata.uri, uriMetadata.displayName)
     }
 }

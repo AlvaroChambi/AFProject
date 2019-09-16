@@ -9,7 +9,6 @@ import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developer.achambi.coreframework.utils.URIMetadata
-import es.developer.achambi.coreframework.utils.URIUtils
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                        lifecycle : Lifecycle,
@@ -18,7 +17,8 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
     private val invoiceUseCase = InvoiceUseCase(FirebaseRepository())
 
-    fun uploadFile(context: Context, uriMetadata: URIMetadata) {
+    fun uploadFile(uriMetadata: URIMetadata) {
+        screen.startUploadingInvoice()
         val responseHandler = object: ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
                 screen.onInvoiceUploaded()
@@ -26,20 +26,30 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
             override fun onError(error: Error) {
                 super.onError(error)
+                screen.finishedUploadingInvoice()
+                screen.onUploadError()
             }
         }
         val request = object : Request<Any> {
             override fun perform(): Any {
-                return invoiceUseCase.uploadUserFiles(uriMetadata.uri, uriMetadata)
+                return invoiceUseCase.uploadUserFiles(uriMetadata)
             }
         }
         request(request, responseHandler)
     }
 
     fun showInvoices() {
+        screen.startLoadingInvoices()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
+                screen.finishedLoadingInvoices()
                 screen.onInvoicesRetrieved( invoicePresentationBuilder.build(response) )
+            }
+
+            override fun onError(error: Error) {
+                super.onError(error)
+                screen.finishedLoadingInvoices()
+                screen.onInvoicesLoadingError()
             }
         }
         val request = object : Request<ArrayList<Invoice>>{
@@ -54,6 +64,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     fun invoiceAdded() {
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
+                screen.finishedUploadingInvoice()
                 screen.onInvoicesRetrieved( invoicePresentationBuilder.build(response) )
             }
         }
