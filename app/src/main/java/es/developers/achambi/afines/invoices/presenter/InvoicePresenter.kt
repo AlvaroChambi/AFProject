@@ -1,5 +1,6 @@
 package es.developers.achambi.afines.invoices.presenter
 
+import android.net.Uri
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.ExecutorInterface
@@ -9,6 +10,7 @@ import es.developer.achambi.coreframework.ui.Presenter
 import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developers.achambi.afines.FirebaseRepository
 import es.developers.achambi.afines.invoices.model.Invoice
+import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
@@ -22,7 +24,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     private val invoiceUseCase =
         InvoiceUseCase(FirebaseRepository())
 
-    fun uploadFile(uriMetadata: URIMetadata) {
+    fun uploadFile(uri: Uri, invoiceUpload: InvoiceUpload) {
         screen.startUploadingInvoice()
         val responseHandler = object: ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
@@ -37,7 +39,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<Any> {
             override fun perform(): Any {
-                return invoiceUseCase.uploadUserFiles(uriMetadata)
+                return invoiceUseCase.uploadUserFiles(uri, resolveFileName(invoiceUpload))
             }
         }
         request(request, responseHandler)
@@ -80,5 +82,13 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
         }
         request(request , responseHandler)
+    }
+
+    private fun resolveFileName(invoiceUpload: InvoiceUpload): String {
+        return if(invoiceUpload.name.isNotEmpty()) {
+            invoiceUpload.name
+        } else {
+            invoiceUpload.uriMetadata.displayName.toString()
+        }
     }
 }

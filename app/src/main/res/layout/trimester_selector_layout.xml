@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/chipGroup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/textView2"
+    app:singleSelection="true">
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_first"
+        style="@style/Widget.MaterialComponents.Chip.Choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/upload_first_trimester_text" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_second"
+        style="@style/Widget.MaterialComponents.Chip.Choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/upload_second_trimester_text" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_third"
+        style="@style/Widget.MaterialComponents.Chip.Choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/upload_third_trimester_text" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_forth"
+        style="@style/Widget.MaterialComponents.Chip.Choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/upload_forth_trimester_text" />
+</merge>

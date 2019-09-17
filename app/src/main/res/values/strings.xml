@@ -6,4 +6,18 @@
     <string name="profile_menu_text">Perfil</string>
     <string name="overview_menu_text">Home</string>
     <string name="upload_invoice_activity_title">Subir factura</string>
+
+    <string name="header_save_invoice_text">Guardar</string>
+
+    <string name="upload_pick_file_header_tag">Selecciona tu factura</string>
+    <string name="upload_name_header_tag">Escoge un nombra para tu factura</string>
+    <string name="upload_trimeser_header_tag">¿De que trimestre es la factura?</string>
+
+    <string name="upload_first_trimester_text">Primer trimestre</string>
+    <string name="upload_second_trimester_text">Segundo trimestre</string>
+    <string name="upload_third_trimester_text">Tercer trimestre</string>
+    <string name="upload_forth_trimester_text">Cuarto trimestre</string>
+
+    <string name="upload_name_error_title">¡Nos faltan datos!</string>
+    <string name="upload_name_error_message">Antes de guardar tienes que subir la factura.</string>
 </resources>

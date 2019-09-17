@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -17,13 +16,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@color/colorPrimary"
-        android:elevation="0dp"/>
+        />
+
     <EditText
         android:id="@+id/file_name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="Selecciona tu factura"
+        android:textStyle="bold"
+        android:text="@string/upload_pick_file_header_tag"
         android:textColor="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -47,66 +47,35 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        
         app:chipIcon="@drawable/outline_insert_drive_file_24"
         app:closeIconEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         tools:text="file_name.png" />
-
-    <com.google.android.material.chip.ChipGroup
+    <es.developers.achambi.afines.invoices.ui.TrimesterSelector
         android:id="@+id/chipGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:singleSelection="true">
-
-        <com.google.android.material.chip.Chip
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:id="@+id/chip5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="32dp"
-            android:text="1 Trimestre" />
-
-        <com.google.android.material.chip.Chip
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:id="@+id/chip4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="32dp"
-            android:text="2 Trimestre" />
-
-        <com.google.android.material.chip.Chip
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:id="@+id/chip3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="32dp"
-            android:text="3 Trimestre" />
-
-        <com.google.android.material.chip.Chip
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:id="@+id/chip2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="32dp"
-            android:text="4 Trimestre" />
-    </com.google.android.material.chip.ChipGroup>
+        app:singleSelection="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp">
+    </es.developers.achambi.afines.invoices.ui.TrimesterSelector>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:text="¿De que trimestre es la factura?"
+        android:layout_marginTop="16dp"
+        android:text="@string/upload_trimeser_header_tag"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/file_name_edit_text" />
 
@@ -116,7 +85,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:text="Aquí puedes cambiar el nombre de tu factura"
+        android:text="@string/upload_name_header_tag"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pick_file_chip" />
 

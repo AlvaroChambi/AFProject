@@ -2,6 +2,7 @@ package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -14,6 +15,7 @@ import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
+import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
@@ -24,6 +26,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     companion object {
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
         const val FILE_EXTRA_CODE = "FILE_EXTRA_CODE"
+        const val URI_EXTRA_CODE = "URI_EXTRA_CODE"
         fun newInstance(): InvoiceFragment {
             return InvoiceFragment()
         }
@@ -104,8 +107,9 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if( requestCode == INVOICE_UPLOAD_DIALOG_CODE && resultCode == Activity.RESULT_OK ) {
-            val resultData: URIMetadata? = data?.getParcelableExtra(FILE_EXTRA_CODE)
-            activity?.let { resultData?.let { it1 -> presenter.uploadFile(it1) } }
+            val invoice: InvoiceUpload? = data?.getParcelableExtra(FILE_EXTRA_CODE)
+            val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
+            uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
         }
     }
 }

@@ -6,7 +6,7 @@ data class InvoiceUploadPresentation(val name: String,
 enum class Trimester{
     FIRST_TRIMESTER,
     SECOND_TRIMESTER,
-    THRID_TRIMESTER,
+    THIRD_TRIMESTER,
     FORTH_TRIMESTER,
     EMPTY
 }

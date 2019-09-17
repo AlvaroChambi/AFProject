@@ -11,32 +11,12 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseFragment
-import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
 
 class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
-    override fun onURIUpdated(uri: Uri?, fileName: String) {
-        pick_file_chip.text = fileName
-        this.uri = uri
-    }
-
-    override fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload) {
-        val intent = activity?.intent
-        intent?.putExtra(InvoiceFragment.FILE_EXTRA_CODE, invoiceUpload)
-        activity?.setResult(Activity.RESULT_OK, intent)
-        activity?.finish()
-    }
-
-    override fun onSaveInvoiceFailed() {
-        AlertDialog.Builder(activity)
-            .setMessage("Antes de guardar la factura tienes que subir un fichero")
-            .setTitle("Nos faltan datos")
-            .create().show()
-    }
-
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
@@ -70,6 +50,7 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
         super.onCreateOptionsMenu(menu, inflater)
         inflater?.inflate(R.menu.full_screen_dialog_menu, menu)
         val compatActivity = activity as AppCompatActivity
+        compatActivity.supportActionBar?.elevation = 0.0f
         compatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         compatActivity.supportActionBar?.setHomeAsUpIndicator(R.drawable.outline_close_24)
     }
@@ -78,20 +59,39 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
         if(item?.itemId == R.id.action_save) {
             activity?.let { presenter.userSaveSelected(
                     it, uri, file_name_edit_text.text.toString(),
-                    Trimester.FIRST_TRIMESTER)
+                    chipGroup.getChecked())
             }
             return true
         }
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onURIUpdated(uri: Uri?, fileName: String) {
+        this.uri = uri
+        pick_file_chip.text = fileName
+        file_name_edit_text.setText(fileName)
+    }
+
+    override fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload) {
+        val intent = activity?.intent
+        intent?.putExtra(InvoiceFragment.FILE_EXTRA_CODE, invoiceUpload)
+        intent?.putExtra(InvoiceFragment.URI_EXTRA_CODE, uri)
+        activity?.setResult(Activity.RESULT_OK, intent)
+        activity?.finish()
+    }
+
+    override fun onSaveInvoiceFailed() {
+        AlertDialog.Builder(activity)
+            .setMessage(R.string.upload_name_error_message)
+            .setTitle(R.string.upload_name_error_title)
+            .create().show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if( requestCode == MEDIA_SEARCH_RESULT_CODE && resultCode == Activity.RESULT_OK ) {
             val resultData: Uri? = data?.data
-            metadata = resultData?.let { activity?.let { it1 -> URIUtils.retrieveFileMetadata(it1, uri = it) } }
-            pick_file_chip.text = metadata?.displayName
-            file_name_edit_text.setText( metadata?.displayName )
+            activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
         }
     }
 }
