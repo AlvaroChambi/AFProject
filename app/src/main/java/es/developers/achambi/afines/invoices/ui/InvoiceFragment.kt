@@ -34,11 +34,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = InvoicePresenter(
-            this, lifecycle,
-            MainExecutor.buildExecutor(),
-            InvoicePresentationBuilder(activity!!)
-        )
+        presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
     }
 
     override fun onViewSetup(view: View) {

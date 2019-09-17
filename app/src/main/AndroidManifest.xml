@@ -7,7 +7,10 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            tools:ignore="GoogleAppIndexingWarning">
+            android:name=".AfinesApplication"
+            tools:ignore="GoogleAppIndexingWarning"
+            android:fullBackupContent="true"
+            android:allowBackup="true">
             <activity android:name=".LoginActivity">
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
