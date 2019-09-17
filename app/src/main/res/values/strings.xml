@@ -10,7 +10,7 @@
     <string name="header_save_invoice_text">Guardar</string>
 
     <string name="upload_pick_file_header_tag">Selecciona tu factura</string>
-    <string name="upload_name_header_tag">Escoge un nombra para tu factura</string>
+    <string name="upload_name_header_tag">Escoge un nombre para tu factura</string>
     <string name="upload_trimeser_header_tag">¿De que trimestre es la factura?</string>
 
     <string name="upload_first_trimester_text">Primer trimestre</string>

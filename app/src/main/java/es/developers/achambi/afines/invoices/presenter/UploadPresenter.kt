@@ -12,12 +12,18 @@ import es.developers.achambi.afines.invoices.ui.UploadScreenInterface
 
 class UploadPresenter(screenInterface: UploadScreenInterface,
                       lifecycle : Lifecycle,
-                      executor: ExecutorInterface)
+                      executor: ExecutorInterface,
+                      private val uriUtils: URIUtils)
     : Presenter<UploadScreenInterface>(screenInterface, lifecycle, executor) {
 
     fun userSelectedURI(context: Context, uri: Uri) {
-        val uriMetadata =  URIUtils.retrieveFileMetadata(context, uri)
-        uriMetadata.displayName?.let { screen.onURIUpdated(uri, it) }
+        val uriMetadata =  uriUtils.retrieveFileMetadata(context, uri)
+        val displayName = uriMetadata.displayName
+        if(displayName != null) {
+            screen.onURIUpdated(uri, displayName)
+        } else {
+            screen.onURIUpdated(uri, "")
+        }
     }
 
     fun userClearedURI() {
@@ -27,12 +33,12 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
     fun userSaveSelected(context: Context, uri: Uri?, name: String, trimester: Trimester) {
         if( uri != null ) {
             val invoiceUpload = InvoiceUpload(
-                URIUtils.retrieveFileMetadata(context, uri),
+                uriUtils.retrieveFileMetadata(context, uri),
                 name, trimester
             )
             screen.onInvoicePreparedToSave(invoiceUpload)
         } else {
-            screen.onSaveInvoiceFailed()
+            screen.onCannotSaveInvoice()
         }
     }
 }

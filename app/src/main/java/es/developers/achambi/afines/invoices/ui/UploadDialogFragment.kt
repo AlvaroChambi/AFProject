@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -11,6 +12,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
@@ -20,6 +22,7 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
+        const val SAVED_URI_KEY = "SAVED_URI_KEY"
 
         fun newInstance(): UploadDialogFragment {
             return UploadDialogFragment()
@@ -29,8 +32,12 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
     private var uri: Uri? = null
     private lateinit var presenter: UploadPresenter
 
+    override val layoutResource: Int
+        get() = R.layout.upload_invoice_dialog_layout
+
     override fun onViewSetup(view: View) {
-        presenter = UploadPresenter(this, lifecycle, MainExecutor.buildExecutor())
+        presenter = UploadPresenter(this, lifecycle, MainExecutor.buildExecutor(),
+            URIUtils())
         pick_file_chip.setOnClickListener{
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = ANY_FILE
@@ -42,9 +49,6 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
             presenter.userClearedURI()
         }
     }
-
-    override val layoutResource: Int
-        get() = R.layout.upload_invoice_dialog_layout
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -80,7 +84,7 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
         activity?.finish()
     }
 
-    override fun onSaveInvoiceFailed() {
+    override fun onCannotSaveInvoice() {
         AlertDialog.Builder(activity)
             .setMessage(R.string.upload_name_error_message)
             .setTitle(R.string.upload_name_error_title)
@@ -93,5 +97,16 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
             val resultData: Uri? = data?.data
             activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(SAVED_URI_KEY, uri)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        uri = savedInstanceState.getParcelable(SAVED_URI_KEY)
+        activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
     }
 }

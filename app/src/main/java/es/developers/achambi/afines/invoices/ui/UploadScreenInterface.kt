@@ -7,5 +7,5 @@ import es.developers.achambi.afines.invoices.model.InvoiceUpload
 interface UploadScreenInterface : Screen {
     fun onURIUpdated(uri: Uri?, fileName: String)
     fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload)
-    fun onSaveInvoiceFailed()
+    fun onCannotSaveInvoice()
 }
