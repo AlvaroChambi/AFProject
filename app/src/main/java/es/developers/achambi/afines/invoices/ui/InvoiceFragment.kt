@@ -26,6 +26,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
         const val FILE_EXTRA_CODE = "FILE_EXTRA_CODE"
         const val URI_EXTRA_CODE = "URI_EXTRA_CODE"
+        const val INVOICES_SAVED_STATE = "INVOICES_SAVED_STATE"
         fun newInstance(): InvoiceFragment {
             return InvoiceFragment()
         }
@@ -38,6 +39,8 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
 
     override fun onViewSetup(view: View) {
         super.onViewSetup(view)
+        activity?.setTitle(R.string.invoices_screen_title)
+
         progressBar = view.findViewById(R.id.horizontal_progress_bar)
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
         view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
@@ -106,6 +109,17 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(INVOICES_SAVED_STATE, adapter.data)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        adapter.data = savedInstanceState.getParcelableArrayList(INVOICES_SAVED_STATE)
+        presentAdapterData()
     }
 }
 

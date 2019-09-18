@@ -1,6 +1,8 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.content.Context
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.format.DateUtils
 import androidx.core.content.ContextCompat
 import es.developer.achambi.coreframework.ui.presentation.SearchListData
@@ -18,10 +20,45 @@ data class InvoicePresentation(
     val trimester: String,
     val stateMessage: String,
     val stateColor: Int,
-    val stateDetails: String)
-    : SearchListData {
+    val stateDetails: String,
+    val showFailedDetails: Boolean)
+    : SearchListData, Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readInt(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readInt(),
+        parcel.readString(),
+        parcel.readByte() != 0.toByte()
+    )
+
     override fun getId(): Long {
         return id.toLong()
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
+        parcel.writeString(name)
+        parcel.writeString(trimester)
+        parcel.writeString(stateMessage)
+        parcel.writeInt(stateColor)
+        parcel.writeString(stateDetails)
+        parcel.writeByte(if (showFailedDetails) 1 else 0)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<InvoicePresentation> {
+        override fun createFromParcel(parcel: Parcel): InvoicePresentation {
+            return InvoicePresentation(parcel)
+        }
+
+        override fun newArray(size: Int): Array<InvoicePresentation?> {
+            return arrayOfNulls(size)
+        }
     }
 }
 class InvoicePresentationBuilder(private val context: Context) {
@@ -31,7 +68,8 @@ class InvoicePresentationBuilder(private val context: Context) {
             buildTrimesterText(context, invoice.trimester),
             buildStateMessage(context, invoice.state),
             buildStateMessageColor(context, invoice.state),
-            buildStateDetails(context, invoice.state, invoice.date) )
+            buildStateDetails(context, invoice.state, invoice.date),
+            invoice.state == InvoiceState.FAILED)
     }
 
     fun build(invoices: ArrayList<Invoice>): ArrayList<InvoicePresentation> {
@@ -71,10 +109,10 @@ class InvoicePresentationBuilder(private val context: Context) {
     private fun buildStateDetails(context: Context, invoiceState: InvoiceState, date: Date): String {
         return when(invoiceState) {
             InvoiceState.PROCESSED,
-            InvoiceState.DELIVERED -> DateUtils.formatDateTime(context, date.time,
+            InvoiceState.DELIVERED,
+            InvoiceState.FAILED -> DateUtils.formatDateTime(context, date.time,
                 DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE or
-                        DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_ALL)
-            InvoiceState.FAILED -> context.getString(R.string.invoice_state_failed_details)
+                        DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_ALL)
         }
     }
 }
