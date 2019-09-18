@@ -7,8 +7,6 @@ import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
-import es.developer.achambi.coreframework.utils.URIMetadata
-import es.developers.achambi.afines.FirebaseRepository
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
@@ -18,11 +16,10 @@ import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                        lifecycle : Lifecycle,
                        executor: ExecutorInterface,
+                       private val invoiceUseCase: InvoiceUseCase,
                        private val invoicePresentationBuilder: InvoicePresentationBuilder
 )
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
-    private val invoiceUseCase =
-        InvoiceUseCase(FirebaseRepository())
 
     fun uploadFile(uri: Uri, invoiceUpload: InvoiceUpload) {
         screen.startUploadingInvoice()
@@ -39,7 +36,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<Any> {
             override fun perform(): Any {
-                return invoiceUseCase.uploadUserFiles(uri, resolveFileName(invoiceUpload))
+                return invoiceUseCase.uploadUserFiles(uri, invoiceUpload)
             }
         }
         request(request, responseHandler)

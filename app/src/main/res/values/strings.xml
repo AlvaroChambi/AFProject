@@ -7,6 +7,8 @@
     <string name="overview_menu_text">Home</string>
     <string name="upload_invoice_activity_title">Subir factura</string>
 
+    <string name="invoices_screen_title">Mis facturas</string>
+
     <string name="header_save_invoice_text">Guardar</string>
 
     <string name="upload_pick_file_header_tag">Selecciona tu factura</string>
@@ -17,7 +19,14 @@
     <string name="upload_second_trimester_text">Segundo trimestre</string>
     <string name="upload_third_trimester_text">Tercer trimestre</string>
     <string name="upload_forth_trimester_text">Cuarto trimestre</string>
+    <string name="upload_empty_trimester_text">-</string>
 
     <string name="upload_name_error_title">¡Nos faltan datos!</string>
     <string name="upload_name_error_message">Antes de guardar tienes que subir la factura.</string>
+
+    <string name="invoice_state_delivered">Factura entregada:</string>
+    <string name="invoice_state_processed">Factura aprovada:</string>
+    <string name="invoice_state_failed">Factura no valida:</string>
+    
+    <string name="invoice_state_failed_details">Por favor actualize la factura entregada</string>
 </resources>
