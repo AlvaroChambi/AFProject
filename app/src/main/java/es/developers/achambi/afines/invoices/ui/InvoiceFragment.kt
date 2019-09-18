@@ -12,7 +12,6 @@ import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
-import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
