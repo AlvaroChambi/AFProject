@@ -23,6 +23,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             throw uploadResult.error!!
         }
 
+        firebaseInvoice.downloadUrl = uploadResult.storage.path
         val firebaseReference = firestore.collection(buildUserPath())
         val databaseResult = Tasks.await(firebaseReference.add(firebaseInvoice))
         if(databaseResult.get().exception != null) {
