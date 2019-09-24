@@ -1,6 +1,7 @@
 package es.developers.achambi.afines.invoices.usecase
 
 import android.net.Uri
+import es.developers.achambi.afines.invoices.model.DetailedInvoice
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceState
@@ -12,6 +13,28 @@ import kotlin.collections.ArrayList
 
 class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     private val invoices = ArrayList<Invoice>()
+
+    fun getDetailedInvoice(invoiceId: Int): DetailedInvoice? {
+        val invoice = getInvoice(invoiceId)
+        val metadata = invoice?.fileReference.let { it?.let { it1 -> firebaseRepository.getFileMetadata(it1) } }
+        return invoice?.let {
+            DetailedInvoice(
+                it,
+                metadata?.name ?: "",
+                metadata?.contentType ?: "",
+                metadata?.contentType ?: ""
+            )
+        }
+    }
+
+    fun getFileBytes(invoiceId: Int): ByteArray? {
+        val invoice = getInvoice(invoiceId)
+        return invoice?.fileReference?.let { firebaseRepository.getFilesBytes(it) }
+    }
+
+    fun getInvoice(invoiceId: Int): Invoice? {
+        return invoices.find { it.id == invoiceId }
+    }
 
     fun queryUserInvoices(refresh: Boolean): ArrayList<Invoice> {
         if(refresh) {
@@ -43,15 +66,16 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return Invoice(
             firebaseInvoice.id.toInt(),
             firebaseInvoice.name,
+            firebaseInvoice.fileReference?: "",
             resolveTrimester(firebaseInvoice.trimester),
             resolveState(firebaseInvoice.processedDate, firebaseInvoice.failedStatus),
             resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate)
         )
     }
 
-    private fun resolveDate(deliveredDate: Long, processedDate: Long?): Date {
-        if(processedDate != null) return Date(processedDate)
-        return Date(deliveredDate)
+    private fun resolveDate(deliveredDate: Long, processedDate: Long?): Long {
+        if(processedDate != null) return processedDate
+        return deliveredDate
     }
 
     private fun resolveTrimester(trimester: String?): Trimester {
@@ -63,12 +87,10 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     private fun resolveState(processedDate: Long?, failed: Boolean): InvoiceState {
-        return if(failed) {
-            InvoiceState.FAILED
-        } else if(processedDate != null){
-            InvoiceState.PROCESSED
-        } else {
-            InvoiceState.DELIVERED
+        return when {
+            failed -> InvoiceState.FAILED
+            processedDate != null -> InvoiceState.PROCESSED
+            else -> InvoiceState.DELIVERED
         }
     }
 }

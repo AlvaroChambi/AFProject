@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import es.developer.achambi.coreframework.threading.MainExecutor
+import es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentationBuilder
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
@@ -11,6 +12,7 @@ import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 class AfinesApplication : Application() {
     companion object {
         lateinit var invoicePresenterFactory: InvoicePresenterFactory
+        lateinit var invoiceDetailsPresenterFactory: InvoiceDetailsPresenterFactory
     }
     override fun onCreate() {
         super.onCreate()
@@ -21,5 +23,8 @@ class AfinesApplication : Application() {
         val presentationBuilder = InvoicePresentationBuilder(this)
 
         invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase, presentationBuilder)
+        invoiceDetailsPresenterFactory = InvoiceDetailsPresenterFactory(executor, invoicesUseCase,
+            InvoiceDetailsPresentationBuilder(this, presentationBuilder)
+        )
     }
 }

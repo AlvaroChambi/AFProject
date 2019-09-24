@@ -9,7 +9,6 @@ import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import es.developer.achambi.coreframework.threading.Error
-import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.*
@@ -50,9 +49,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
 
         adapter.setListener { item ->
-            InvoiceBottomSheetFragment().show(activity?.supportFragmentManager, null)
+            InvoiceBottomSheetFragment.newInstance(item.id).show(activity?.supportFragmentManager, null)
         }
     }
+
+
 
     override fun onInvoicesLoadingError() {
         showError(Error("Failed to load invoices. Please try again later."))

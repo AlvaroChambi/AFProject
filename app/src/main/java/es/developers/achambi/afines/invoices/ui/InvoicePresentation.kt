@@ -9,10 +9,7 @@ import es.developer.achambi.coreframework.ui.presentation.SearchListData
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceState
-import java.util.*
 import kotlin.collections.ArrayList
-
-
 
 data class InvoicePresentation(
     val id: Int,
@@ -61,8 +58,29 @@ data class InvoicePresentation(
         }
     }
 }
+
+data class InvoiceDetailsPresentation(val id: Int,
+                                      val name: String,
+                                      val trimester: String,
+                                      val stateMessage: String,
+                                      val stateMessageColor: Int)
+
+class InvoiceDetailsPresentationBuilder(
+    private val context: Context, private val invoicePresentationBuilder: InvoicePresentationBuilder){
+    fun build(invoice: Invoice): InvoiceDetailsPresentation {
+        val basePresentation = invoicePresentationBuilder.build(invoice)
+        return InvoiceDetailsPresentation(
+            basePresentation.id,
+            basePresentation.name,
+            basePresentation.trimester,
+            basePresentation.stateMessage + basePresentation.stateDetails,
+            basePresentation.stateColor
+        )
+    }
+}
+
 class InvoicePresentationBuilder(private val context: Context) {
-    private fun build(invoice: Invoice): InvoicePresentation {
+     fun build(invoice: Invoice): InvoicePresentation {
         return InvoicePresentation(invoice.id,
             invoice.name,
             buildTrimesterText(context, invoice.trimester),
@@ -106,11 +124,11 @@ class InvoicePresentationBuilder(private val context: Context) {
         }
     }
 
-    private fun buildStateDetails(context: Context, invoiceState: InvoiceState, date: Date): String {
+    private fun buildStateDetails(context: Context, invoiceState: InvoiceState, date: Long): String {
         return when(invoiceState) {
             InvoiceState.PROCESSED,
             InvoiceState.DELIVERED,
-            InvoiceState.FAILED -> DateUtils.formatDateTime(context, date.time,
+            InvoiceState.FAILED -> DateUtils.formatDateTime(context, date,
                 DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE or
                         DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_ALL)
         }

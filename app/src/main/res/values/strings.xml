@@ -29,4 +29,8 @@
     <string name="invoice_state_failed">Factura no valida:</string>
     
     <string name="invoice_state_failed_details">Por favor actualize la factura entregada</string>
+
+    <string name="invoice_details_edit_tag">Editar factura</string>
+    <string name="invoice_details_download_tag">Descargar factura</string>
+    <string name="invoice_details_delete_tag">Borrar factura</string>
 </resources>
