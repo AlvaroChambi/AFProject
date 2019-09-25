@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
+        <import type="android.view.View"/>
         <variable
             name="invoice"
             type="es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentation" />
@@ -36,7 +37,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="24dp"
             android:drawableStart="@drawable/round_edit_24"
@@ -45,45 +45,52 @@
             android:text="@string/invoice_details_edit_tag"
             android:textColor="@color/text_secondary"
             android:textSize="18sp"
+            android:visibility="@{invoice.processed ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/delete_invoice_button" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/delete_invoice_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="24dp"
             android:drawableStart="@drawable/round_delete_24"
             android:drawablePadding="16dp"
             android:drawableTint="@color/colorPrimary"
             android:text="@string/invoice_details_delete_tag"
             android:textColor="@color/text_secondary"
             android:textSize="18sp"
+            android:visibility="@{invoice.failed | invoice.processed ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toTopOf="@+id/edit_invoice_button"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/download_invoice_button" />
+            app:layout_goneMarginBottom="24dp"
+            tools:visibility="" />
 
         <TextView
             android:id="@+id/download_invoice_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="24dp"
             android:drawableStart="@drawable/round_cloud_download_24"
             android:drawablePadding="16dp"
             android:drawableTint="@color/colorPrimary"
             android:text="@string/invoice_details_download_tag"
             android:textColor="@color/text_secondary"
             android:textSize="18sp"
+            android:visibility="@{invoice.failed ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toTopOf="@+id/delete_invoice_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view3" />
+            app:layout_goneMarginBottom="24dp" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -103,7 +110,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
             android:background="@color/text_gray"
+            app:layout_constraintBottom_toTopOf="@+id/download_invoice_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

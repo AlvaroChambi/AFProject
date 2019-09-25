@@ -63,7 +63,9 @@ data class InvoiceDetailsPresentation(val id: Int,
                                       val name: String,
                                       val trimester: String,
                                       val stateMessage: String,
-                                      val stateMessageColor: Int)
+                                      val stateMessageColor: Int,
+                                      val failed: Boolean,
+                                      val processed: Boolean)
 
 class InvoiceDetailsPresentationBuilder(
     private val context: Context, private val invoicePresentationBuilder: InvoicePresentationBuilder){
@@ -74,7 +76,9 @@ class InvoiceDetailsPresentationBuilder(
             basePresentation.name,
             basePresentation.trimester,
             basePresentation.stateMessage + basePresentation.stateDetails,
-            basePresentation.stateColor
+            basePresentation.stateColor,
+            basePresentation.showFailedDetails,
+            invoice.state == InvoiceState.PROCESSED
         )
     }
 }
