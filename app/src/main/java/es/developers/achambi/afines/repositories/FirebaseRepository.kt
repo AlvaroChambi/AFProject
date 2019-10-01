@@ -5,9 +5,8 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ListResult
+import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.UploadTask
-import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import java.lang.Exception
 
@@ -23,11 +22,31 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             throw uploadResult.error!!
         }
 
+        firebaseInvoice.fileReference = uploadResult.storage.path
         val firebaseReference = firestore.collection(buildUserPath())
         val databaseResult = Tasks.await(firebaseReference.add(firebaseInvoice))
         if(databaseResult.get().exception != null) {
             throw databaseResult.get().exception!!
         }
+    }
+
+    fun userInvoices(): List<FirebaseInvoice> {
+        val listRef = firestore.collection( buildUserPath())
+        val result = Tasks.await(listRef.get())
+        if(result.isEmpty) {
+            return ArrayList()
+        }
+        return result.toObjects(FirebaseInvoice::class.java)
+    }
+
+    fun getFileMetadata(referencePath: String): StorageMetadata {
+        val ref = firestorage.reference.child(referencePath)
+        return Tasks.await(ref.metadata)
+    }
+
+    fun getFilesBytes(referencePath: String): ByteArray {
+        val ref = firestorage.reference.child(referencePath)
+        return Tasks.await(ref.getBytes(20148*2048))
     }
 
     private fun buildUserPath(): String {
@@ -40,14 +59,5 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         val fileReference = storageReference.child(INVOICES_PATH + "${buildUserPath()}/${fileName}")
 
         return Tasks.await(fileReference.putFile(uri))
-    }
-
-    fun userInvoices(): List<FirebaseInvoice> {
-        val listRef = firestore.collection( buildUserPath())
-        val result = Tasks.await(listRef.get())
-        if(result.isEmpty) {
-            return ArrayList()
-        }
-        return result.toObjects(FirebaseInvoice::class.java)
     }
 }

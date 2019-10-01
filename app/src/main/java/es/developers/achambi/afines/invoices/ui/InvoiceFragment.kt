@@ -9,7 +9,6 @@ import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import es.developer.achambi.coreframework.threading.Error
-import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.*
@@ -45,14 +44,16 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
         view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
             startActivityForResult(activity?.let {
-                UploadInvoiceActivity.newInstance(
-                    it
-                )
-            },
-                INVOICE_UPLOAD_DIALOG_CODE
-            )
+                UploadInvoiceActivity.newInstance( it )
+            }, INVOICE_UPLOAD_DIALOG_CODE )
+        }
+
+        adapter.setListener { item ->
+            InvoiceBottomSheetFragment.newInstance(item.id).show(activity?.supportFragmentManager, null)
         }
     }
+
+
 
     override fun onInvoicesLoadingError() {
         showError(Error("Failed to load invoices. Please try again later."))
