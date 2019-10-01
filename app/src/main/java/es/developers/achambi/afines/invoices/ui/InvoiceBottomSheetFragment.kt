@@ -30,6 +30,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     private var binding: InvoiceDetailsBottonSheetBinding? = null
     companion object {
         private const val INVOICE_ID_EXTRA = "invoice_id_extra"
+        private const val SAVED_STATE_KEY = "saved_state_key"
         fun newInstance(invoiceId: Int): InvoiceBottomSheetFragment{
             val fragment = InvoiceBottomSheetFragment()
             val bundle = Bundle()

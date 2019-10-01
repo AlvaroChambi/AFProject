@@ -33,6 +33,10 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     fun getInvoice(invoiceId: Int): Invoice? {
+        val result = invoices.find { it.id == invoiceId }
+        if(result == null){
+            invoices.addAll(queryUserInvoices(false))
+        }
         return invoices.find { it.id == invoiceId }
     }
 
