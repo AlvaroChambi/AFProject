@@ -2,7 +2,6 @@ package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,10 +14,17 @@ import es.developers.achambi.afines.R
 import es.developers.achambi.afines.databinding.InvoiceDetailsBottonSheetBinding
 import es.developers.achambi.afines.invoices.presenter.InvoiceDetailsPresenter
 import kotlinx.android.synthetic.main.invoice_details_botton_sheet.*
-import java.io.IOException
 
 private const val WRITE_REQUEST_CODE: Int = 43
 class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsScreen {
+    override fun showDownloadinProgress() {
+        invoice_download_details_progress_bar.visibility = View.VISIBLE
+    }
+
+    override fun showDownloadFinished() {
+        invoice_download_details_progress_bar.visibility = View.GONE
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View?{
         binding = DataBindingUtil.inflate(inflater, R.layout.invoice_details_botton_sheet, container, false)
@@ -30,7 +36,6 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     private var binding: InvoiceDetailsBottonSheetBinding? = null
     companion object {
         private const val INVOICE_ID_EXTRA = "invoice_id_extra"
-        private const val SAVED_STATE_KEY = "saved_state_key"
         fun newInstance(invoiceId: Int): InvoiceBottomSheetFragment{
             val fragment = InvoiceBottomSheetFragment()
             val bundle = Bundle()
@@ -62,22 +67,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            invoiceId?.let { presenter.onUserFileBytesRequired(it, data?.data) }
-        }
-    }
-
-    override fun populateFile(uri: Uri?, data: ByteArray) {
-        try {
-            val os = activity?.contentResolver?.openOutputStream(uri)
-
-            if (os != null) {
-                os.write(data)
-                os.close()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            dismiss()
+            invoiceId?.let { presenter.onUserFileBytesRequired(it, data?.data, activity) }
         }
     }
 
@@ -94,10 +84,39 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
 
         startActivityForResult(intent, WRITE_REQUEST_CODE)
     }
+
+    override fun showDetailsLoadingFinished() {
+        details_progress_bar.visibility = View.GONE
+    }
+
+    override fun showDownloadSuccess() {
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, null)
+        dismiss()
+    }
+
+    override fun showDownloadError() {
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+        dismiss()
+    }
+
+    override fun showDetailsLoading() {
+        details_progress_bar.visibility = View.VISIBLE
+    }
+
+    override fun showDetailsError(invoicePresentation: InvoiceDetailsPresentation) {
+        binding?.invoice = invoicePresentation
+    }
+
 }
 
 interface InvoiceDetailsScreen: Screen {
     fun showInvoice(invoicePresentation: InvoiceDetailsPresentation)
     fun createFile(mimeType: String, fileName: String)
-    fun populateFile(uri: Uri?, data: ByteArray)
+    fun showDetailsLoading()
+    fun showDetailsLoadingFinished()
+    fun showDetailsError(invoicePresentation: InvoiceDetailsPresentation)
+    fun showDownloadSuccess()
+    fun showDownloadError()
+    fun showDownloadinProgress()
+    fun showDownloadFinished()
 }

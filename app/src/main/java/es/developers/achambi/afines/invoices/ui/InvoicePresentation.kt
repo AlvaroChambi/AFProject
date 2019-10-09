@@ -65,7 +65,8 @@ data class InvoiceDetailsPresentation(val id: Int,
                                       val stateMessage: String,
                                       val stateMessageColor: Int,
                                       val failed: Boolean,
-                                      val processed: Boolean)
+                                      val processed: Boolean,
+                                      val error: Boolean)
 
 class InvoiceDetailsPresentationBuilder(
     private val context: Context, private val invoicePresentationBuilder: InvoicePresentationBuilder){
@@ -78,8 +79,13 @@ class InvoiceDetailsPresentationBuilder(
             basePresentation.stateMessage + basePresentation.stateDetails,
             basePresentation.stateColor,
             basePresentation.showFailedDetails,
-            invoice.state == InvoiceState.PROCESSED
+            invoice.state == InvoiceState.PROCESSED,
+            false
         )
+    }
+    fun buildError(): InvoiceDetailsPresentation {
+        return InvoiceDetailsPresentation(0,"", "", "",0, false,
+            processed = false, error = true)
     }
 }
 

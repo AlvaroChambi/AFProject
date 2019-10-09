@@ -33,4 +33,12 @@
     <string name="invoice_details_edit_tag">Editar factura</string>
     <string name="invoice_details_download_tag">Descargar factura</string>
     <string name="invoice_details_delete_tag">Borrar factura</string>
+
+    <string name="invoice_download_error_message">Algo ha ido mal con la descarga. Por favor intentelo otra vez mas tarde.</string>
+    <string name="invoice_download_success_message">¡La descarga se ha completado con éxito!</string>
+
+    <string name="invoice_details_loading_failed_message">No se pudo mostrar la factura. Por favor intentelo otra vez mas tarde.</string>
+
+    <string name="invoices_overview_error_message">"No se pudieron recuperar las facturas. Por favor intentelo otra vez mas tarde"</string>
+    <string name="invoices_upload_error_message">No se pudo subir su factura. Por favor intentelo otra vez mas tarde.</string>
 </resources>
