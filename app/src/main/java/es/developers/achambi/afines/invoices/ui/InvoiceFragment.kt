@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
@@ -26,6 +27,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         const val FILE_EXTRA_CODE = "FILE_EXTRA_CODE"
         const val URI_EXTRA_CODE = "URI_EXTRA_CODE"
         const val INVOICES_SAVED_STATE = "INVOICES_SAVED_STATE"
+        const val INVOICE_DETAILS_REQUEST_CODE = 103
         fun newInstance(): InvoiceFragment {
             return InvoiceFragment()
         }
@@ -49,18 +51,20 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
 
         adapter.setListener { item ->
-            InvoiceBottomSheetFragment.newInstance(item.id).show(activity?.supportFragmentManager, null)
+            val dialog = InvoiceBottomSheetFragment.newInstance(item.id)
+            dialog.setTargetFragment(this, INVOICE_DETAILS_REQUEST_CODE)
+            dialog.show(activity?.supportFragmentManager, null)
         }
     }
 
 
 
     override fun onInvoicesLoadingError() {
-        showError(Error("Failed to load invoices. Please try again later."))
+        showError(Error(resources.getString(R.string.invoices_overview_error_message)))
     }
 
     override fun onUploadError() {
-        showSnackBackError(Error("Failed to upload the invoice. Please try again later."))
+        showSnackBackError(Error(resources.getString(R.string.invoices_upload_error_message)))
     }
 
     override fun startLoadingInvoices() {
@@ -109,6 +113,15 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             val invoice: InvoiceUpload? = data?.getParcelableExtra(FILE_EXTRA_CODE)
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
+        } else if(requestCode == INVOICE_DETAILS_REQUEST_CODE) {
+            when(resultCode) {
+                Activity.RESULT_OK -> view?.let {
+                    Snackbar.make(it,R.string.invoice_download_success_message , Snackbar.LENGTH_SHORT).show()
+                }
+                Activity.RESULT_CANCELED -> view?.let {
+                    Snackbar.make(it,R.string.invoice_download_error_message , Snackbar.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
