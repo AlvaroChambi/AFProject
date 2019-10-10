@@ -114,13 +114,9 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
         } else if(requestCode == INVOICE_DETAILS_REQUEST_CODE) {
-            when(resultCode) {
-                Activity.RESULT_OK -> view?.let {
-                    Snackbar.make(it,R.string.invoice_download_success_message , Snackbar.LENGTH_SHORT).show()
-                }
-                Activity.RESULT_CANCELED -> view?.let {
-                    Snackbar.make(it,R.string.invoice_download_error_message , Snackbar.LENGTH_SHORT).show()
-                }
+            val message = data?.getStringExtra(InvoiceBottomSheetFragment.INVOICE_EXTRA_KEY)
+            view?.let {
+                message?.let { it1 -> Snackbar.make(it, it1, Snackbar.LENGTH_SHORT).show() }
             }
         }
     }

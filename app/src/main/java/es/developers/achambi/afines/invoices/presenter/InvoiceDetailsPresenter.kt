@@ -47,7 +47,7 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
     }
 
     fun onUserDownloadClicked(invoiceId: Int) {
-        screen.showDownloadinProgress()
+        screen.showDownloadInProgress()
         val responseHandler = object : ResponseHandler<DetailedInvoice?> {
             override fun onSuccess(response: DetailedInvoice?) {
                 if(response != null) {
@@ -58,6 +58,23 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
         val request = object : Request<DetailedInvoice?> {
             override fun perform(): DetailedInvoice? {
                 return useCase.getDetailedInvoice(invoiceId)
+            }
+        }
+        request(request, responseHandler)
+    }
+
+    fun onUserDeleteSelected(invoiceId: Int) {
+        val responseHandler = object : ResponseHandler<Any> {
+            override fun onSuccess(response: Any) {
+                screen.showInvoiceDeleted()
+            }
+
+            override fun onError(error: Error) {
+            }
+        }
+        val request = object : Request<Any> {
+            override fun perform(): Any {
+                return useCase.deleteInvoice(invoiceId)
             }
         }
         request(request, responseHandler)

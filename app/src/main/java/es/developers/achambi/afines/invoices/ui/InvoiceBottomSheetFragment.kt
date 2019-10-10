@@ -1,6 +1,8 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,14 +19,6 @@ import kotlinx.android.synthetic.main.invoice_details_botton_sheet.*
 
 private const val WRITE_REQUEST_CODE: Int = 43
 class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsScreen {
-    override fun showDownloadinProgress() {
-        invoice_download_details_progress_bar.visibility = View.VISIBLE
-    }
-
-    override fun showDownloadFinished() {
-        invoice_download_details_progress_bar.visibility = View.GONE
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View?{
         binding = DataBindingUtil.inflate(inflater, R.layout.invoice_details_botton_sheet, container, false)
@@ -35,6 +29,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     private lateinit var presenter: InvoiceDetailsPresenter
     private var binding: InvoiceDetailsBottonSheetBinding? = null
     companion object {
+        const val INVOICE_EXTRA_KEY = "INVOICE_EXTRA_KEY"
         private const val INVOICE_ID_EXTRA = "invoice_id_extra"
         fun newInstance(invoiceId: Int): InvoiceBottomSheetFragment{
             val fragment = InvoiceBottomSheetFragment()
@@ -57,7 +52,18 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
         download_invoice_button.setOnClickListener {
             invoiceId?.let { presenter.onUserDownloadClicked(it) }
         }
+        delete_invoice_button.setOnClickListener { showConfirmationDialog() }
         binding = DataBindingUtil.findBinding(view)
+    }
+
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle("Borrar factura")
+            .setMessage("¿Estas seguro de que quieres borrar la factura?")
+            .setPositiveButton("Continuar"){ dialog, which ->
+                invoiceId?.let { presenter.onUserDeleteSelected(it) } }
+            .setNegativeButton("Cancelar", null)
+        builder.create().show()
     }
 
     override fun showInvoice(invoicePresentation: InvoiceDetailsPresentation) {
@@ -90,12 +96,23 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     }
 
     override fun showDownloadSuccess() {
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, null)
+        val intent = Intent()
+        intent.putExtra(INVOICE_EXTRA_KEY, resources.getString(R.string.invoice_download_success_message))
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         dismiss()
     }
 
     override fun showDownloadError() {
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+        val intent = Intent()
+        intent.putExtra(INVOICE_EXTRA_KEY, resources.getString(R.string.invoice_download_error_message))
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+        dismiss()
+    }
+
+    override fun showInvoiceDeleted() {
+        val intent = Intent()
+        intent.putExtra(INVOICE_EXTRA_KEY, resources.getString(R.string.invoice_delete_success_message))
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         dismiss()
     }
 
@@ -107,6 +124,13 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
         binding?.invoice = invoicePresentation
     }
 
+    override fun showDownloadInProgress() {
+        invoice_download_details_progress_bar.visibility = View.VISIBLE
+    }
+
+    override fun showDownloadFinished() {
+        invoice_download_details_progress_bar.visibility = View.GONE
+    }
 }
 
 interface InvoiceDetailsScreen: Screen {
@@ -117,6 +141,7 @@ interface InvoiceDetailsScreen: Screen {
     fun showDetailsError(invoicePresentation: InvoiceDetailsPresentation)
     fun showDownloadSuccess()
     fun showDownloadError()
-    fun showDownloadinProgress()
+    fun showDownloadInProgress()
     fun showDownloadFinished()
+    fun showInvoiceDeleted()
 }

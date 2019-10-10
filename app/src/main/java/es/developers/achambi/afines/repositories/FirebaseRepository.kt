@@ -39,6 +39,11 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return result.toObjects(FirebaseInvoice::class.java)
     }
 
+    fun deleteInvoice(referencePath: String) {
+        val ref = firestorage.reference.child(referencePath)
+        Tasks.await(ref.delete())
+    }
+
     fun getFileMetadata(referencePath: String): StorageMetadata {
         val ref = firestorage.reference.child(referencePath)
         return Tasks.await(ref.metadata)

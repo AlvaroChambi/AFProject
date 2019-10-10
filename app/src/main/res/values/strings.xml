@@ -41,4 +41,6 @@
 
     <string name="invoices_overview_error_message">"No se pudieron recuperar las facturas. Por favor intentelo otra vez mas tarde"</string>
     <string name="invoices_upload_error_message">No se pudo subir su factura. Por favor intentelo otra vez mas tarde.</string>
+
+    <string name="invoice_delete_success_message">La factura se ha borrado con éxito</string>
 </resources>

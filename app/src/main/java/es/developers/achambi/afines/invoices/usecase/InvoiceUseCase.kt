@@ -27,6 +27,11 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         }
     }
 
+    fun deleteInvoice(invoiceId: Int) {
+        val invoice = getInvoice(invoiceId)
+        invoice?.fileReference.let { it?.let { it1 -> firebaseRepository.deleteInvoice(it1) } }
+    }
+
     fun getFileBytes(invoiceId: Int): ByteArray? {
         val invoice = getInvoice(invoiceId)
         return invoice?.fileReference?.let { firebaseRepository.getFilesBytes(it) }
