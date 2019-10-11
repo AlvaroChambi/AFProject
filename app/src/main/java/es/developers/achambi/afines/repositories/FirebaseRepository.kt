@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.UploadTask
+import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import java.lang.Exception
 
@@ -39,9 +40,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return result.toObjects(FirebaseInvoice::class.java)
     }
 
-    fun deleteInvoice(referencePath: String) {
-        val ref = firestorage.reference.child(referencePath)
-        Tasks.await(ref.delete())
+    fun deleteInvoice(invoice: Invoice) {
+        //val ref = firestorage.reference.child(invoice.fileReference)
+        //Tasks.await(ref.delete())
+        val dbReference = firestore.collection(buildUserPath())
+        val invoiceSnapshot = Tasks.await(dbReference.whereEqualTo("id", invoice.id).get().)
+        return
     }
 
     fun getFileMetadata(referencePath: String): StorageMetadata {

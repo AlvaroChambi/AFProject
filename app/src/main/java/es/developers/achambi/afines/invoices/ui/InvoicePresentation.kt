@@ -12,7 +12,7 @@ import es.developers.achambi.afines.invoices.model.InvoiceState
 import kotlin.collections.ArrayList
 
 data class InvoicePresentation(
-    val id: Int,
+    private val keyId: Long,
     val name: String,
     val trimester: String,
     val stateMessage: String,
@@ -21,7 +21,7 @@ data class InvoicePresentation(
     val showFailedDetails: Boolean)
     : SearchListData, Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -31,11 +31,11 @@ data class InvoicePresentation(
     )
 
     override fun getId(): Long {
-        return id.toLong()
+        return keyId
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
+        parcel.writeLong(id)
         parcel.writeString(name)
         parcel.writeString(trimester)
         parcel.writeString(stateMessage)
@@ -59,7 +59,7 @@ data class InvoicePresentation(
     }
 }
 
-data class InvoiceDetailsPresentation(val id: Int,
+data class InvoiceDetailsPresentation(val id: Long,
                                       val name: String,
                                       val trimester: String,
                                       val stateMessage: String,

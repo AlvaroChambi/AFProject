@@ -2,7 +2,6 @@ package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,16 +24,16 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
         return binding?.root
     }
 
-    private var invoiceId: Int? = null
+    private var invoiceId: Long? = null
     private lateinit var presenter: InvoiceDetailsPresenter
     private var binding: InvoiceDetailsBottonSheetBinding? = null
     companion object {
         const val INVOICE_EXTRA_KEY = "INVOICE_EXTRA_KEY"
         private const val INVOICE_ID_EXTRA = "invoice_id_extra"
-        fun newInstance(invoiceId: Int): InvoiceBottomSheetFragment{
+        fun newInstance(invoiceId: Long): InvoiceBottomSheetFragment{
             val fragment = InvoiceBottomSheetFragment()
             val bundle = Bundle()
-            bundle.putInt(INVOICE_ID_EXTRA, invoiceId)
+            bundle.putLong(INVOICE_ID_EXTRA, invoiceId)
             fragment.arguments = bundle
             return fragment
         }
@@ -42,7 +41,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        invoiceId = arguments?.getInt(INVOICE_ID_EXTRA)
+        invoiceId = arguments?.getLong(INVOICE_ID_EXTRA)
         presenter = AfinesApplication.invoiceDetailsPresenterFactory.build(this,lifecycle)
     }
 
