@@ -22,7 +22,7 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
                               private val presentationBuilder: InvoiceDetailsPresentationBuilder)
     : Presenter<InvoiceDetailsScreen>(invoiceDetailsScreen, lifecycle, executor) {
 
-    fun onViewCreated(invoiceId: Int) {
+    fun onViewCreated(invoiceId: Long) {
         screen.showDetailsLoading()
         val responseHandler = object : ResponseHandler<Invoice?> {
             override fun onSuccess(response: Invoice?) {
@@ -46,8 +46,8 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
         request(request, responseHandler)
     }
 
-    fun onUserDownloadClicked(invoiceId: Int) {
-        screen.showDownloadinProgress()
+    fun onUserDownloadClicked(invoiceId: Long) {
+        screen.showDownloadInProgress()
         val responseHandler = object : ResponseHandler<DetailedInvoice?> {
             override fun onSuccess(response: DetailedInvoice?) {
                 if(response != null) {
@@ -63,7 +63,7 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
         request(request, responseHandler)
     }
 
-    fun onUserFileBytesRequired(invoiceId: Int, uri: Uri?, activity: Activity?) {
+    fun onUserFileBytesRequired(invoiceId: Long, uri: Uri?, activity: Activity?) {
         val responseHandler = object : ResponseHandler<ByteArray?> {
             override fun onSuccess(response: ByteArray?) {
                 if(response != null && uri != null) {

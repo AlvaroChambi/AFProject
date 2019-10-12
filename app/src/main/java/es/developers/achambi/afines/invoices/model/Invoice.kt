@@ -5,29 +5,32 @@ import android.os.Parcelable
 import es.developer.achambi.coreframework.utils.ParcelUtil
 import es.developers.achambi.afines.invoices.ui.Trimester
 
-data class Invoice(val id: Int,
+data class Invoice(val id: Long,
     val name: String,
     val fileReference: String,
     val trimester: Trimester,
     val state: InvoiceState,
-    val date: Long
-): Parcelable {
+    val date: Long,
+    val dbReference: String)
+    : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         ParcelUtil.readEnumFromParcel(parcel, Trimester::class.java),
         ParcelUtil.readEnumFromParcel(parcel, InvoiceState::class.java),
-        parcel.readLong()
+        parcel.readLong(),
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
+        parcel.writeLong(id)
         parcel.writeString(name)
         parcel.writeString(fileReference)
         ParcelUtil.writeEnumToParcel(parcel, trimester)
         ParcelUtil.writeEnumToParcel(parcel, state)
         parcel.writeLong(date)
+        parcel.writeString(dbReference)
     }
 
     override fun describeContents(): Int {

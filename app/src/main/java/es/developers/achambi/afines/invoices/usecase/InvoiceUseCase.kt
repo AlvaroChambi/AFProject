@@ -14,7 +14,7 @@ import kotlin.collections.ArrayList
 class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     private val invoices = ArrayList<Invoice>()
 
-    fun getDetailedInvoice(invoiceId: Int): DetailedInvoice? {
+    fun getDetailedInvoice(invoiceId: Long): DetailedInvoice? {
         val invoice = getInvoice(invoiceId)
         val metadata = invoice?.fileReference.let { it?.let { it1 -> firebaseRepository.getFileMetadata(it1) } }
         return invoice?.let {
@@ -27,12 +27,19 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         }
     }
 
-    fun getFileBytes(invoiceId: Int): ByteArray? {
+    fun deleteInvoice(invoiceId: Long) {
+        val invoice = getInvoice(invoiceId)
+        invoice?.let {
+            firebaseRepository.deleteInvoice(it)
+        }
+    }
+
+    fun getFileBytes(invoiceId: Long): ByteArray? {
         val invoice = getInvoice(invoiceId)
         return invoice?.fileReference?.let { firebaseRepository.getFilesBytes(it) }
     }
 
-    fun getInvoice(invoiceId: Int): Invoice? {
+    fun getInvoice(invoiceId: Long): Invoice? {
         val result = invoices.find { it.id == invoiceId }
         if(result == null){
             invoices.addAll(queryUserInvoices(false))
@@ -68,12 +75,13 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
 
     private fun buildInvoice(firebaseInvoice: FirebaseInvoice): Invoice {
         return Invoice(
-            firebaseInvoice.id.toInt(),
+            firebaseInvoice.id,
             firebaseInvoice.name,
             firebaseInvoice.fileReference?: "",
             resolveTrimester(firebaseInvoice.trimester),
             resolveState(firebaseInvoice.processedDate, firebaseInvoice.failedStatus),
-            resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate)
+            resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate),
+            firebaseInvoice.dbPath
         )
     }
 

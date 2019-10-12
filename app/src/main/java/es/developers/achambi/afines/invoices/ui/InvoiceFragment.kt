@@ -28,6 +28,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         const val URI_EXTRA_CODE = "URI_EXTRA_CODE"
         const val INVOICES_SAVED_STATE = "INVOICES_SAVED_STATE"
         const val INVOICE_DETAILS_REQUEST_CODE = 103
+        const val DELETED_INVOICE_ID_KEY = "deleted_invoice_id_key"
+
+        const val INVOICE_OPERATION_KEY = "INVOICE_OPERATION_KEY"
+        const val INVOICE_DELETED_CODE = 104
         fun newInstance(): InvoiceFragment {
             return InvoiceFragment()
         }
@@ -67,29 +71,37 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         showSnackBackError(Error(resources.getString(R.string.invoices_upload_error_message)))
     }
 
-    override fun startLoadingInvoices() {
+    override fun showFullScreenProgress() {
         startLoading()
     }
 
-    override fun startUploadingInvoice() {
+    override fun showProgress() {
         progressBar.visibility = View.VISIBLE
     }
 
-    override fun finishedLoadingInvoices() {
-        hideLoading()
-    }
-
-    override fun finishedUploadingInvoice() {
+    override fun showProgressFinished() {
         progressBar.visibility = View.GONE
     }
 
-    override fun onInvoiceUploaded() {
-        presenter.invoiceAdded()
+    override fun showFullScreenProgressFinished() {
+        hideLoading()
     }
 
-    override fun onInvoicesRetrieved(invoices: ArrayList<InvoicePresentation>) {
+    override fun showInvoices(invoices: ArrayList<InvoicePresentation>) {
         adapter.data = invoices
         presentAdapterData()
+    }
+
+    override fun showInvoiceDeleted() {
+        view?.let {
+            Snackbar.make(it, R.string.invoice_delete_success_message, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun showInvoiceDeleteError() {
+        view?.let {
+            Snackbar.make(it, R.string.invoice_delete_error_message, Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDataSetup() {
@@ -114,12 +126,14 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
         } else if(requestCode == INVOICE_DETAILS_REQUEST_CODE) {
-            when(resultCode) {
-                Activity.RESULT_OK -> view?.let {
-                    Snackbar.make(it,R.string.invoice_download_success_message , Snackbar.LENGTH_SHORT).show()
-                }
-                Activity.RESULT_CANCELED -> view?.let {
-                    Snackbar.make(it,R.string.invoice_download_error_message , Snackbar.LENGTH_SHORT).show()
+            val code = data?.getIntExtra(INVOICE_OPERATION_KEY, 0)
+            if(code == INVOICE_DELETED_CODE) {
+                val invoiceId = data.getLongExtra(DELETED_INVOICE_ID_KEY, 0)
+                presenter.deleteRequested(invoiceId)
+            } else {
+                val message = data?.getStringExtra(InvoiceBottomSheetFragment.INVOICE_EXTRA_KEY)
+                view?.let {
+                    message?.let { it1 -> Snackbar.make(it, it1, Snackbar.LENGTH_SHORT).show() }
                 }
             }
         }

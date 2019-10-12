@@ -22,15 +22,16 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
 
     fun uploadFile(uri: Uri, invoiceUpload: InvoiceUpload) {
-        screen.startUploadingInvoice()
+        screen.showProgress()
         val responseHandler = object: ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
-                screen.onInvoiceUploaded()
+                screen.showProgressFinished()
+                refreshInvoices()
             }
 
             override fun onError(error: Error) {
                 super.onError(error)
-                screen.finishedUploadingInvoice()
+                screen.showProgressFinished()
                 screen.onUploadError()
             }
         }
@@ -43,16 +44,16 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     }
 
     fun showInvoices() {
-        screen.startLoadingInvoices()
+        screen.showFullScreenProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
-                screen.finishedLoadingInvoices()
-                screen.onInvoicesRetrieved( invoicePresentationBuilder.build(response) )
+                screen.showFullScreenProgressFinished()
+                screen.showInvoices( invoicePresentationBuilder.build(response) )
             }
 
             override fun onError(error: Error) {
                 super.onError(error)
-                screen.finishedLoadingInvoices()
+                screen.showFullScreenProgressFinished()
                 screen.onInvoicesLoadingError()
             }
         }
@@ -65,11 +66,39 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         request(request , responseHandler)
     }
 
-    fun invoiceAdded() {
+    fun deleteRequested(invoiceId: Long) {
+        screen.showProgress()
+        val responseHandler = object : ResponseHandler<Any> {
+            override fun onSuccess(response: Any) {
+                screen.showInvoiceDeleted()
+                screen.showProgressFinished()
+                refreshInvoices()
+            }
+
+            override fun onError(error: Error) {
+                screen.showProgressFinished()
+                screen.showInvoiceDeleteError()
+            }
+        }
+        val request = object : Request<Any> {
+            override fun perform(): Any {
+                return invoiceUseCase.deleteInvoice(invoiceId)
+            }
+        }
+        request(request, responseHandler)
+    }
+
+    fun refreshInvoices() {
+        screen.showProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
-                screen.finishedUploadingInvoice()
-                screen.onInvoicesRetrieved( invoicePresentationBuilder.build(response) )
+                screen.showProgressFinished()
+                screen.showInvoices( invoicePresentationBuilder.build(response) )
+            }
+
+            override fun onError(error: Error) {
+                super.onError(error)
+                screen.showProgressFinished()
             }
         }
         val request = object : Request<ArrayList<Invoice>>{
@@ -79,13 +108,5 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
         }
         request(request , responseHandler)
-    }
-
-    private fun resolveFileName(invoiceUpload: InvoiceUpload): String {
-        return if(invoiceUpload.name.isNotEmpty()) {
-            invoiceUpload.name
-        } else {
-            invoiceUpload.uriMetadata.displayName.toString()
-        }
     }
 }

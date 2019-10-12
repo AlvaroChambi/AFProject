@@ -6,40 +6,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.databinding.InvoiceDetailsBottonSheetBinding
+import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.presenter.InvoiceDetailsPresenter
 import kotlinx.android.synthetic.main.invoice_details_botton_sheet.*
 
 private const val WRITE_REQUEST_CODE: Int = 43
 class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsScreen {
-    override fun showDownloadinProgress() {
-        invoice_download_details_progress_bar.visibility = View.VISIBLE
-    }
-
-    override fun showDownloadFinished() {
-        invoice_download_details_progress_bar.visibility = View.GONE
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View?{
         binding = DataBindingUtil.inflate(inflater, R.layout.invoice_details_botton_sheet, container, false)
         return binding?.root
     }
 
-    private var invoiceId: Int? = null
+    private var invoiceId: Long? = null
     private lateinit var presenter: InvoiceDetailsPresenter
     private var binding: InvoiceDetailsBottonSheetBinding? = null
     companion object {
+        const val INVOICE_EXTRA_KEY = "INVOICE_EXTRA_KEY"
         private const val INVOICE_ID_EXTRA = "invoice_id_extra"
-        fun newInstance(invoiceId: Int): InvoiceBottomSheetFragment{
+        fun newInstance(invoiceId: Long): InvoiceBottomSheetFragment{
             val fragment = InvoiceBottomSheetFragment()
             val bundle = Bundle()
-            bundle.putInt(INVOICE_ID_EXTRA, invoiceId)
+            bundle.putLong(INVOICE_ID_EXTRA, invoiceId)
             fragment.arguments = bundle
             return fragment
         }
@@ -47,7 +42,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        invoiceId = arguments?.getInt(INVOICE_ID_EXTRA)
+        invoiceId = arguments?.getLong(INVOICE_ID_EXTRA)
         presenter = AfinesApplication.invoiceDetailsPresenterFactory.build(this,lifecycle)
     }
 
@@ -57,7 +52,25 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
         download_invoice_button.setOnClickListener {
             invoiceId?.let { presenter.onUserDownloadClicked(it) }
         }
+        delete_invoice_button.setOnClickListener { showConfirmationDialog() }
         binding = DataBindingUtil.findBinding(view)
+    }
+
+    private fun showConfirmationDialog() {
+        val builder = context?.let { AlertDialog.Builder(it) }
+        builder?.setTitle("Borrar factura")
+            ?.setMessage("¿Estas seguro de que quieres borrar la factura?")
+            ?.setPositiveButton("Continuar"){ _, _ ->
+                invoiceId?.let {
+                    val intent = Intent()
+                    intent.putExtra(InvoiceFragment.DELETED_INVOICE_ID_KEY, it)
+                    intent.putExtra(InvoiceFragment.INVOICE_OPERATION_KEY, InvoiceFragment.INVOICE_DELETED_CODE)
+                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                    dismiss()
+                }
+            }
+            ?.setNegativeButton("Cancelar", null)
+        builder?.create()?.show()
     }
 
     override fun showInvoice(invoicePresentation: InvoiceDetailsPresentation) {
@@ -90,12 +103,16 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     }
 
     override fun showDownloadSuccess() {
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, null)
+        val intent = Intent()
+        intent.putExtra(INVOICE_EXTRA_KEY, resources.getString(R.string.invoice_download_success_message))
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         dismiss()
     }
 
     override fun showDownloadError() {
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+        val intent = Intent()
+        intent.putExtra(INVOICE_EXTRA_KEY, resources.getString(R.string.invoice_download_error_message))
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         dismiss()
     }
 
@@ -107,6 +124,13 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
         binding?.invoice = invoicePresentation
     }
 
+    override fun showDownloadInProgress() {
+        invoice_download_details_progress_bar.visibility = View.VISIBLE
+    }
+
+    override fun showDownloadFinished() {
+        invoice_download_details_progress_bar.visibility = View.GONE
+    }
 }
 
 interface InvoiceDetailsScreen: Screen {
@@ -117,6 +141,6 @@ interface InvoiceDetailsScreen: Screen {
     fun showDetailsError(invoicePresentation: InvoiceDetailsPresentation)
     fun showDownloadSuccess()
     fun showDownloadError()
-    fun showDownloadinProgress()
+    fun showDownloadInProgress()
     fun showDownloadFinished()
 }
