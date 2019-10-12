@@ -25,12 +25,13 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         screen.showProgress()
         val responseHandler = object: ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
-                screen.onInvoiceUploaded()
+                screen.showProgressFinished()
+                refreshInvoices()
             }
 
             override fun onError(error: Error) {
                 super.onError(error)
-                screen.showFullScreenProgressFinished()
+                screen.showProgressFinished()
                 screen.onUploadError()
             }
         }
@@ -46,13 +47,13 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         screen.showFullScreenProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
-                screen.showProgressFinished()
+                screen.showFullScreenProgressFinished()
                 screen.showInvoices( invoicePresentationBuilder.build(response) )
             }
 
             override fun onError(error: Error) {
                 super.onError(error)
-                screen.showProgressFinished()
+                screen.showFullScreenProgressFinished()
                 screen.onInvoicesLoadingError()
             }
         }
@@ -70,7 +71,8 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         val responseHandler = object : ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
                 screen.showInvoiceDeleted()
-                invoicesUpdated()
+                screen.showProgressFinished()
+                refreshInvoices()
             }
 
             override fun onError(error: Error) {
@@ -86,11 +88,17 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         request(request, responseHandler)
     }
 
-    fun invoicesUpdated() {
+    fun refreshInvoices() {
+        screen.showProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
-                screen.showFullScreenProgressFinished()
+                screen.showProgressFinished()
                 screen.showInvoices( invoicePresentationBuilder.build(response) )
+            }
+
+            override fun onError(error: Error) {
+                super.onError(error)
+                screen.showProgressFinished()
             }
         }
         val request = object : Request<ArrayList<Invoice>>{

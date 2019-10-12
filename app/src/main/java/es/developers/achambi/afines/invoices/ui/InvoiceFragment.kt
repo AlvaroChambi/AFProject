@@ -80,15 +80,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     }
 
     override fun showProgressFinished() {
-        hideLoading()
-    }
-
-    override fun showFullScreenProgressFinished() {
         progressBar.visibility = View.GONE
     }
 
-    override fun onInvoiceUploaded() {
-        presenter.invoicesUpdated()
+    override fun showFullScreenProgressFinished() {
+        hideLoading()
     }
 
     override fun showInvoices(invoices: ArrayList<InvoicePresentation>) {

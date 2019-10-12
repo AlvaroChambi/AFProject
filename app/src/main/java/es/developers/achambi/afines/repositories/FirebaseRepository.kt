@@ -8,15 +8,15 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
-import java.lang.Exception
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage) {
     companion object {
         const val INVOICES_PATH = "invoices/"
-        private const val TIMEOUT = 5L
+        private const val TIMEOUT = 3L
     }
     @Throws(Error::class)
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice) {
@@ -25,13 +25,19 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         val firebaseReference = firestore.collection(buildUserPath())
         val invoiceReference = firebaseReference.document()
         firebaseInvoice.dbPath = invoiceReference.id
+
         try {
             Tasks.await(fileReference.putFile(uri),TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw Error(e.message)
         }catch (e: InterruptedException) {
             throw Error(e.message)
+        }catch (e: TimeoutException) {
+            /*On a timeout (no network connection for example) the operation will be performed locally and will be
+            synchronized with the server when the connection is available. So we will just ignore this and treat it
+            as a successful operation*/
         }
+
 
         try {
             firebaseInvoice.fileReference = fileReference.path
@@ -40,7 +46,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             throw Error(e.message)
         }catch (e:InterruptedException) {
             throw Error(e.message)
-        }
+        }catch (e: TimeoutException) {}
     }
 
     fun userInvoices(): List<FirebaseInvoice> {
@@ -52,16 +58,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return result.toObjects(FirebaseInvoice::class.java)
     }
 
+    @Throws(Error::class)
     fun deleteInvoice(invoice: Invoice) {
         try {
+            val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
+            Tasks.await(databaseRef.delete(), TIMEOUT, TimeUnit.SECONDS)
+        }catch (e: ExecutionException) {
+            throw Error(e.message)
+        }catch (e: InterruptedException) {
+            throw Error(e.message)
+        }catch (e: TimeoutException) {}
 
-        }catch (e: Exception) {
-
-        }
-        /*val storageRef = firestorage.reference.child(invoice.fileReference)
-        Tasks.await(storageRef.delete())*/
-        val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
-        Tasks.await(databaseRef.delete())
+        try {
+            val storageRef = firestorage.reference.child(invoice.fileReference)
+            Tasks.await(storageRef.delete(), TIMEOUT, TimeUnit.SECONDS)
+        }catch (e: ExecutionException) {
+            throw Error(e.message)
+        }catch (e: InterruptedException) {
+            throw Error(e.message)
+        }catch (e: TimeoutException) {}
     }
 
     fun getFileMetadata(referencePath: String): StorageMetadata {
