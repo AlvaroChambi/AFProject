@@ -63,23 +63,6 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
         request(request, responseHandler)
     }
 
-    fun onUserDeleteSelected(invoiceId: Long) {
-        val responseHandler = object : ResponseHandler<Any> {
-            override fun onSuccess(response: Any) {
-                screen.showInvoiceDeleted()
-            }
-
-            override fun onError(error: Error) {
-            }
-        }
-        val request = object : Request<Any> {
-            override fun perform(): Any {
-                return useCase.deleteInvoice(invoiceId)
-            }
-        }
-        request(request, responseHandler)
-    }
-
     fun onUserFileBytesRequired(invoiceId: Long, uri: Uri?, activity: Activity?) {
         val responseHandler = object : ResponseHandler<ByteArray?> {
             override fun onSuccess(response: ByteArray?) {

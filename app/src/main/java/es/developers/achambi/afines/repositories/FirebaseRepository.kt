@@ -6,28 +6,40 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
-import com.google.firebase.storage.UploadTask
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import java.lang.Exception
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage) {
     companion object {
         const val INVOICES_PATH = "invoices/"
+        private const val TIMEOUT = 5L
     }
-    @Throws(Exception::class)
+    @Throws(Error::class)
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice) {
-       val uploadResult = uploadToStorage(uri, firebaseInvoice.name)
-        if(uploadResult.error != null) {
-            throw uploadResult.error!!
+        val storageReference = firestorage.reference
+        val fileReference = storageReference.child(INVOICES_PATH + "${buildUserPath()}/${firebaseInvoice.name}")
+        val firebaseReference = firestore.collection(buildUserPath())
+        val invoiceReference = firebaseReference.document()
+        firebaseInvoice.dbPath = invoiceReference.id
+        try {
+            Tasks.await(fileReference.putFile(uri),TIMEOUT, TimeUnit.SECONDS)
+        }catch (e: ExecutionException) {
+            throw Error(e.message)
+        }catch (e: InterruptedException) {
+            throw Error(e.message)
         }
 
-        firebaseInvoice.fileReference = uploadResult.storage.path
-        val firebaseReference = firestore.collection(buildUserPath())
-        val databaseResult = Tasks.await(firebaseReference.add(firebaseInvoice))
-        if(databaseResult.get().exception != null) {
-            throw databaseResult.get().exception!!
+        try {
+            firebaseInvoice.fileReference = fileReference.path
+            Tasks.await(invoiceReference.set(firebaseInvoice), TIMEOUT, TimeUnit.SECONDS)
+        }catch (e:ExecutionException) {
+            throw Error(e.message)
+        }catch (e:InterruptedException) {
+            throw Error(e.message)
         }
     }
 
@@ -41,11 +53,15 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     fun deleteInvoice(invoice: Invoice) {
-        //val ref = firestorage.reference.child(invoice.fileReference)
-        //Tasks.await(ref.delete())
-        val dbReference = firestore.collection(buildUserPath())
-        val invoiceSnapshot = Tasks.await(dbReference.whereEqualTo("id", invoice.id).get().)
-        return
+        try {
+
+        }catch (e: Exception) {
+
+        }
+        /*val storageRef = firestorage.reference.child(invoice.fileReference)
+        Tasks.await(storageRef.delete())*/
+        val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
+        Tasks.await(databaseRef.delete())
     }
 
     fun getFileMetadata(referencePath: String): StorageMetadata {
@@ -61,12 +77,5 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     private fun buildUserPath(): String {
         val user = FirebaseAuth.getInstance().currentUser
         return user?.uid + "/"
-    }
-
-    private fun uploadToStorage(uri: Uri, fileName: String): UploadTask.TaskSnapshot {
-        val storageReference = firestorage.reference
-        val fileReference = storageReference.child(INVOICES_PATH + "${buildUserPath()}/${fileName}")
-
-        return Tasks.await(fileReference.putFile(uri))
     }
 }

@@ -10,15 +10,17 @@ data class Invoice(val id: Long,
     val fileReference: String,
     val trimester: Trimester,
     val state: InvoiceState,
-    val date: Long
-): Parcelable {
+    val date: Long,
+    val dbReference: String)
+    : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         ParcelUtil.readEnumFromParcel(parcel, Trimester::class.java),
         ParcelUtil.readEnumFromParcel(parcel, InvoiceState::class.java),
-        parcel.readLong()
+        parcel.readLong(),
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -28,6 +30,7 @@ data class Invoice(val id: Long,
         ParcelUtil.writeEnumToParcel(parcel, trimester)
         ParcelUtil.writeEnumToParcel(parcel, state)
         parcel.writeLong(date)
+        parcel.writeString(dbReference)
     }
 
     override fun describeContents(): Int {

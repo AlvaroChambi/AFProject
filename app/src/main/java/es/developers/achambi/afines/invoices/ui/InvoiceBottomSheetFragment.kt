@@ -1,18 +1,19 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.databinding.InvoiceDetailsBottonSheetBinding
+import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.presenter.InvoiceDetailsPresenter
 import kotlinx.android.synthetic.main.invoice_details_botton_sheet.*
 
@@ -56,13 +57,20 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     }
 
     private fun showConfirmationDialog() {
-        val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Borrar factura")
-            .setMessage("¿Estas seguro de que quieres borrar la factura?")
-            .setPositiveButton("Continuar"){ dialog, which ->
-                invoiceId?.let { presenter.onUserDeleteSelected(it) } }
-            .setNegativeButton("Cancelar", null)
-        builder.create().show()
+        val builder = context?.let { AlertDialog.Builder(it) }
+        builder?.setTitle("Borrar factura")
+            ?.setMessage("¿Estas seguro de que quieres borrar la factura?")
+            ?.setPositiveButton("Continuar"){ _, _ ->
+                invoiceId?.let {
+                    val intent = Intent()
+                    intent.putExtra(InvoiceFragment.DELETED_INVOICE_ID_KEY, it)
+                    intent.putExtra(InvoiceFragment.INVOICE_OPERATION_KEY, InvoiceFragment.INVOICE_DELETED_CODE)
+                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                    dismiss()
+                }
+            }
+            ?.setNegativeButton("Cancelar", null)
+        builder?.create()?.show()
     }
 
     override fun showInvoice(invoicePresentation: InvoiceDetailsPresentation) {
@@ -108,13 +116,6 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
         dismiss()
     }
 
-    override fun showInvoiceDeleted() {
-        val intent = Intent()
-        intent.putExtra(INVOICE_EXTRA_KEY, resources.getString(R.string.invoice_delete_success_message))
-        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
-        dismiss()
-    }
-
     override fun showDetailsLoading() {
         details_progress_bar.visibility = View.VISIBLE
     }
@@ -142,5 +143,4 @@ interface InvoiceDetailsScreen: Screen {
     fun showDownloadError()
     fun showDownloadInProgress()
     fun showDownloadFinished()
-    fun showInvoiceDeleted()
 }

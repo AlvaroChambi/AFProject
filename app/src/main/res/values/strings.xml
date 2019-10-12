@@ -43,4 +43,5 @@
     <string name="invoices_upload_error_message">No se pudo subir su factura. Por favor intentelo otra vez mas tarde.</string>
 
     <string name="invoice_delete_success_message">La factura se ha borrado con éxito</string>
+    <string name="invoice_delete_error_message">No se ha podido borrar la factura. Por favor intentelo otra vez mas tarde.</string>
 </resources>

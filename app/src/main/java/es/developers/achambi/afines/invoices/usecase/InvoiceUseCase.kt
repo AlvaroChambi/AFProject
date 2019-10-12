@@ -78,7 +78,8 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             firebaseInvoice.fileReference?: "",
             resolveTrimester(firebaseInvoice.trimester),
             resolveState(firebaseInvoice.processedDate, firebaseInvoice.failedStatus),
-            resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate)
+            resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate),
+            firebaseInvoice.dbPath
         )
     }
 
