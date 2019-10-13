@@ -18,9 +18,12 @@ import es.developers.achambi.afines.invoices.presenter.InvoiceDetailsPresenter
 import kotlinx.android.synthetic.main.invoice_details_botton_sheet.*
 
 private const val WRITE_REQUEST_CODE: Int = 43
+
 class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsScreen {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View?{
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.invoice_details_botton_sheet, container, false)
         return binding?.root
     }
@@ -28,10 +31,11 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     private var invoiceId: Long? = null
     private lateinit var presenter: InvoiceDetailsPresenter
     private var binding: InvoiceDetailsBottonSheetBinding? = null
+
     companion object {
         const val INVOICE_EXTRA_KEY = "INVOICE_EXTRA_KEY"
         private const val INVOICE_ID_EXTRA = "invoice_id_extra"
-        fun newInstance(invoiceId: Long): InvoiceBottomSheetFragment{
+        fun newInstance(invoiceId: Long): InvoiceBottomSheetFragment {
             val fragment = InvoiceBottomSheetFragment()
             val bundle = Bundle()
             bundle.putLong(INVOICE_ID_EXTRA, invoiceId)
@@ -43,7 +47,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         invoiceId = arguments?.getLong(INVOICE_ID_EXTRA)
-        presenter = AfinesApplication.invoiceDetailsPresenterFactory.build(this,lifecycle)
+        presenter = AfinesApplication.invoiceDetailsPresenterFactory.build(this, lifecycle)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,6 +57,16 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
             invoiceId?.let { presenter.onUserDownloadClicked(it) }
         }
         delete_invoice_button.setOnClickListener { showConfirmationDialog() }
+        edit_invoice_button.setOnClickListener {
+            activity?.let {
+                val intent = Intent()
+                intent.putExtra(InvoiceFragment.INVOICE_OPERATION_KEY, InvoiceFragment.INVOICE_EDITED_CODE)
+                intent.putExtra(InvoiceFragment.INVOICE_ID_EXTRA_KEY, invoiceId)
+                targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                dismiss()
+            }
+        }
+
         binding = DataBindingUtil.findBinding(view)
     }
 
@@ -60,7 +74,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
         val builder = context?.let { AlertDialog.Builder(it) }
         builder?.setTitle("Borrar factura")
             ?.setMessage("¿Estas seguro de que quieres borrar la factura?")
-            ?.setPositiveButton("Continuar"){ _, _ ->
+            ?.setPositiveButton("Continuar") { _, _ ->
                 invoiceId?.let {
                     val intent = Intent()
                     intent.putExtra(InvoiceFragment.DELETED_INVOICE_ID_KEY, it)
@@ -79,7 +93,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             invoiceId?.let { presenter.onUserFileBytesRequired(it, data?.data, activity) }
         }
     }
@@ -133,7 +147,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
     }
 }
 
-interface InvoiceDetailsScreen: Screen {
+interface InvoiceDetailsScreen : Screen {
     fun showInvoice(invoicePresentation: InvoiceDetailsPresentation)
     fun createFile(mimeType: String, fileName: String)
     fun showDetailsLoading()

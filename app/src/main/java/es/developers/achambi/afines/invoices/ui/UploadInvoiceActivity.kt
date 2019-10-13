@@ -18,6 +18,6 @@ class UploadInvoiceActivity: BaseActivity() {
     }
 
     override fun getFragment(args: Bundle?): BaseFragment {
-        return UploadDialogFragment.newInstance()
+        return UploadDialogFragment.newInstance(args)
     }
 }

@@ -21,5 +21,8 @@
         <activity android:name=".invoices.ui.UploadInvoiceActivity"
             android:parentActivityName=".OverviewActivity">
         </activity>
+        <activity android:name=".invoices.ui.EditInvoiceActivity"
+            android:parentActivityName=".OverviewActivity">
+        </activity>
     </application>
 </manifest>

@@ -5,4 +5,10 @@
         android:id="@+id/action_save"
         android:title="@string/header_save_invoice_text"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_override"
+        android:title="@string/header_save_invoice_text"
+        app:showAsAction="ifRoom">
+
+    </item>
 </menu>

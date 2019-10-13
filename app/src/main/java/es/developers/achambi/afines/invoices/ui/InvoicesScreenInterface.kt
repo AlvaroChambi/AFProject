@@ -15,4 +15,7 @@ interface InvoicesScreenInterface: Screen{
 
     fun showInvoiceDeleted()
     fun showInvoiceDeleteError()
+
+    fun showEditInvoiceSuccess()
+    fun showEditInvoiceError()
 }

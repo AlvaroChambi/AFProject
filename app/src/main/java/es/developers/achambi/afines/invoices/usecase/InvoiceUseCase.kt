@@ -27,6 +27,15 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         }
     }
 
+    fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
+        val invoice = getInvoice(invoiceId)
+        invoice?.let { firebaseRepository.updateInvoiceMetadata(invoice, invoiceUpload.name,
+            invoiceUpload.trimester.toString()) }
+        if(uri != null) {
+            invoice?.let { firebaseRepository.updateInvoiceFile(invoice, invoiceUpload, uri) }
+        }
+    }
+
     fun deleteInvoice(invoiceId: Long) {
         val invoice = getInvoice(invoiceId)
         invoice?.let {

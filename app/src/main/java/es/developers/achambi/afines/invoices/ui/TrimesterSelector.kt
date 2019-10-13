@@ -17,6 +17,16 @@ class TrimesterSelector @JvmOverloads constructor(
         inflater.inflate(R.layout.trimester_selector_layout, this)
     }
 
+    fun setTrimester(trimester: Trimester) {
+        when(trimester) {
+            Trimester.FIRST_TRIMESTER -> check(R.id.chip_first)
+            Trimester.SECOND_TRIMESTER -> check(R.id.chip_second)
+            Trimester.THIRD_TRIMESTER -> check(R.id.chip_third)
+            Trimester.FORTH_TRIMESTER -> check(R.id.chip_forth)
+            else -> clearCheck()
+        }
+    }
+
     fun getChecked(): Trimester {
         return when(checkedChipId) {
             R.id.chip_first -> Trimester.FIRST_TRIMESTER

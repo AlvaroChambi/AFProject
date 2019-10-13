@@ -26,12 +26,15 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
         const val FILE_EXTRA_CODE = "FILE_EXTRA_CODE"
         const val URI_EXTRA_CODE = "URI_EXTRA_CODE"
+        const val INVOICE_ID_EXTRA_KEY = "INVOICE_ID_EXTRA_KEY"
         const val INVOICES_SAVED_STATE = "INVOICES_SAVED_STATE"
         const val INVOICE_DETAILS_REQUEST_CODE = 103
+        const val INVOICE_EDIT_REQUEST_CODE = 104
         const val DELETED_INVOICE_ID_KEY = "deleted_invoice_id_key"
 
         const val INVOICE_OPERATION_KEY = "INVOICE_OPERATION_KEY"
         const val INVOICE_DELETED_CODE = 104
+        const val INVOICE_EDITED_CODE = 105
         fun newInstance(): InvoiceFragment {
             return InvoiceFragment()
         }
@@ -104,6 +107,18 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
     }
 
+    override fun showEditInvoiceError() {
+        view?.let {
+            Snackbar.make(it, R.string.invoice_edit_error_message, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun showEditInvoiceSuccess() {
+        view?.let {
+            Snackbar.make(it, R.string.invoice_edit_success_message, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onDataSetup() {
         super.onDataSetup()
         presenter.showInvoices()
@@ -130,11 +145,24 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             if(code == INVOICE_DELETED_CODE) {
                 val invoiceId = data.getLongExtra(DELETED_INVOICE_ID_KEY, 0)
                 presenter.deleteRequested(invoiceId)
-            } else {
+            } else if(code == INVOICE_EDITED_CODE) {
+                val invoiceId: Long? = data.getLongExtra(INVOICE_ID_EXTRA_KEY, 0)
+                if (invoiceId != null) {
+                    activity?.let { startActivityForResult(EditInvoiceActivity.newInstance(it, invoiceId),
+                        INVOICE_EDIT_REQUEST_CODE) }
+                }
+            }else {
                 val message = data?.getStringExtra(InvoiceBottomSheetFragment.INVOICE_EXTRA_KEY)
                 view?.let {
                     message?.let { it1 -> Snackbar.make(it, it1, Snackbar.LENGTH_SHORT).show() }
                 }
+            }
+        } else if(requestCode == INVOICE_EDIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val invoice: InvoiceUpload? = data?.getParcelableExtra(FILE_EXTRA_CODE)
+            val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
+            val invoiceId: Long? = data?.getLongExtra(INVOICE_ID_EXTRA_KEY, 0)
+            if (invoiceId != null && invoice != null) {
+                presenter.userOverrideSelected(uri, invoice, invoiceId)
             }
         }
     }
