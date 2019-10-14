@@ -3,18 +3,52 @@ package es.developers.achambi.afines.invoices.presenter
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.Lifecycle
+import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.ExecutorInterface
+import es.developer.achambi.coreframework.threading.Request
+import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developer.achambi.coreframework.utils.URIUtils
+import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
+import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
+import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.UploadScreenInterface
+import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import java.lang.Exception
 
 class UploadPresenter(screenInterface: UploadScreenInterface,
                       lifecycle : Lifecycle,
                       executor: ExecutorInterface,
-                      private val uriUtils: URIUtils)
+                      private val uriUtils: URIUtils,
+                      private val invoiceUseCase: InvoiceUseCase,
+                      private val invoiceUploadPresentationBuilder: InvoiceUploadPresentationBuilder)
     : Presenter<UploadScreenInterface>(screenInterface, lifecycle, executor) {
+
+    fun onViewSetup(invoiceId: Long?) {
+        if(invoiceId != null) {
+            screen.showScreenProgress()
+            val responseHandler = object: ResponseHandler<Invoice?> {
+                override fun onSuccess(response: Invoice?) {
+                    screen.showScreenProgressFinished()
+                    response?.let { invoiceUploadPresentationBuilder.build(it) }?.let { screen.showEditableInvoice(it) }
+                }
+
+                override fun onError(error: Error) {
+                    super.onError(error)
+                    screen.showScreenProgressFinished()
+                    screen.showErrorRetrievingInvoice()
+                }
+            }
+            val request = object : Request<Invoice?> {
+                override fun perform(): Invoice? {
+                    return invoiceUseCase.getInvoice(invoiceId)
+                }
+            }
+            request(request, responseHandler)
+        }
+    }
 
     fun userSelectedURI(context: Context, uri: Uri) {
         val uriMetadata =  uriUtils.retrieveFileMetadata(context, uri)
@@ -40,5 +74,11 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
         } else {
             screen.onCannotSaveInvoice()
         }
+    }
+
+    fun userOverrideSelected(context: Context, uri: Uri?, name: String, trimester: Trimester) {
+        val invoiceUpload = InvoiceUpload(uriUtils.retrieveFileMetadata(context, uri),
+            name, trimester)
+        screen.onInvoicePreparedToEdit(invoiceUpload)
     }
 }

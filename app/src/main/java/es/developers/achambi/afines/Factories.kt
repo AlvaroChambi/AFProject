@@ -2,12 +2,11 @@ package es.developers.achambi.afines
 
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.MainExecutor
+import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.invoices.presenter.InvoiceDetailsPresenter
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
-import es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentationBuilder
-import es.developers.achambi.afines.invoices.ui.InvoiceDetailsScreen
-import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
-import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
+import es.developers.achambi.afines.invoices.presenter.UploadPresenter
+import es.developers.achambi.afines.invoices.ui.*
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
@@ -24,5 +23,13 @@ class InvoiceDetailsPresenterFactory(private val executor: MainExecutor,
     fun build(invoiceDetailsScreen: InvoiceDetailsScreen, lifecycle: Lifecycle): InvoiceDetailsPresenter {
         return InvoiceDetailsPresenter(invoiceDetailsScreen, lifecycle, executor, invoiceUseCase, presentationBuilder)
     }
+}
 
+class InvoiceUploadPresenterFactory(private val executor: MainExecutor,
+                                    private val invoiceUseCase: InvoiceUseCase,
+                                    private val presentationBuilder: InvoiceUploadPresentationBuilder,
+                                    private val uriUtils: URIUtils) {
+    fun build(uploadScreenInterface: UploadScreenInterface, lifecycle: Lifecycle): UploadPresenter {
+        return UploadPresenter(uploadScreenInterface, lifecycle, executor, uriUtils, invoiceUseCase, presentationBuilder)
+    }
 }

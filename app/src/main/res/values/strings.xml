@@ -6,6 +6,7 @@
     <string name="profile_menu_text">Perfil</string>
     <string name="overview_menu_text">Home</string>
     <string name="upload_invoice_activity_title">Subir factura</string>
+    <string name="edit_invoice_activity_title">Editar factura</string>
 
     <string name="invoices_screen_title">Mis facturas</string>
 
@@ -44,4 +45,7 @@
 
     <string name="invoice_delete_success_message">La factura se ha borrado con éxito</string>
     <string name="invoice_delete_error_message">No se ha podido borrar la factura. Por favor intentelo otra vez mas tarde.</string>
+
+    <string name="invoice_edit_success_message">La factura se ha actualizado con éxito</string>
+    <string name="invoice_edit_error_message">No se ha podido actualizar la factura. Por favor intentelo otra vez mas tarde.</string>
 </resources>

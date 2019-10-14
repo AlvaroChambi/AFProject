@@ -1,5 +1,6 @@
 package es.developers.achambi.afines.invoices.presenter
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.Error
@@ -11,6 +12,7 @@ import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
+import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
@@ -83,6 +85,29 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         val request = object : Request<Any> {
             override fun perform(): Any {
                 return invoiceUseCase.deleteInvoice(invoiceId)
+            }
+        }
+        request(request, responseHandler)
+    }
+
+    fun userOverrideSelected(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
+        screen.showProgress()
+        val responseHandler = object : ResponseHandler<Any> {
+            override fun onSuccess(response: Any) {
+                screen.showProgressFinished()
+                screen.showEditInvoiceSuccess()
+                refreshInvoices()
+            }
+
+            override fun onError(error: Error) {
+                screen.showProgressFinished()
+                screen.showEditInvoiceError()
+            }
+        }
+
+        val request = object : Request<Any> {
+            override fun perform(): Any {
+                return invoiceUseCase.updateInvoice(uri, invoiceUpload, invoiceId)
             }
         }
         request(request, responseHandler)
