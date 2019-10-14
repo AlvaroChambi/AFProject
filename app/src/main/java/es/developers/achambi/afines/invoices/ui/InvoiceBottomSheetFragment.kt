@@ -13,7 +13,6 @@ import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.databinding.InvoiceDetailsBottonSheetBinding
-import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.presenter.InvoiceDetailsPresenter
 import kotlinx.android.synthetic.main.invoice_details_botton_sheet.*
 
@@ -72,9 +71,9 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
 
     private fun showConfirmationDialog() {
         val builder = context?.let { AlertDialog.Builder(it) }
-        builder?.setTitle("Borrar factura")
-            ?.setMessage("¿Estas seguro de que quieres borrar la factura?")
-            ?.setPositiveButton("Continuar") { _, _ ->
+        builder?.setTitle(R.string.delete_invoice_alert_dialog_title)
+            ?.setMessage(R.string.delete_invoice_alert_dialog_message)
+            ?.setPositiveButton(R.string.alert_dialog_continue_text){ _, _ ->
                 invoiceId?.let {
                     val intent = Intent()
                     intent.putExtra(InvoiceFragment.DELETED_INVOICE_ID_KEY, it)
@@ -83,7 +82,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
                     dismiss()
                 }
             }
-            ?.setNegativeButton("Cancelar", null)
+            ?.setNegativeButton(R.string.alert_dialog_cancel_text, null)
         builder?.create()?.show()
     }
 

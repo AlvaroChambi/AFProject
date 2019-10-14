@@ -50,9 +50,15 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
         screen.showDownloadInProgress()
         val responseHandler = object : ResponseHandler<DetailedInvoice?> {
             override fun onSuccess(response: DetailedInvoice?) {
+                screen.showDownloadFinished()
                 if(response != null) {
                     screen.createFile(response.mimeType, response.fileName)
                 }
+            }
+
+            override fun onError(error: Error) {
+                super.onError(error)
+                screen.showDownloadFinished()
             }
         }
         val request = object : Request<DetailedInvoice?> {
@@ -64,6 +70,7 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
     }
 
     fun onUserFileBytesRequired(invoiceId: Long, uri: Uri?, activity: Activity?) {
+        screen.showDownloadInProgress()
         val responseHandler = object : ResponseHandler<ByteArray?> {
             override fun onSuccess(response: ByteArray?) {
                 if(response != null && uri != null) {
@@ -86,8 +93,8 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
 
             override fun onError(error: Error) {
                 super.onError(error)
+                screen.showDownloadFinished()
                 screen.showDownloadError()
-                screen.showDownloadSuccess()
             }
         }
         val request = object : Request<ByteArray?> {

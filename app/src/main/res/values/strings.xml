@@ -48,4 +48,9 @@
 
     <string name="invoice_edit_success_message">La factura se ha actualizado con éxito</string>
     <string name="invoice_edit_error_message">No se ha podido actualizar la factura. Por favor intentelo otra vez mas tarde.</string>
+
+    <string name="delete_invoice_alert_dialog_title">Borrar factura</string>
+    <string name="delete_invoice_alert_dialog_message">¿Estas seguro de que quieres borrar la factura?</string>
+    <string name="alert_dialog_continue_text">Continuar</string>
+    <string name="alert_dialog_cancel_text">Cancelar</string>
 </resources>
