@@ -17,15 +17,15 @@ import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
 
-class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
+class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
         private const val INVOICE_ID_KEY = "invoice_id_key"
 
-        fun newInstance(args: Bundle?): UploadDialogFragment {
-            val fragment = UploadDialogFragment()
+        fun newInstance(args: Bundle?): UploadInvoiceFragment {
+            val fragment = UploadInvoiceFragment()
             fragment.arguments = args
             return fragment
         }

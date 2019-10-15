@@ -11,7 +11,7 @@ class EditInvoiceActivity: BaseActivity() {
     companion object {
         fun newInstance(context: Context, invoiceId: Long): Intent {
             val intent = Intent( context, EditInvoiceActivity::class.java )
-            val args = UploadDialogFragment.getArguments(invoiceId)
+            val args = UploadInvoiceFragment.getArguments(invoiceId)
             intent.putExtra(BASE_ARGUMENTS, args)
             return intent
         }
@@ -21,6 +21,6 @@ class EditInvoiceActivity: BaseActivity() {
     }
 
     override fun getFragment(args: Bundle): BaseFragment {
-        return UploadDialogFragment.newInstance(args)
+        return UploadInvoiceFragment.newInstance(args)
     }
 }
