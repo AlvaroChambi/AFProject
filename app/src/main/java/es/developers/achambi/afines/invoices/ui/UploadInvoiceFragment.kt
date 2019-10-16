@@ -46,12 +46,16 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = AfinesApplication.invoiceUploadPresenterFactory.build(this, lifecycle)
         invoiceId = arguments?.getLong(INVOICE_ID_KEY)
     }
 
+    override fun onDataSetup() {
+        super.onDataSetup()
+        presenter.onDataSetup(invoiceId)
+    }
+
     override fun onViewSetup(view: View) {
-        presenter = AfinesApplication.invoiceUploadPresenterFactory.build(this, lifecycle)
-        presenter.onViewSetup(invoiceId)
         pick_file_chip.setOnClickListener{
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = ANY_FILE

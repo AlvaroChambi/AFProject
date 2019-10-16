@@ -26,7 +26,7 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
                       private val invoiceUploadPresentationBuilder: InvoiceUploadPresentationBuilder)
     : Presenter<UploadScreenInterface>(screenInterface, lifecycle, executor) {
 
-    fun onViewSetup(invoiceId: Long?) {
+    fun onDataSetup(invoiceId: Long?) {
         if(invoiceId != null) {
             screen.showScreenProgress()
             val responseHandler = object: ResponseHandler<Invoice?> {

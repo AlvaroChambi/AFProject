@@ -16,6 +16,7 @@ class AfinesApplication : Application() {
         lateinit var invoicePresenterFactory: InvoicePresenterFactory
         lateinit var invoiceDetailsPresenterFactory: InvoiceDetailsPresenterFactory
         lateinit var invoiceUploadPresenterFactory: InvoiceUploadPresenterFactory
+        lateinit var profilePresenterFactory: ProfilePresenterFactory
     }
     override fun onCreate() {
         super.onCreate()
@@ -33,5 +34,7 @@ class AfinesApplication : Application() {
         )
         invoiceUploadPresenterFactory = InvoiceUploadPresenterFactory(executor, invoicesUseCase,
             uploadPresentationBuilder, uriUtils)
+
+        profilePresenterFactory = ProfilePresenterFactory(executor)
     }
 }
