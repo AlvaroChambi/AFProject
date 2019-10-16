@@ -5,7 +5,9 @@ import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.invoices.presenter.*
 import es.developers.achambi.afines.invoices.ui.*
+import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.invoices.usecase.ProfileUseCase
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
@@ -32,8 +34,10 @@ class InvoiceUploadPresenterFactory(private val executor: MainExecutor,
     }
 }
 
-class ProfilePresenterFactory(private val executor: MainExecutor) {
+class ProfilePresenterFactory(private val executor: MainExecutor,
+                              private val useCase: ProfileUseCase,
+                              private val presentationBuilder: ProfilePresentationBuilder) {
     fun build(screen: ProfileScreenInterface, lifecycle: Lifecycle): ProfilePresenter {
-        return ProfilePresenter(screen, lifecycle, executor)
+        return ProfilePresenter(screen, lifecycle, executor, useCase, presentationBuilder)
     }
 }

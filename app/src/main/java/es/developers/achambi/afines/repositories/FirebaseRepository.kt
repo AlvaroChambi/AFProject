@@ -10,12 +10,15 @@ import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
+import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import java.lang.Exception
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
-                         private val firestorage: FirebaseStorage) {
+                         private val firestorage: FirebaseStorage,
+                         private val firebaseAuth: FirebaseAuth) {
     companion object {
         const val INVOICES_PATH = "invoices/"
         private const val TIMEOUT = 3L
@@ -108,7 +111,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
             Tasks.await(databaseRef.update("name", name), TIMEOUT, TimeUnit.SECONDS)
-        } catch (e: ExecutionException) {
+        }catch (e: ExecutionException) {
             throw Error(e.message)
         }catch (e: InterruptedException) {
             throw Error(e.message)
@@ -123,6 +126,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             throw Error(e.message)
         }catch (e: TimeoutException) {}
     }
+    @Throws(Error::class)
+    fun retrieveCurrentUser(): FirebaseProfile? {
+        try {
+            val userId = firebaseAuth.currentUser?.uid
+            val databaseRef = userId?.let { firestore.collection("profiles").document(it) }
+            val result = databaseRef?.let {
+                Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
+            }
+            result?.let {
+                val result = result.toObject(FirebaseProfile::class.java)
+                return result
+            }
+        } catch (e: ExecutionException) {
+            throw Error(e.message)
+        }catch (e: InterruptedException) {
+            throw Error(e.message)
+        }catch (e: TimeoutException) {}
+        throw Error()
+    }
 
     fun getFileMetadata(referencePath: String): StorageMetadata {
         val ref = firestorage.reference.child(referencePath)
@@ -135,7 +157,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     private fun buildUserPath(): String {
-        val user = FirebaseAuth.getInstance().currentUser
+        val user = firebaseAuth.currentUser
         return user?.uid + "/"
     }
 }
