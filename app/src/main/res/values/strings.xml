@@ -53,4 +53,14 @@
     <string name="delete_invoice_alert_dialog_message">¿Estas seguro de que quieres borrar la factura?</string>
     <string name="alert_dialog_continue_text">Continuar</string>
     <string name="alert_dialog_cancel_text">Cancelar</string>
+
+    <string name="profile_email_hint_text">Email</string>
+    <string name="profile_address_hint_text">Dirección</string>
+    <string name="profile_dni_hint_text">Dni</string>
+    <string name="profile_naf_hint_text">Naf</string>
+    <string name="profile_ccc_hint_text">ccc</string>
+    <string name="profile_bank_account_hint_text">Cuenta bancaria</string>
+
+    <string name="logout_text">Logout</string>
+    <string name="profile_save_button_text">Guardar</string>
 </resources>

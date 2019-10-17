@@ -3,11 +3,11 @@ package es.developers.achambi.afines
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
-import es.developers.achambi.afines.invoices.presenter.InvoiceDetailsPresenter
-import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
-import es.developers.achambi.afines.invoices.presenter.UploadPresenter
+import es.developers.achambi.afines.invoices.presenter.*
 import es.developers.achambi.afines.invoices.ui.*
+import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.invoices.usecase.ProfileUseCase
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
@@ -31,5 +31,13 @@ class InvoiceUploadPresenterFactory(private val executor: MainExecutor,
                                     private val uriUtils: URIUtils) {
     fun build(uploadScreenInterface: UploadScreenInterface, lifecycle: Lifecycle): UploadPresenter {
         return UploadPresenter(uploadScreenInterface, lifecycle, executor, uriUtils, invoiceUseCase, presentationBuilder)
+    }
+}
+
+class ProfilePresenterFactory(private val executor: MainExecutor,
+                              private val useCase: ProfileUseCase,
+                              private val presentationBuilder: ProfilePresentationBuilder) {
+    fun build(screen: ProfileScreenInterface, lifecycle: Lifecycle): ProfilePresenter {
+        return ProfilePresenter(screen, lifecycle, executor, useCase, presentationBuilder)
     }
 }

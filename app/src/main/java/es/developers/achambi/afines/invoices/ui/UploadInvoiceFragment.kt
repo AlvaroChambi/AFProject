@@ -17,15 +17,15 @@ import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
 
-class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
+class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
         private const val INVOICE_ID_KEY = "invoice_id_key"
 
-        fun newInstance(args: Bundle?): UploadDialogFragment {
-            val fragment = UploadDialogFragment()
+        fun newInstance(args: Bundle?): UploadInvoiceFragment {
+            val fragment = UploadInvoiceFragment()
             fragment.arguments = args
             return fragment
         }
@@ -46,12 +46,16 @@ class UploadDialogFragment: BaseFragment(), UploadScreenInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = AfinesApplication.invoiceUploadPresenterFactory.build(this, lifecycle)
         invoiceId = arguments?.getLong(INVOICE_ID_KEY)
     }
 
+    override fun onDataSetup() {
+        super.onDataSetup()
+        presenter.onDataSetup(invoiceId)
+    }
+
     override fun onViewSetup(view: View) {
-        presenter = AfinesApplication.invoiceUploadPresenterFactory.build(this, lifecycle)
-        presenter.onViewSetup(invoiceId)
         pick_file_chip.setOnClickListener{
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = ANY_FILE
