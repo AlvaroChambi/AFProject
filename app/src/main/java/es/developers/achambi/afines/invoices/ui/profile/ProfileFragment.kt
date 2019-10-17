@@ -14,9 +14,19 @@ import kotlinx.android.synthetic.main.user_profile_layout.*
 
 class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     private lateinit var presenter: ProfilePresenter
-
     private var editActionButton : MenuItem? = null
     private var cancelEditActionButton: MenuItem? = null
+    private var editEnabled = false
+
+    override val layoutResource: Int
+        get() = R.layout.user_profile_layout
+
+    companion object{
+        private const val EDIT_SAVED_STATE_KEY = "edit_saved_state_key"
+        fun newInstance(): ProfileFragment {
+            return ProfileFragment()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,12 +47,12 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
 
         profile_user_name_text.text = presentation.userName
 
-        profile_email_edit_text.editText?.setText(presentation.email)
-        profile_address_edit_text.editText?.setText(presentation.address)
-        profile_dni_edit_text.editText?.setText(presentation.dni)
-        profile_naf_edit_text.editText?.setText(presentation.naf)
-        profile_ccc_edit_text.editText?.setText(presentation.ccc)
-        profile_account_edit_text.editText?.setText(presentation.bankAccount)
+        profile_email_edit_frame.editText?.setText(presentation.email)
+        profile_address_edit_frame.editText?.setText(presentation.address)
+        profile_dni_edit_frame.editText?.setText(presentation.dni)
+        profile_naf_edit_frame.editText?.setText(presentation.naf)
+        profile_ccc_edit_frame.editText?.setText(presentation.ccc)
+        profile_account_edit_frame.editText?.setText(presentation.bankAccount)
     }
 
     override fun showProfileFieldsError() {
@@ -64,31 +74,19 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         compatActivity.supportActionBar?.elevation = 0.0f
         editActionButton = menu?.findItem(R.id.action_edit_profile)
         cancelEditActionButton = menu?.findItem(R.id.action_cancel_edit_profile)
+        /*Restore pass is performed before this step, so we have to apply the restored state here*/
+        showEditState()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             R.id.action_edit_profile -> {
-                editActionButton?.isVisible = false
-                cancelEditActionButton?.isVisible = true
-                profile_save_button.visibility = View.VISIBLE
-                profile_email_edit_text.isEnabled = true
-                profile_address_edit_text.isEnabled = true
-                profile_dni_edit_text.isEnabled = true
-                profile_naf_edit_text.isEnabled = true
-                profile_ccc_edit_text.isEnabled = true
-                profile_account_edit_text.isEnabled = true
+                editEnabled = true
+                showEditState()
             }
             R.id.action_cancel_edit_profile -> {
-                editActionButton?.isVisible = true
-                cancelEditActionButton?.isVisible = false
-                profile_save_button.visibility = View.GONE
-                profile_email_edit_text.isEnabled = false
-                profile_address_edit_text.isEnabled = false
-                profile_dni_edit_text.isEnabled = false
-                profile_naf_edit_text.isEnabled = false
-                profile_ccc_edit_text.isEnabled = false
-                profile_account_edit_text.isEnabled = false
+                editEnabled = false
+                showEditState()
             }
             R.id.action_more_options -> {
                 val dialog = activity?.let { BottomSheetDialog(it) }
@@ -100,13 +98,37 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         return super.onOptionsItemSelected(item)
     }
 
-    override val layoutResource: Int
-        get() = R.layout.user_profile_layout
-
-    companion object{
-        fun newInstance(): ProfileFragment {
-            return ProfileFragment()
+    private fun showEditState() {
+        if(editEnabled) {
+            editActionButton?.isVisible = false
+            cancelEditActionButton?.isVisible = true
+            profile_save_button.visibility = View.VISIBLE
+            profile_email_edit_frame.isEnabled = true
+            profile_address_edit_frame.isEnabled = true
+            profile_dni_edit_frame.isEnabled = true
+            profile_naf_edit_frame.isEnabled = true
+            profile_ccc_edit_frame.isEnabled = true
+            profile_account_edit_frame.isEnabled = true
+        } else {
+            editActionButton?.isVisible = true
+            cancelEditActionButton?.isVisible = false
+            profile_save_button.visibility = View.GONE
+            profile_email_edit_frame.isEnabled = false
+            profile_address_edit_frame.isEnabled = false
+            profile_dni_edit_frame.isEnabled = false
+            profile_naf_edit_frame.isEnabled = false
+            profile_ccc_edit_frame.isEnabled = false
+            profile_account_edit_frame.isEnabled = false
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(EDIT_SAVED_STATE_KEY, editEnabled)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        editEnabled = savedInstanceState.getBoolean(EDIT_SAVED_STATE_KEY)
+    }
 }
