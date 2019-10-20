@@ -63,4 +63,7 @@
 
     <string name="logout_text">Logout</string>
     <string name="profile_save_button_text">Guardar</string>
+
+    <string name="profile_edit_success_message">Tus datos se han actualizado con éxito!</string>
+    <string name="profile_edit_error_message">No se han podido actualizar tus datos. Por favor intentelo otra vez mas tarde.</string>
 </resources>

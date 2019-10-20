@@ -8,6 +8,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
+import es.developers.achambi.afines.invoices.presenter.ProfileUpload
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
@@ -107,20 +108,36 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(Error::class)
-    fun updateInvoiceMetadata(invoice: Invoice, name: String, trimester: String ) {
+    fun updateUserProfile(profileUpload: ProfileUpload) {
+        val userId = firebaseAuth.currentUser?.uid
+        val databaseRef = userId?.let { firestore.collection("profiles").document(it) }
         try {
-            val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
-            Tasks.await(databaseRef.update("name", name), TIMEOUT, TimeUnit.SECONDS)
+            databaseRef?.let {
+                Tasks.await( databaseRef.update(
+                    "address", profileUpload.address,
+                    "ccc", profileUpload.ccc,
+                    "dni", profileUpload.dni,
+                    "email", profileUpload.email,
+                    "iban", profileUpload.account,
+                    "naf", profileUpload.naf
+                ), TIMEOUT, TimeUnit.SECONDS )
+            }
         }catch (e: ExecutionException) {
             throw Error(e.message)
         }catch (e: InterruptedException) {
             throw Error(e.message)
         }catch (e: TimeoutException) {}
+    }
 
+    @Throws(Error::class)
+    fun updateInvoiceMetadata(invoice: Invoice, name: String, trimester: String ) {
         try {
             val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
-            Tasks.await(databaseRef.update("trimester", trimester), TIMEOUT, TimeUnit.SECONDS)
-        } catch (e: ExecutionException) {
+            Tasks.await(databaseRef.update(
+                "name", name,
+                "trimester", trimester),
+                TIMEOUT, TimeUnit.SECONDS)
+        }catch (e: ExecutionException) {
             throw Error(e.message)
         }catch (e: InterruptedException) {
             throw Error(e.message)

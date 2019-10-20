@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.presenter.ProfilePresenter
-import es.developers.achambi.afines.invoices.presenter.ProfileScreenInterface
 import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentation
 import kotlinx.android.synthetic.main.user_profile_layout.*
 
@@ -40,11 +41,19 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
 
     override fun onViewSetup(view: View) {
         activity?.setTitle(R.string.profile_activity_title)
+        profile_save_button.setOnClickListener {
+            presenter.saveProfile(
+                email = email_edit_text.text.toString(),
+                address = address_edit_text.text.toString(),
+                dni = dni_edit_text.text.toString(),
+                naf = naf_edit_text.text.toString(),
+                ccc = ccc_edit_text.text.toString(),
+                account = account_edit_text.text.toString()
+            )
+        }
     }
 
     override fun showProfileFields(presentation: ProfilePresentation) {
-        editActionButton?.isVisible = true
-
         profile_user_name_text.text = presentation.userName
 
         profile_email_edit_frame.editText?.setText(presentation.email)
@@ -53,6 +62,10 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         profile_naf_edit_frame.editText?.setText(presentation.naf)
         profile_ccc_edit_frame.editText?.setText(presentation.ccc)
         profile_account_edit_frame.editText?.setText(presentation.bankAccount)
+    }
+
+    override fun showEditAvailable() {
+        editActionButton?.isVisible = true
     }
 
     override fun showProfileFieldsError() {
@@ -65,6 +78,35 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
 
     override fun showFullScreenProgressFinished() {
         full_screen_progress.showProgressSuccess()
+    }
+
+    override fun showSaveAvailability(available: Boolean) {
+        profile_save_button.isEnabled = available
+    }
+
+    override fun showProfileUpdateSuccess() {
+        view?.let {
+            Snackbar.make(it, R.string.profile_edit_success_message, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun showProfileUpdateError() {
+        view?.let {
+            Snackbar.make(it, R.string.profile_edit_error_message, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun showUpdateProgress() {
+        profile_update_progress_bar.visibility = View.VISIBLE
+    }
+
+    override fun showUpdateProgressFinished() {
+        profile_update_progress_bar.visibility = View.GONE
+    }
+
+    override fun showEditStateDisabled() {
+        editEnabled = false
+        showEditState()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -131,4 +173,22 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         super.onRestoreInstanceState(savedInstanceState)
         editEnabled = savedInstanceState.getBoolean(EDIT_SAVED_STATE_KEY)
     }
+}
+
+interface ProfileScreenInterface: Screen {
+    fun showProfileFields(presentation: ProfilePresentation)
+    fun showEditAvailable()
+    fun showProfileFieldsError()
+
+    fun showFullScreenProgress()
+    fun showFullScreenProgressFinished()
+
+    fun showProfileUpdateSuccess()
+    fun showProfileUpdateError()
+
+    fun showUpdateProgress()
+    fun showUpdateProgressFinished()
+
+    fun showSaveAvailability(available: Boolean)
+    fun showEditStateDisabled()
 }

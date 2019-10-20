@@ -134,16 +134,15 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Jos Jose Josendo" />
 
-        <TextView
+        <Button
             android:id="@+id/profile_save_button"
             android:layout_width="0dp"
             android:layout_height="48dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:background="@color/colorAccent"
+            android:layout_marginEnd="16dp"
             android:gravity="center"
             android:text="@string/profile_save_button_text"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -164,7 +163,7 @@
             app:layout_constraintTop_toBottomOf="@+id/profile_dni_edit_frame">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/naf_edit_frame"
+                android:id="@+id/naf_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="false"
@@ -181,5 +180,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/profile_user_name_text"
             tools:visibility="gone"/>
+
+        <ProgressBar
+            android:id="@+id/profile_update_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:indeterminate="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_user_name_text"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
