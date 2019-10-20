@@ -5,6 +5,7 @@ import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.invoices.presenter.*
 import es.developers.achambi.afines.invoices.ui.*
+import es.developers.achambi.afines.invoices.ui.profile.ProfileScreenInterface
 import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.invoices.usecase.ProfileUseCase
