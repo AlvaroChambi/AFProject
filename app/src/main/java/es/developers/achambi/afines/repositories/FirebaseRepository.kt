@@ -22,8 +22,19 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firebaseAuth: FirebaseAuth) {
     companion object {
         const val INVOICES_PATH = "invoices/"
+        const val PROFILES_PATH = "profiles"
+        const val ADDRESS_ATTRIBUTE_KEY = "address"
+        const val CCC_ATTRIBUTE_KEY = "ccc"
+        const val DNI_ATTRIBUTE_KEY = "dni"
+        const val EMAIL_ATTRIBUTE_KEY = "email"
+        const val IBAN_ATTRIBUTE_KEY = "iban"
+        const val NAF_ATTRIBUTE_KEY = "naf"
+        const val NAME_ATTRIBUTE_KEY = "name"
+        const val TRIMESTER_ATTRIBUTE_KEY = "trimester"
+        const val FILE_ATTRIBUTE_KEY = "fileReference"
         private const val TIMEOUT = 3L
     }
+
     @Throws(Error::class)
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice) {
         val storageReference = firestorage.reference
@@ -99,7 +110,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
         try {
             val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
-            Tasks.await(databaseRef.update("fileReference", fileReference.path), TIMEOUT, TimeUnit.SECONDS)
+            Tasks.await(databaseRef.update(FILE_ATTRIBUTE_KEY, fileReference.path), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw Error(e.message)
         }catch (e: InterruptedException) {
@@ -110,16 +121,16 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     @Throws(Error::class)
     fun updateUserProfile(profileUpload: ProfileUpload) {
         val userId = firebaseAuth.currentUser?.uid
-        val databaseRef = userId?.let { firestore.collection("profiles").document(it) }
+        val databaseRef = userId?.let { firestore.collection(PROFILES_PATH).document(it) }
         try {
             databaseRef?.let {
                 Tasks.await( databaseRef.update(
-                    "address", profileUpload.address,
-                    "ccc", profileUpload.ccc,
-                    "dni", profileUpload.dni,
-                    "email", profileUpload.email,
-                    "iban", profileUpload.account,
-                    "naf", profileUpload.naf
+                    ADDRESS_ATTRIBUTE_KEY, profileUpload.address,
+                    CCC_ATTRIBUTE_KEY, profileUpload.ccc,
+                    DNI_ATTRIBUTE_KEY, profileUpload.dni,
+                    EMAIL_ATTRIBUTE_KEY, profileUpload.email,
+                    IBAN_ATTRIBUTE_KEY, profileUpload.account,
+                    NAF_ATTRIBUTE_KEY, profileUpload.naf
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
         }catch (e: ExecutionException) {
@@ -134,8 +145,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
             Tasks.await(databaseRef.update(
-                "name", name,
-                "trimester", trimester),
+                NAME_ATTRIBUTE_KEY, name,
+                TRIMESTER_ATTRIBUTE_KEY, trimester),
                 TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw Error(e.message)
@@ -147,13 +158,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun retrieveCurrentUser(): FirebaseProfile? {
         try {
             val userId = firebaseAuth.currentUser?.uid
-            val databaseRef = userId?.let { firestore.collection("profiles").document(it) }
+            val databaseRef = userId?.let { firestore.collection(PROFILES_PATH).document(it) }
             val result = databaseRef?.let {
                 Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
             }
             result?.let {
-                val result = result.toObject(FirebaseProfile::class.java)
-                return result
+                return result.toObject(FirebaseProfile::class.java)
             }
         } catch (e: ExecutionException) {
             throw Error(e.message)
