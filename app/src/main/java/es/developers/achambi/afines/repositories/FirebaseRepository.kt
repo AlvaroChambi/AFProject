@@ -9,10 +9,9 @@ import com.google.firebase.storage.StorageMetadata
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.ProfileUpload
-import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
+import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import java.lang.Exception
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -23,6 +22,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     companion object {
         const val INVOICES_PATH = "invoices/"
         const val PROFILES_PATH = "profiles"
+        const val NOTIFICATIONS_PATH = "notifications"
         const val ADDRESS_ATTRIBUTE_KEY = "address"
         const val CCC_ATTRIBUTE_KEY = "ccc"
         const val DNI_ATTRIBUTE_KEY = "dni"
@@ -166,6 +166,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 return result.toObject(FirebaseProfile::class.java)
             }
         } catch (e: ExecutionException) {
+            throw Error(e.message)
+        }catch (e: InterruptedException) {
+            throw Error(e.message)
+        }catch (e: TimeoutException) {}
+        throw Error()
+    }
+
+    fun retrieveNotifications(): List<FirebaseNotification> {
+        try {
+            val userId = firebaseAuth.currentUser?.uid
+            val databaseRef = userId?.let { firestore.collection("user")
+                .document(userId).collection("notifications") }
+            val result = databaseRef?.let {
+                Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
+            }
+            result?.let {
+                return result.toObjects(FirebaseNotification::class.java)
+            }
+        }catch (e: ExecutionException) {
             throw Error(e.message)
         }catch (e: InterruptedException) {
             throw Error(e.message)

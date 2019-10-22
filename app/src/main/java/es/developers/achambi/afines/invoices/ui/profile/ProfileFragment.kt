@@ -40,7 +40,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     }
 
     override fun onViewSetup(view: View) {
-        activity?.setTitle(R.string.profile_activity_title)
+        activity?.setTitle(R.string.profile_menu_text)
         profile_save_button.setOnClickListener {
             presenter.saveProfile(
                 email = email_edit_text.text.toString(),
