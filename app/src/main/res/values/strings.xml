@@ -4,7 +4,7 @@
     <string name="login">Login</string>
     <string name="invoice_menu_text">Facturas</string>
     <string name="profile_menu_text">Perfil</string>
-    <string name="overview_menu_text">Home</string>
+    <string name="overview_menu_text">Inicio</string>
     <string name="upload_invoice_activity_title">Subir factura</string>
     <string name="edit_invoice_activity_title">Editar factura</string>
 

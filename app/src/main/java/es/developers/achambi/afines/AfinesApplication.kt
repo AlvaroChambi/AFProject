@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
+import es.developers.achambi.afines.home.NotificationsUseCase
 import es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentationBuilder
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
@@ -20,6 +21,7 @@ class AfinesApplication : Application() {
         lateinit var invoiceDetailsPresenterFactory: InvoiceDetailsPresenterFactory
         lateinit var invoiceUploadPresenterFactory: InvoiceUploadPresenterFactory
         lateinit var profilePresenterFactory: ProfilePresenterFactory
+        lateinit var notificationsPresenterFactory: NotificationsPresenterFactory
     }
     override fun onCreate() {
         super.onCreate()
@@ -32,6 +34,7 @@ class AfinesApplication : Application() {
         val uriUtils = URIUtils()
         val profilePresentationBuilder = ProfilePresentationBuilder()
         val profileUseCase = ProfileUseCase(firebaseRepository)
+        val notificationsUseCase = NotificationsUseCase(firebaseRepository)
 
         invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase, presentationBuilder)
         invoiceDetailsPresenterFactory = InvoiceDetailsPresenterFactory(executor, invoicesUseCase,
@@ -41,5 +44,6 @@ class AfinesApplication : Application() {
             uploadPresentationBuilder, uriUtils)
 
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder)
+        notificationsPresenterFactory = NotificationsPresenterFactory(executor, notificationsUseCase)
     }
 }

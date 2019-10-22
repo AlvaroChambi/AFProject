@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/navigation_menu_invoice"
-        android:enabled="true"
-        android:icon="@drawable/baseline_add_black_18dp"
-        android:title="@string/invoice_menu_text"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/navigation_menu_overview"
         android:enabled="true"
-        android:icon="@drawable/baseline_add_circle_black_18dp"
+        android:icon="@drawable/baseline_home_24"
         android:title="@string/overview_menu_text"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/navigation_menu_invoice"
+        android:enabled="true"
+        android:icon="@drawable/baseline_list_24"
+        android:title="@string/invoice_menu_text"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/navigation_menu_profile"

@@ -23,7 +23,7 @@ class OverviewActivity : BaseNavigationActivity(){
     }
 
     override fun provideEntryFragment(): Fragment {
-        return InvoiceFragment.newInstance()
+        return OverviewFragment.newInstance()
     }
 
     companion object {
