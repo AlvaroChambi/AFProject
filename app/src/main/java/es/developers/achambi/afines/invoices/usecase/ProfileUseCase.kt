@@ -17,4 +17,8 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository) {
     fun updateProfile(profileUpload: ProfileUpload) {
         firebaseRepository.updateUserProfile(profileUpload)
     }
+
+    fun logout() {
+        firebaseRepository.logout()
+    }
 }

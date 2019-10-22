@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
+import es.developers.achambi.afines.LoginActivity
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.presenter.ProfilePresenter
 import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentation
@@ -133,11 +134,21 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
             R.id.action_more_options -> {
                 val dialog = activity?.let { BottomSheetDialog(it) }
                 val rootView = layoutInflater.inflate(R.layout.profile_logout_layout, null)
+                rootView.findViewById<View>(R.id.profile_logout_button).setOnClickListener {
+                    presenter.logout()
+                }
                 dialog?.setContentView(rootView)
                 dialog?.show()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun exit() {
+        activity?.let {
+            startActivity(LoginActivity.getStartIntent(it))
+            activity?.finish()
+        }
     }
 
     private fun showEditState() {
@@ -191,4 +202,5 @@ interface ProfileScreenInterface: Screen {
 
     fun showSaveAvailability(available: Boolean)
     fun showEditStateDisabled()
+    fun exit()
 }

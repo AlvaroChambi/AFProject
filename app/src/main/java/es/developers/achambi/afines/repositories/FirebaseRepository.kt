@@ -118,6 +118,16 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: TimeoutException) {}
     }
 
+    fun logout() {
+        try {
+            firebaseAuth.signOut()
+        }catch (e: ExecutionException) {
+            throw Error(e.message)
+        }catch (e: InterruptedException) {
+            throw Error(e.message)
+        }catch (e: TimeoutException) {}
+    }
+
     @Throws(Error::class)
     fun updateUserProfile(profileUpload: ProfileUpload) {
         val userId = firebaseAuth.currentUser?.uid

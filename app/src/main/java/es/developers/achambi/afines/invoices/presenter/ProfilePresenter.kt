@@ -44,6 +44,20 @@ class ProfilePresenter(screen: ProfileScreenInterface,
         request(request, responseHandler)
     }
 
+    fun logout() {
+        val responseHandler = object: ResponseHandler<Any?> {
+            override fun onSuccess(response: Any?) {
+                screen.exit()
+            }
+        }
+        val request = object : Request<Any?> {
+            override fun perform(): Any? {
+                return useCase.logout()
+            }
+        }
+        request(request, responseHandler)
+    }
+
     fun saveProfile( email: String, address: String, dni: String,
                      naf: String, ccc: String, account: String) {
         screen.showUpdateProgress()
