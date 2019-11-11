@@ -41,6 +41,7 @@
     <string name="invoice_details_loading_failed_message">No se pudo mostrar la factura. Por favor intentelo otra vez mas tarde.</string>
 
     <string name="invoices_overview_error_message">"No se pudieron recuperar las facturas. Por favor intentelo otra vez mas tarde"</string>
+    <string name="invoice_upload_error_message">No se pudo recuperar la factura. Por favor intenterlo otra vez mas tarde.</string>
     <string name="invoices_upload_error_message">No se pudo subir su factura. Por favor intentelo otra vez mas tarde.</string>
 
     <string name="invoice_delete_success_message">La factura se ha borrado con éxito</string>
@@ -66,4 +67,5 @@
 
     <string name="profile_edit_success_message">Tus datos se han actualizado con éxito!</string>
     <string name="profile_edit_error_message">No se han podido actualizar tus datos. Por favor intentelo otra vez mas tarde.</string>
+    <string name="photo_capture_error_message">Ha habido un problema creando el fichero. Asegurese de tener espacio disponible en el dispositivo.</string>
 </resources>

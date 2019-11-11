@@ -16,14 +16,13 @@ class OverviewActivity : BaseNavigationActivity(){
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when(p0.itemId) {
             R.id.navigation_menu_profile -> replaceFragment(ProfileFragment.newInstance(), null)
-            R.id.navigation_menu_overview -> replaceFragment(OverviewFragment.newInstance(), null)
             R.id.navigation_menu_invoice -> replaceFragment(InvoiceFragment.newInstance(), null)
         }
         return true
     }
 
     override fun provideEntryFragment(): Fragment {
-        return OverviewFragment.newInstance()
+        return InvoiceFragment.newInstance()
     }
 
     companion object {

@@ -2,21 +2,26 @@ package es.developers.achambi.afines.invoices.presenter
 
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
+import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
+import es.developer.achambi.coreframework.utils.DateFormatUtils
 import es.developer.achambi.coreframework.utils.URIUtils
+import es.developers.achambi.afines.BuildConfig
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
-import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.UploadScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
-import java.lang.Exception
+import java.io.File
+import java.io.IOException
+import java.util.*
 
 class UploadPresenter(screenInterface: UploadScreenInterface,
                       lifecycle : Lifecycle,
@@ -80,5 +85,24 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
         val invoiceUpload = InvoiceUpload(uriUtils.retrieveFileMetadata(context, uri),
             name, trimester)
         screen.onInvoicePreparedToEdit(invoiceUpload)
+    }
+
+    fun userPhotoFileRequested(context: Context) {
+        try {
+            // Create an image file name
+            val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = File.createTempFile(
+                "FACTURA_${DateFormatUtils.formatDateDetailed(Date())}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+            )
+
+            val photoUri = FileProvider.getUriForFile(context,BuildConfig.FILE_PROVIDER,
+                file)
+            screen.onPhotoUriCreated(photoUri)
+            screen.showCamera(photoUri)
+        } catch (e: IOException) {
+            screen.showPhotoCaptureError()
+        }
     }
 }
