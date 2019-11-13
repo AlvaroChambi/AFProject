@@ -7,10 +7,13 @@ import es.developers.achambi.afines.home.NotificationsPresenter
 import es.developers.achambi.afines.home.NotificationsUseCase
 import es.developers.achambi.afines.invoices.presenter.*
 import es.developers.achambi.afines.invoices.ui.*
-import es.developers.achambi.afines.invoices.ui.profile.ProfileScreenInterface
-import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentationBuilder
+import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
+import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
-import es.developers.achambi.afines.invoices.usecase.ProfileUseCase
+import es.developers.achambi.afines.profile.presenter.ProfilePresenter
+import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
+import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
+import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
@@ -41,7 +44,13 @@ class ProfilePresenterFactory(private val executor: MainExecutor,
                               private val useCase: ProfileUseCase,
                               private val presentationBuilder: ProfilePresentationBuilder) {
     fun build(screen: ProfileScreenInterface, lifecycle: Lifecycle): ProfilePresenter {
-        return ProfilePresenter(screen, lifecycle, executor, useCase, presentationBuilder)
+        return ProfilePresenter(
+            screen,
+            lifecycle,
+            executor,
+            useCase,
+            presentationBuilder
+        )
     }
 }
 
@@ -49,5 +58,11 @@ class NotificationsPresenterFactory(private val executor: MainExecutor,
                                     private val useCase: NotificationsUseCase){
     fun build(screen: NotificationsScreen, lifecycle: Lifecycle): NotificationsPresenter {
         return NotificationsPresenter(screen, lifecycle, executor, useCase)
+    }
+}
+
+class UpdatePasswordPresenterFactory(private val executor: MainExecutor, private val useCase: ProfileUseCase) {
+    fun build(screen: UpdatePasswordScreen, lifecycle: Lifecycle): UpdatePasswordPresenter {
+        return UpdatePasswordPresenter(screen, lifecycle, executor, useCase)
     }
 }

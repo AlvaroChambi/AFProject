@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import es.developer.achambi.coreframework.ui.navigation.BaseNavigationActivity
 import es.developers.achambi.afines.invoices.ui.InvoiceFragment
-import es.developers.achambi.afines.invoices.ui.profile.ProfileFragment
+import es.developers.achambi.afines.profile.ui.ProfileFragment
 
 class OverviewActivity : BaseNavigationActivity(){
     override fun provideMenuResource(): Int {

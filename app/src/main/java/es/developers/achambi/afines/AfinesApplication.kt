@@ -11,9 +11,9 @@ import es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentationBuilde
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
-import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentationBuilder
+import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
-import es.developers.achambi.afines.invoices.usecase.ProfileUseCase
+import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 
 class AfinesApplication : Application() {
     companion object {
@@ -22,6 +22,7 @@ class AfinesApplication : Application() {
         lateinit var invoiceUploadPresenterFactory: InvoiceUploadPresenterFactory
         lateinit var profilePresenterFactory: ProfilePresenterFactory
         lateinit var notificationsPresenterFactory: NotificationsPresenterFactory
+        lateinit var updatePasswordPresenterFactory: UpdatePasswordPresenterFactory
     }
     override fun onCreate() {
         super.onCreate()
@@ -45,5 +46,7 @@ class AfinesApplication : Application() {
 
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder)
         notificationsPresenterFactory = NotificationsPresenterFactory(executor, notificationsUseCase)
+
+        updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
     }
 }

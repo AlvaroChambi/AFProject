@@ -2,16 +2,18 @@ package es.developers.achambi.afines.repositories
 
 import android.net.Uri
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
-import es.developers.achambi.afines.invoices.presenter.ProfileUpload
+import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developer.achambi.coreframework.threading.Error
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -38,17 +40,18 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     @Throws(Error::class)
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice) {
         val storageReference = firestorage.reference
-        val fileReference = storageReference.child(INVOICES_PATH + "${buildUserPath()}/${firebaseInvoice.name}")
-        val firebaseReference = firestore.collection(buildUserPath())
+        val user = firebaseAuth.currentUser
+        val fileReference = storageReference.child(INVOICES_PATH + "${user?.uid + "/"}/${firebaseInvoice.name}")
+        val firebaseReference = firestore.collection(user?.uid + "/")
         val invoiceReference = firebaseReference.document()
         firebaseInvoice.dbPath = invoiceReference.id
 
         try {
             Tasks.await(fileReference.putFile(uri),TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {
             /*On a timeout (no network connection for example) the operation will be performed locally and will be
             synchronized with the server when the connection is available. So we will just ignore this and treat it
@@ -59,14 +62,15 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             firebaseInvoice.fileReference = fileReference.path
             Tasks.await(invoiceReference.set(firebaseInvoice), TIMEOUT, TimeUnit.SECONDS)
         }catch (e:ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e:InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
     }
 
     fun userInvoices(): List<FirebaseInvoice> {
-        val listRef = firestore.collection( buildUserPath())
+        val user = firebaseAuth.currentUser
+        val listRef = firestore.collection(user?.uid + "/")
         val result = Tasks.await(listRef.get())
         if(result.isEmpty) {
             return ArrayList()
@@ -76,55 +80,58 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
     @Throws(Error::class)
     fun deleteInvoice(invoice: Invoice) {
+        val user = firebaseAuth.currentUser
         try {
-            val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
+            val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
             Tasks.await(databaseRef.delete(), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
 
         try {
             val storageRef = firestorage.reference.child(invoice.fileReference)
             Tasks.await(storageRef.delete(), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
     }
 
     @Throws(Error::class)
     fun updateInvoiceFile(invoice: Invoice, invoiceUpload: InvoiceUpload, uri: Uri) {
         val storageReference = firestorage.reference
+        val user = firebaseAuth.currentUser
         val fileReference = storageReference.child(
-            INVOICES_PATH + "${buildUserPath()}/${invoiceUpload.uriMetadata.displayName}")
+            INVOICES_PATH + "${user?.uid + "/"}/${invoiceUpload.uriMetadata.displayName}")
         try {
             Tasks.await(fileReference.putFile(uri), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
 
         try {
-            val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
+            val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(FILE_ATTRIBUTE_KEY, fileReference.path), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
     }
 
+    @Throws(Error::class)
     fun logout() {
         try {
             firebaseAuth.signOut()
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
     }
 
@@ -144,24 +151,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
     }
 
     @Throws(Error::class)
     fun updateInvoiceMetadata(invoice: Invoice, name: String, trimester: String ) {
         try {
-            val databaseRef = firestore.collection(buildUserPath()).document(invoice.dbReference)
+            val user = firebaseAuth.currentUser
+            val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(
                 NAME_ATTRIBUTE_KEY, name,
                 TRIMESTER_ATTRIBUTE_KEY, trimester),
                 TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
     }
     @Throws(Error::class)
@@ -176,18 +184,19 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 return result.toObject(FirebaseProfile::class.java)
             }
         } catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
         throw Error()
     }
 
+    @Throws(Error::class)
     fun retrieveNotifications(): List<FirebaseNotification> {
         try {
             val userId = firebaseAuth.currentUser?.uid
             val databaseRef = userId?.let { firestore.collection("user")
-                .document(userId).collection("notifications") }
+                .document(userId).collection(NOTIFICATIONS_PATH) }
             val result = databaseRef?.let {
                 Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
             }
@@ -195,9 +204,9 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 return result.toObjects(FirebaseNotification::class.java)
             }
         }catch (e: ExecutionException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: InterruptedException) {
-            throw Error(e.message)
+            throw Error()
         }catch (e: TimeoutException) {}
         throw Error()
     }
@@ -212,8 +221,22 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return Tasks.await(ref.getBytes(20148*2048))
     }
 
-    private fun buildUserPath(): String {
+    @Throws(Error::class)
+    fun updateUserPassword(currentPassword: String, newPassword: String) {
         val user = firebaseAuth.currentUser
-        return user?.uid + "/"
+        val email = user?.email
+        if(email.isNullOrEmpty()) {
+            throw Error()
+        } else {
+            val credential = EmailAuthProvider.getCredential(email, currentPassword)
+            try {
+                Tasks.await(user.reauthenticate(credential), TIMEOUT, TimeUnit.SECONDS)
+                Tasks.await(user.updatePassword(newPassword), TIMEOUT, TimeUnit.SECONDS)
+            } catch (e: ExecutionException) {
+                throw Error()
+            }catch (e: InterruptedException) {
+                throw Error()
+            }catch (e: TimeoutException) {}
+        }
     }
 }

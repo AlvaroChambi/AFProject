@@ -1,4 +1,4 @@
-package es.developers.achambi.afines.invoices.ui
+package es.developers.achambi.afines.profile.ui
 
 import android.content.Context
 import android.content.Intent
@@ -7,17 +7,17 @@ import es.developer.achambi.coreframework.ui.BaseActivity
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developers.achambi.afines.R
 
-class UploadInvoiceActivity: BaseActivity() {
-    companion object {
+class UpdatePasswordActivity: BaseActivity() {
+    companion object{
         fun getStartIntent(context: Context): Intent {
-            return Intent( context, UploadInvoiceActivity::class.java )
+            return Intent(context, UpdatePasswordActivity::class.java)
         }
     }
     override fun getScreenTitle(): Int {
-        return R.string.upload_invoice_activity_title
+        return R.string.update_password_activity_title
     }
 
     override fun getFragment(args: Bundle?): BaseFragment {
-        return UploadInvoiceFragment.newInstance(args)
+        return UpdatePasswordFragment.newInstance()
     }
 }

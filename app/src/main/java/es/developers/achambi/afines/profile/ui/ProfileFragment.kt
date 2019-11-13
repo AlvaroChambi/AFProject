@@ -1,4 +1,4 @@
-package es.developers.achambi.afines.invoices.ui.profile
+package es.developers.achambi.afines.profile.ui
 
 import android.os.Bundle
 import android.view.*
@@ -10,8 +10,8 @@ import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.LoginActivity
 import es.developers.achambi.afines.R
-import es.developers.achambi.afines.invoices.presenter.ProfilePresenter
-import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentation
+import es.developers.achambi.afines.profile.presenter.ProfilePresenter
+import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import kotlinx.android.synthetic.main.user_profile_layout.*
 
 class ProfileFragment: BaseFragment(), ProfileScreenInterface {
@@ -133,9 +133,14 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
             }
             R.id.action_more_options -> {
                 val dialog = activity?.let { BottomSheetDialog(it) }
-                val rootView = layoutInflater.inflate(R.layout.profile_logout_layout, null)
+                val rootView = layoutInflater.inflate(R.layout.profile_more_options_layout, null)
                 rootView.findViewById<View>(R.id.profile_logout_button).setOnClickListener {
                     presenter.logout()
+                }
+                rootView.findViewById<View>(R.id.profile_update_password_button).setOnClickListener {
+                    activity?.let {
+                        startActivity(UpdatePasswordActivity.getStartIntent(it))
+                    }
                 }
                 dialog?.setContentView(rootView)
                 dialog?.show()

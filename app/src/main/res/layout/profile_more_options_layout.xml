@@ -10,10 +10,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:textColor="@color/text_secondary"
         android:textSize="18sp"
         android:text="@string/logout_text"/>
+
+    <TextView
+        android:id="@+id/profile_update_password_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="18sp"
+        android:text="@string/update_password_text"/>
 </LinearLayout>

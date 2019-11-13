@@ -10,7 +10,7 @@
 
     <string name="invoices_screen_title">Mis facturas</string>
 
-    <string name="header_save_invoice_text">Guardar</string>
+    <string name="header_save_generic_text">Guardar</string>
 
     <string name="upload_pick_file_header_tag">Selecciona tu factura</string>
     <string name="upload_name_header_tag">Escoge un nombre para tu factura</string>
@@ -68,4 +68,16 @@
     <string name="profile_edit_success_message">Tus datos se han actualizado con éxito!</string>
     <string name="profile_edit_error_message">No se han podido actualizar tus datos. Por favor intentelo otra vez mas tarde.</string>
     <string name="photo_capture_error_message">Ha habido un problema creando el fichero. Asegurese de tener espacio disponible en el dispositivo.</string>
+
+    <string name="update_password_activity_title">Cambiar contraseña</string>
+    <string name="update_password_text">Cambiar contraseña</string>
+    <string name="current_password_tag">Contraseña actual</string>
+    <string name="new_password_tag">Nueva contraseña</string>
+    <string name="new_password_confirm_tag">Confirmar nueva contraseña</string>
+
+    <string name="password_update_success_text">La contraseña se ha actualizado con éxito.</string>
+    <string name="password_update_missing_fields_text">Hay campos sin rellenar, por favor revisa el formulario e intentelo otra vez.</string>
+    <string name="password_update_invalid_password_text">La contraseña actual no es valida. Por favor revisela e intentelo otra vez.</string>
+    <string name="password_update_weak_password_text">La contraseña debe de tener al menos 6 caracteres.</string>
+    <string name="password_update_not_matching_text">La confimación de contraseña no coincide con la nueva contraseña.</string>
 </resources>

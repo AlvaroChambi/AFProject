@@ -28,6 +28,8 @@
             android:parentActivityName=".OverviewActivity">
         </activity>
 
+        <activity android:name=".profile.ui.UpdatePasswordActivity"/>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${provider}"

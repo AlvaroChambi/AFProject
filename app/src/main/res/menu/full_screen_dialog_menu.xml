@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Two items with the same text but different meaning, each one triggers a different operation,
+     only one should be visible at a given time-->
     <item
         android:id="@+id/action_save"
-        android:title="@string/header_save_invoice_text"
+        android:title="@string/header_save_generic_text"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_override"
-        android:title="@string/header_save_invoice_text"
+        android:title="@string/header_save_generic_text"
         app:showAsAction="ifRoom">
 
     </item>

@@ -53,7 +53,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
         view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
             startActivityForResult(activity?.let {
-                UploadInvoiceActivity.newInstance( it )
+                UploadInvoiceActivity.getStartIntent( it )
             }, INVOICE_UPLOAD_DIALOG_CODE )
         }
 
