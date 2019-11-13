@@ -1,6 +1,6 @@
-package es.developers.achambi.afines.invoices.usecase
+package es.developers.achambi.afines.profile.usecase
 
-import es.developers.achambi.afines.invoices.presenter.ProfileUpload
+import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 
@@ -16,6 +16,10 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository) {
 
     fun updateProfile(profileUpload: ProfileUpload) {
         firebaseRepository.updateUserProfile(profileUpload)
+    }
+
+    fun updatePassword(currentPassword: String, newPassword: String) {
+        firebaseRepository.updateUserPassword(currentPassword, newPassword)
     }
 
     fun logout() {

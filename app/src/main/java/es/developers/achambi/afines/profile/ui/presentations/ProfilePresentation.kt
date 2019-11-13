@@ -1,4 +1,4 @@
-package es.developers.achambi.afines.invoices.ui.profile.presentations
+package es.developers.achambi.afines.profile.ui.presentations
 
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 

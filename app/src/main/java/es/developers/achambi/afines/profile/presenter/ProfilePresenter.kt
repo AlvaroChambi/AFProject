@@ -1,4 +1,4 @@
-package es.developers.achambi.afines.invoices.presenter
+package es.developers.achambi.afines.profile.presenter
 
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.Error
@@ -6,9 +6,9 @@ import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
-import es.developers.achambi.afines.invoices.ui.profile.ProfileScreenInterface
-import es.developers.achambi.afines.invoices.ui.profile.presentations.ProfilePresentationBuilder
-import es.developers.achambi.afines.invoices.usecase.ProfileUseCase
+import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
+import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
+import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 
 class ProfilePresenter(screen: ProfileScreenInterface,
@@ -139,6 +139,7 @@ data class ProfileUpload(val email: String,
         fun naf(naf: String) = apply { this.naf = naf }
         fun ccc(ccc: String) = apply { this.ccc = ccc }
         fun account(account: String) = apply { this.account = account }
-        fun build() = ProfileUpload(email, address, dni, naf, ccc, account)
+        fun build() =
+            ProfileUpload(email, address, dni, naf, ccc, account)
     }
 }
