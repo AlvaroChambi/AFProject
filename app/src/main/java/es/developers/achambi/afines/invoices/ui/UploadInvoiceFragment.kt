@@ -5,22 +5,26 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
+import java.io.File
 
 class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
+        const val PHOTO_CAPTURE_RESULT_CODE = 102
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
         private const val INVOICE_ID_KEY = "invoice_id_key"
 
@@ -66,6 +70,10 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         pick_file_chip.setOnCloseIconClickListener {
             presenter.userClearedURI()
         }
+
+        invoice_photo_button.setOnClickListener {
+            activity?.let { it1 -> presenter.userPhotoFileRequested(it1) }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -83,6 +91,22 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         compatActivity.supportActionBar?.elevation = 0.0f
         compatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         compatActivity.supportActionBar?.setHomeAsUpIndicator(R.drawable.outline_close_24)
+    }
+
+    override fun showPhotoCaptureError() {
+        view?.let {
+            Snackbar.make(it, R.string.photo_capture_error_message, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun showCamera(uri: Uri) {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(activity?.packageManager)?.also {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                startActivityForResult(takePictureIntent, PHOTO_CAPTURE_RESULT_CODE)
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -106,6 +130,10 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         this.uri = uri
         pick_file_chip.text = fileName
         file_name_edit_text.setText(fileName)
+    }
+
+    override fun onPhotoUriCreated(uri: Uri) {
+        this.uri = uri
     }
 
     override fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload) {
@@ -141,7 +169,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
 
     override fun showErrorRetrievingInvoice() {
         progress_background.visibility = View.VISIBLE
-        base_request_error_message.text = "No se pudo recuperar la factura. Por favor itentelo de nuevo mas tarde."
+        base_request_error_message.text = resources.getText(R.string.invoice_upload_error_message)
     }
 
     override fun showScreenProgress() {
@@ -159,8 +187,17 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         if( requestCode == MEDIA_SEARCH_RESULT_CODE && resultCode == Activity.RESULT_OK ) {
             val resultData: Uri? = data?.data
             activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
+        } else if(requestCode == PHOTO_CAPTURE_RESULT_CODE) {
+            //An uri was previously created over a temp file and setted before the picture was taken, if the result
+            // code is not ok, we'll just clear the uri value
+            if(resultCode == Activity.RESULT_OK) {
+                activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
+            } else {
+                this.uri = null
+            }
         }
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

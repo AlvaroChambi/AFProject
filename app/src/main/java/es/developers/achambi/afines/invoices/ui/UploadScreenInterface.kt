@@ -17,4 +17,8 @@ interface UploadScreenInterface : Screen {
 
     fun showEditableInvoice(invoice: InvoiceUploadPresentation)
     fun showErrorRetrievingInvoice()
+
+    fun showPhotoCaptureError()
+    fun showCamera(uri: Uri)
+    fun onPhotoUriCreated(uri: Uri)
 }
