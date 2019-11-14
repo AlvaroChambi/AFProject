@@ -1,6 +1,7 @@
 language: android
 dist: trusty
 before_install:
+- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv -in keystore.jks.enc -out keystore.jks -d
 - echo "sdk.dir=$ANDROID_HOME" > local.properties
 - mkdir "$ANDROID_HOME/licenses" || true
 - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
@@ -14,8 +15,14 @@ android:
   - ".+"
 script:
 - "./gradlew assembleRelease --scan -s"
-
-env:
-  global:
-  - secure: anz2bx2VxHbrawC8L+RMQvSG/Xmr3H2AiYKmIJw4EuVdpXVqFIzoeC5nLLJP9bSidAg5ivGMe9lxvS3yVYhMGr54K4e7VEwD3FXZ49UfuGCugRSm8lAkUpIN7s0zmY/69hHzQo9g1kndOJIMowG4u6Dq9EccZEr62B0mSyeKAVTY3r7kSMGJGq9R3Eik4ZlT2mMF2HrThDHyVYRulowc7fIFhuqhhV0evisQbwQQCizIuV7gE8Iyl0RqungsJvk+YC3SON9I3vlcIN8Hzjq4Er7v3Mn+OsmmWKOVWlM7ioFPCrreLgpNNOwpa2uaMBR8C8N4nkFd5sINXnYybxX2MObdgup9fweKxVzPqsaMKrElq5G+4OnVCV4h3HIwESwoNXftpBSNQXcAtZqyBhxlOkFfMM9ASbKpxpsItcb+svUh5kdc2iqV9NC2sCaDZP2/mQRSzR6Od5af6rsLk+D/m0WzdCoL4/M3lzh20ngEQ7GdX9E12XKy/myyBp+MGaIKg0rHffUgLxiNQ/2pzMfhLVxVDjP0T30cIo/rG9eozq5/adZDKbUBoa041bbbX1up2jp/Y3r2MH/SBYEa+7/013F7MintZE0QqnYecTe4fZZe3Q+sk7GLt5nkkLD35yAWCMmeDzQRHrcdmjHRNsPpFFzDxJBVLSI8O/3QMJSFuuY=
-  - secure: AJRWk21gUKX3fbcCW2ckOZTB4HTPkKOdeNj7bN3pIbzSf2RrGsNT1c67/sA5YzSIJmOQvrcNFGzGujqNF7a4vVKexKYKZEf6t88B3piDIuW5bdkxAMmK5ete2UvRA0AWE+9Paf+zKZfPCzS21wa+vTtQfEWQI2e0De9bbI9RM1S+XBemOxpw4zCVMjfSLd4m8FQzdfHIUzLUpKPzHDdneN7D3pChaVXVy3Lkv3ztIqmPPX9hlcV2hqMd8cYoFzZIM0da9FjQvA2+FGDcARZyg1R/ZLzEC7O9mhrhx8EQFl0LpEBiADnJ5weYHxOpr7rrcXV174LijCRt/vroPIySFBbJWs0ac+3nizZIixXxA3XomzgBIMTre1Ywy2HdLkyenY2wY843qDTnaOMzjh8DzLC23V37uDZmtEC7qpUuBqVewSnIkDXQFb3S+lJrdUMyJTkaIfJUIOS90TBpEAsHOGiXCE0fBPJsp9lvw5t3bmvwmBG90vRWwwivATz+Hd+Zc2E9GdmdVgJ8OYr0LBpYcsh5bZAR0+jzbO2SuKNLKFAv68wX+0a2kHRefY8wSUkUD/ZSv6mom9oGzTFMePwIXGnYUKvfBYIEdzLBt6i8xmOnL5y5p7hXmnqSqek0tBBEci83ZBWb4wP8eNPTifBAClfnH1GC34pyNZumNPe0xm0=
+deploy:
+  provider: releases
+  api_key:
+  secure: "feIEcu3aI3mcpMHGjly5dWCZsJ8hleJG3mhewirNNzMI4JRmmc07kJ68Rkv9S9KgbyYIPJfhMtJRfBn1KwS6IYnr/0OV959hIc4WFyXTXs2S12YGD21r9QvJUb0AFunbyPsPDh2Dw+iw0Bk1NK8GdU5fGMbWNalWkqpGmOkuRkpe+mfiRuKwB6Gbdn1/hAL9I5FiuTpsafw55p0R1RfaorweShQK1sZzN2bddCq99NDColEKQ5G4/KgrKgfqTCL0vsC7enAmPm+hgonwS//zI9TIlMce2uAGH8KN2cRjWujcNM2abM9ycPYwb6k5NYvWIpF5T9AIQV7s+JAxMjBb+i06Iyv67hodrt04BtR0QOfAlsHZwpcctratCJEsyZp1Zw3OJ+zlQSmLDpnBzEAopAsoiGgExpxgfDnOF5sxu+u8vns2uVMUwJo3XR8dst5Wkspp71HvS/LjjD2SGOwp2DPyQvpRhDZS6q96V6XI8MXRCddfIXtc5Nn1tqwVp7fAe1xxJ0JxhbRel2FLNGJCLe/YkYqrYMh/L7TNAsvQEsHBQP4Lc4+rRK8FygN5ol3HI7kTUa7GiGG0xkaqPL+f++CeeGajJ1pEu/Qqo8ZyndaYi8oZjjvjyedkk29QFfg4CruQfdw+mpCJA11s5EscT39uL52w27MOO2OPs0xeHC8="
+  file_glob: true
+  file: "/home/travis/build/AlvaroChambi/AFProject/app/build/outputs/apk/release/*"
+  skip_cleanup: true
+  on:
+    tags: true
+    branch: master
+    repo: AlvaroChambi/AFProject
