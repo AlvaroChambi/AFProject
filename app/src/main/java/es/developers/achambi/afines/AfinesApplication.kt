@@ -34,7 +34,7 @@ class AfinesApplication : Application() {
         val uploadPresentationBuilder = InvoiceUploadPresentationBuilder()
         val uriUtils = URIUtils()
         val profilePresentationBuilder = ProfilePresentationBuilder()
-        val profileUseCase = ProfileUseCase(firebaseRepository)
+        val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase)
         val notificationsUseCase = NotificationsUseCase(firebaseRepository)
 
         invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase, presentationBuilder)

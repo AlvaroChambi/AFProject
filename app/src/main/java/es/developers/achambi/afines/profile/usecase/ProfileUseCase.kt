@@ -1,10 +1,13 @@
 package es.developers.achambi.afines.profile.usecase
 
+import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 
-class ProfileUseCase(private val firebaseRepository: FirebaseRepository) {
+class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
+                     private val invoicesUseCase: InvoiceUseCase
+) {
     private var firebaseProfile: FirebaseProfile? = null
 
     fun getUserProfile(refresh: Boolean): FirebaseProfile? {
@@ -23,6 +26,8 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     fun logout() {
+        firebaseProfile = null
+        invoicesUseCase.clearCache()
         firebaseRepository.logout()
     }
 }

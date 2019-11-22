@@ -14,6 +14,10 @@ import kotlin.collections.ArrayList
 class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     private val invoices = ArrayList<Invoice>()
 
+    fun clearCache() {
+        invoices.clear()
+    }
+
     fun getDetailedInvoice(invoiceId: Long): DetailedInvoice? {
         val invoice = getInvoice(invoiceId)
         val metadata = invoice?.fileReference.let { it?.let { it1 -> firebaseRepository.getFileMetadata(it1) } }
