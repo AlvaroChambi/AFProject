@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import es.developer.achambi.coreframework.ui.presentation.SearchListData
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.Invoice
-import es.developers.achambi.afines.invoices.model.InvoiceState
+import es.developers.achambi.afines.repositories.model.InvoiceState
 import kotlin.collections.ArrayList
 
 data class InvoicePresentation(
@@ -79,7 +79,8 @@ class InvoiceDetailsPresentationBuilder(
             basePresentation.stateMessage + basePresentation.stateDetails,
             basePresentation.stateColor,
             basePresentation.showFailedDetails,
-            invoice.state == InvoiceState.PROCESSED,
+            (invoice.state == InvoiceState.ACCEPTED 
+                    || invoice.state == InvoiceState.ACCOUNTED),
             false
         )
     }
@@ -97,7 +98,7 @@ class InvoicePresentationBuilder(private val context: Context) {
             buildStateMessage(context, invoice.state),
             buildStateMessageColor(context, invoice.state),
             buildStateDetails(context, invoice.state, invoice.date),
-            invoice.state == InvoiceState.FAILED)
+            invoice.state == InvoiceState.REJECTED)
     }
 
     fun build(invoices: ArrayList<Invoice>): ArrayList<InvoicePresentation> {
@@ -118,27 +119,33 @@ class InvoicePresentationBuilder(private val context: Context) {
         }
     }
 
-    private fun buildStateMessage(context: Context, state: InvoiceState): String {
+    private fun buildStateMessage(context: Context, state: InvoiceState?): String {
         return when(state) {
-            InvoiceState.DELIVERED -> context.getString(R.string.invoice_state_delivered)
-            InvoiceState.PROCESSED -> context.getString(R.string.invoice_state_processed)
-            InvoiceState.FAILED -> context.getString(R.string.invoice_state_failed)
+            InvoiceState.SENT -> context.getString(R.string.invoice_state_delivered)
+            InvoiceState.ACCEPTED -> context.getString(R.string.invoice_state_processed)
+            InvoiceState.REJECTED -> context.getString(R.string.invoice_state_failed)
+            InvoiceState.ACCOUNTED -> context.getString(R.string.invoice_state_accounted)
+            else -> ""
         }
     }
 
-    private fun buildStateMessageColor(context: Context, invoiceState: InvoiceState): Int {
+    private fun buildStateMessageColor(context: Context, invoiceState: InvoiceState?): Int {
         return when(invoiceState) {
-            InvoiceState.DELIVERED -> ContextCompat.getColor(context, R.color.color_state_pending)
-            InvoiceState.PROCESSED -> ContextCompat.getColor(context, R.color.color_state_approved)
-            InvoiceState.FAILED -> ContextCompat.getColor(context, R.color.color_state_failed)
+            InvoiceState.SENT -> ContextCompat.getColor(context, R.color.color_state_pending)
+            InvoiceState.ACCEPTED -> ContextCompat.getColor(context, R.color.color_state_approved)
+            InvoiceState.REJECTED -> ContextCompat.getColor(context, R.color.color_state_failed)
+            InvoiceState.ACCOUNTED -> ContextCompat.getColor(context, R.color.color_state_approved)
+            else -> ContextCompat.getColor(context, R.color.color_state_approved)
         }
     }
 
-    private fun buildStateDetails(context: Context, invoiceState: InvoiceState, date: Long): String {
+    private fun buildStateDetails(context: Context, invoiceState: InvoiceState?, date: Long): String {
         return when(invoiceState) {
-            InvoiceState.PROCESSED,
-            InvoiceState.DELIVERED,
-            InvoiceState.FAILED -> DateUtils.formatDateTime(context, date,
+            InvoiceState.SENT,
+            InvoiceState.ACCEPTED,
+            InvoiceState.REJECTED,
+            InvoiceState.ACCOUNTED,
+            null -> DateUtils.formatDateTime(context, date,
                 DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE or
                         DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_ALL)
         }

@@ -4,10 +4,10 @@ import android.net.Uri
 import es.developers.achambi.afines.invoices.model.DetailedInvoice
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.model.Invoice
-import es.developers.achambi.afines.invoices.model.InvoiceState
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
+import es.developers.achambi.afines.repositories.model.InvoiceState
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -37,7 +37,8 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             invoiceUpload.trimester.toString()) }
         if(uri != null) {
             invoice?.let { firebaseRepository.updateInvoiceFile(invoice, invoiceUpload, uri) }
-            invoice?.let{ firebaseRepository.updateInvoiceClearRejectedState(invoice) }
+            invoice?.let{ firebaseRepository.updateInvoiceState(invoice,
+                InvoiceState.SENT.toString(), Date().time) }
         }
     }
 
@@ -80,11 +81,14 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     private fun buildPostInvoice(invoiceUpload: InvoiceUpload): FirebaseInvoice {
-        return FirebaseInvoice(Date().time,
-            invoiceUpload.name,
-            invoiceUpload.trimester.toString(),
-            invoiceUpload.uriMetadata.displayName,
-            Date().time)
+        return FirebaseInvoice(
+            id = Date().time,
+            name = invoiceUpload.name,
+            trimester = invoiceUpload.trimester.toString(),
+            fileReference = invoiceUpload.uriMetadata.displayName,
+            state = InvoiceState.SENT.toString(),
+            deliveredDate = Date().time
+        )
     }
 
     private fun buildInvoice(firebaseInvoice: FirebaseInvoice): Invoice {
@@ -93,7 +97,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             firebaseInvoice.name,
             firebaseInvoice.fileReference?: "",
             resolveTrimester(firebaseInvoice.trimester),
-            resolveState(firebaseInvoice.processedDate, firebaseInvoice.failedStatus),
+            firebaseInvoice.state?.let { InvoiceState.valueOf(it) },
             resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate),
             firebaseInvoice.dbPath
         )
@@ -109,14 +113,6 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             Trimester.valueOf(trimester)
         } else {
             Trimester.EMPTY
-        }
-    }
-
-    private fun resolveState(processedDate: Long?, failed: Boolean): InvoiceState {
-        return when {
-            failed -> InvoiceState.FAILED
-            processedDate != null -> InvoiceState.PROCESSED
-            else -> InvoiceState.DELIVERED
         }
     }
 }

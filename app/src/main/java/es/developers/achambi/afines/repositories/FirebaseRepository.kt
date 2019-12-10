@@ -35,7 +35,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val TRIMESTER_ATTRIBUTE_KEY = "trimester"
         const val FILE_ATTRIBUTE_KEY = "fileReference"
         const val PROCESSED_DATE_KEY = "processedDate"
-        const val FAILED_STATE_KEY = "failedStatus"
+        const val INVOICE_STATE_KEY = "state"
         private const val TIMEOUT = 3L
     }
 
@@ -175,13 +175,13 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: TimeoutException) {}
     }
     @Throws(Error::class)
-    fun updateInvoiceClearRejectedState(invoice: Invoice) {
+    fun updateInvoiceState(invoice: Invoice, state: String, timestamp: Long) {
         try {
             val user = firebaseAuth.currentUser
             val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(
-                PROCESSED_DATE_KEY, null,
-                FAILED_STATE_KEY, false),
+                PROCESSED_DATE_KEY, timestamp,
+                INVOICE_STATE_KEY, state),
                 TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw Error()

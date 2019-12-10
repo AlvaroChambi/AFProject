@@ -28,7 +28,8 @@
     <string name="invoice_state_delivered">Factura entregada:</string>
     <string name="invoice_state_processed">Factura aprovada:</string>
     <string name="invoice_state_failed">Factura no valida:</string>
-    
+    <string name="invoice_state_accounted">Factura contabilizada:</string>
+
     <string name="invoice_state_failed_details">Por favor actualize la factura entregada</string>
 
     <string name="invoice_details_edit_tag">Editar factura</string>
