@@ -1,8 +1,10 @@
 package es.developers.achambi.afines.invoices.ui
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,6 +13,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developers.achambi.afines.AfinesApplication
@@ -18,13 +21,14 @@ import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
-import java.io.File
+
 
 class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
         const val PHOTO_CAPTURE_RESULT_CODE = 102
+        const val CAMERA_PERMISSION_REQUEST_CODE = 103
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
         private const val INVOICE_ID_KEY = "invoice_id_key"
 
@@ -72,9 +76,33 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         }
 
         invoice_photo_button.setOnClickListener {
-            activity?.let { it1 -> presenter.userPhotoFileRequested(it1) }
+            activity?.let {
+                if (ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(
+                        arrayOf(Manifest.permission.CAMERA),
+                        CAMERA_PERMISSION_REQUEST_CODE)
+                }else {
+                    presenter.userPhotoFileRequested(it)
+                }
+            }
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray) {
+        when(requestCode) {
+            CAMERA_PERMISSION_REQUEST_CODE -> {
+                if ((grantResults.isNotEmpty()
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    activity?.let { presenter.userPhotoFileRequested(it) }
+                }
+            }
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -102,6 +130,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     override fun showCamera(uri: Uri) {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
+            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             takePictureIntent.resolveActivity(activity?.packageManager)?.also {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
                 startActivityForResult(takePictureIntent, PHOTO_CAPTURE_RESULT_CODE)
@@ -188,7 +217,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
             val resultData: Uri? = data?.data
             activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
         } else if(requestCode == PHOTO_CAPTURE_RESULT_CODE) {
-            //An uri was previously created over a temp file and setted before the picture was taken, if the result
+            //An uri was previously created over a temp file and set before the picture was taken, if the result
             // code is not ok, we'll just clear the uri value
             if(resultCode == Activity.RESULT_OK) {
                 activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }

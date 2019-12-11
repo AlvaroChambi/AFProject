@@ -88,6 +88,7 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
     }
 
     fun userPhotoFileRequested(context: Context) {
+
         try {
             // Create an image file name
             val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
