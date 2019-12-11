@@ -8,13 +8,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.Settings
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.ui.BaseFragment
@@ -95,7 +93,6 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode) {
             CAMERA_PERMISSION_REQUEST_CODE -> {
                 if ((grantResults.isNotEmpty()
