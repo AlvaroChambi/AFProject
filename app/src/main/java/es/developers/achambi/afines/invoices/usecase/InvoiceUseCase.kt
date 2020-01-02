@@ -76,6 +76,16 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return invoices
     }
 
+    fun queryUserInvoices(query: String): ArrayList<Invoice> {
+        val filteredArray = ArrayList<Invoice>()
+        invoices.forEach { invoice ->
+            if(invoice.name.contains( query )) {
+                filteredArray.add(invoice)
+            }
+        }
+        return filteredArray
+    }
+
     fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload) {
         firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
     }

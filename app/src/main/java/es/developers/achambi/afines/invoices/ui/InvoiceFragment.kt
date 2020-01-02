@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
@@ -48,6 +49,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     override fun onViewSetup(view: View) {
         super.onViewSetup(view)
         activity?.setTitle(R.string.invoices_screen_title)
+        val refreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh_layout)
+        refreshLayout.setOnRefreshListener {
+            refreshLayout.isRefreshing = false
+            presenter.refreshInvoices()
+        }
 
         progressBar = view.findViewById(R.id.horizontal_progress_bar)
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
@@ -117,6 +123,14 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         view?.let {
             Snackbar.make(it, R.string.invoice_edit_success_message, Snackbar.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onQueryTextSubmitted(query: String) {
+        presenter.queryInvoices(query)
+    }
+
+    override fun onSearchFinished() {
+        presenter.showInvoices()
     }
 
     override fun onDataSetup() {

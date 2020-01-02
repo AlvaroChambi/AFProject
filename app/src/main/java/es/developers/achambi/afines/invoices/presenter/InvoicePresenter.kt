@@ -68,6 +68,29 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         request(request , responseHandler)
     }
 
+    fun queryInvoices(query: String) {
+        screen.showProgress()
+        val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
+            override fun onSuccess(response: ArrayList<Invoice>) {
+                screen.showProgressFinished()
+                screen.showInvoices( invoicePresentationBuilder.build(response) )
+            }
+
+            override fun onError(error: Error) {
+                super.onError(error)
+                screen.showProgressFinished()
+                screen.onInvoicesLoadingError()
+            }
+        }
+        val request = object : Request<ArrayList<Invoice>>{
+            override fun perform(): ArrayList<Invoice> {
+                return invoiceUseCase.queryUserInvoices(query)
+            }
+
+        }
+        request(request , responseHandler)
+    }
+
     fun deleteRequested(invoiceId: Long) {
         screen.showProgress()
         val responseHandler = object : ResponseHandler<Any> {
