@@ -1,6 +1,5 @@
 package es.developers.achambi.afines.invoices.presenter
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.Error
@@ -12,7 +11,6 @@ import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
-import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,

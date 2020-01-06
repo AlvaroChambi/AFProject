@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import es.developer.achambi.coreframework.ui.BaseActivity
 import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developers.achambi.afines.login.LoginFragment
 
 class LoginActivity: BaseActivity() {
     companion object{

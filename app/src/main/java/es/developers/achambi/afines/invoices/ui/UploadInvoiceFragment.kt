@@ -104,15 +104,15 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater?.inflate(R.menu.full_screen_dialog_menu, menu)
+        inflater.inflate(R.menu.full_screen_dialog_menu, menu)
         if(invoiceId == null) {
-            menu?.findItem(R.id.action_save)?.isVisible = true
-            menu?.findItem(R.id.action_override)?.isVisible = false
+            menu.findItem(R.id.action_save)?.isVisible = true
+            menu.findItem(R.id.action_override)?.isVisible = false
         } else {
-            menu?.findItem(R.id.action_override)?.isVisible = true
-            menu?.findItem(R.id.action_save)?.isVisible = false
+            menu.findItem(R.id.action_override)?.isVisible = true
+            menu.findItem(R.id.action_save)?.isVisible = false
         }
 
         val compatActivity = activity as AppCompatActivity
@@ -138,14 +138,14 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if(item?.itemId == R.id.action_save) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.action_save) {
             activity?.let { presenter.userSaveSelected(
                     it, uri, file_name_edit_text.text.toString(),
                     invoice_trimester_selector.getChecked())
             }
             return true
-        } else if(item?.itemId == R.id.action_override) {
+        } else if(item.itemId == R.id.action_override) {
             activity?.let {
                     presenter.userOverrideSelected(it, uri,
                         file_name_edit_text.text.toString(),

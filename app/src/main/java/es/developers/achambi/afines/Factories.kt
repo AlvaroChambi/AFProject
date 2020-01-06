@@ -10,6 +10,9 @@ import es.developers.achambi.afines.invoices.ui.*
 import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.login.LoginPresenter
+import es.developers.achambi.afines.login.LoginScreenInterface
+import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.profile.presenter.ProfilePresenter
 import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
 import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
@@ -64,5 +67,11 @@ class NotificationsPresenterFactory(private val executor: MainExecutor,
 class UpdatePasswordPresenterFactory(private val executor: MainExecutor, private val useCase: ProfileUseCase) {
     fun build(screen: UpdatePasswordScreen, lifecycle: Lifecycle): UpdatePasswordPresenter {
         return UpdatePasswordPresenter(screen, lifecycle, executor, useCase)
+    }
+}
+
+class LoginPresenterFactory(private val executor: MainExecutor, private val useCase: LoginUseCase) {
+    fun build(screen: LoginScreenInterface, lifecycle: Lifecycle): LoginPresenter {
+        return LoginPresenter(screen, lifecycle, executor, useCase)
     }
 }

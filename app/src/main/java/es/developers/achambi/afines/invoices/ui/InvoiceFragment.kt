@@ -66,7 +66,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         adapter.setListener { item ->
             val dialog = InvoiceBottomSheetFragment.newInstance(item.id)
             dialog.setTargetFragment(this, INVOICE_DETAILS_REQUEST_CODE)
-            dialog.show(activity?.supportFragmentManager, null)
+            activity?.supportFragmentManager?.let { dialog.show(it, null) }
         }
     }
 

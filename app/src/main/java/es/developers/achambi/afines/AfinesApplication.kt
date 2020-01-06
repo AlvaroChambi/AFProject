@@ -13,6 +13,7 @@ import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 
 class AfinesApplication : Application() {
@@ -23,6 +24,7 @@ class AfinesApplication : Application() {
         lateinit var profilePresenterFactory: ProfilePresenterFactory
         lateinit var notificationsPresenterFactory: NotificationsPresenterFactory
         lateinit var updatePasswordPresenterFactory: UpdatePasswordPresenterFactory
+        lateinit var loginPresenterFactory: LoginPresenterFactory
     }
     override fun onCreate() {
         super.onCreate()
@@ -36,6 +38,7 @@ class AfinesApplication : Application() {
         val profilePresentationBuilder = ProfilePresentationBuilder()
         val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase)
         val notificationsUseCase = NotificationsUseCase(firebaseRepository)
+        val loginUseCase = LoginUseCase(firebaseRepository)
 
         invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase, presentationBuilder)
         invoiceDetailsPresenterFactory = InvoiceDetailsPresenterFactory(executor, invoicesUseCase,
@@ -48,5 +51,6 @@ class AfinesApplication : Application() {
         notificationsPresenterFactory = NotificationsPresenterFactory(executor, notificationsUseCase)
 
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
+        loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)
     }
 }

@@ -54,13 +54,13 @@ class UpdatePasswordFragment: BaseFragment(), UpdatePasswordScreen {
     override val layoutResource: Int
         get() = R.layout.update_password_fragment_layout
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater?.inflate(R.menu.update_password_menu, menu)
+        inflater.inflate(R.menu.update_password_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             R.id.action_save_password -> {
                 presenter.userSaved(
                     currentPassword = currentPassword.text.toString(),
