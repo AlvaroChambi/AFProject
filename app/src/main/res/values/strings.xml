@@ -26,7 +26,7 @@
     <string name="upload_name_error_message">Antes de guardar tienes que subir la factura.</string>
 
     <string name="invoice_state_delivered">Factura entregada:</string>
-    <string name="invoice_state_processed">Factura aprovada:</string>
+    <string name="invoice_state_processed">Factura aprobada:</string>
     <string name="invoice_state_failed">Factura no valida:</string>
     <string name="invoice_state_accounted">Factura contabilizada:</string>
 
@@ -63,6 +63,8 @@
     <string name="profile_ccc_hint_text">ccc</string>
     <string name="profile_bank_account_hint_text">Cuenta bancaria</string>
 
+    <string name="password_hint_text">Contraseña</string>
+
     <string name="logout_text">Logout</string>
     <string name="profile_save_button_text">Guardar</string>
 
@@ -81,4 +83,10 @@
     <string name="password_update_invalid_password_text">La contraseña actual no es valida. Por favor revisela e intentelo otra vez.</string>
     <string name="password_update_weak_password_text">La contraseña debe de tener al menos 6 caracteres.</string>
     <string name="password_update_not_matching_text">La confimación de contraseña no coincide con la nueva contraseña.</string>
+
+    <string name="login_invalid_email_text">El email no es válido</string>
+    <string name="login_invalid_password_text">La contraseña no es válida</string>
+
+    <string name="generic_error_text">Algo ha ido mal, por favor inténtelo de nuevo mas tarde</string>
+    <string name="login_user_doesnt_exist_text">No existe ninguna cuenta con ese email</string>
 </resources>

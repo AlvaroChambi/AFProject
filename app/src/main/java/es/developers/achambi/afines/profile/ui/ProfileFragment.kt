@@ -110,19 +110,19 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         showEditState()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater?.inflate(R.menu.profile_navigation_menu, menu)
+        inflater.inflate(R.menu.profile_navigation_menu, menu)
         val compatActivity = activity as AppCompatActivity
         compatActivity.supportActionBar?.elevation = 0.0f
-        editActionButton = menu?.findItem(R.id.action_edit_profile)
-        cancelEditActionButton = menu?.findItem(R.id.action_cancel_edit_profile)
+        editActionButton = menu.findItem(R.id.action_edit_profile)
+        cancelEditActionButton = menu.findItem(R.id.action_cancel_edit_profile)
         /*Restore pass is performed before this step, so we have to apply the restored state here*/
         showEditState()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             R.id.action_edit_profile -> {
                 editEnabled = true
                 showEditState()

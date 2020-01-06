@@ -70,8 +70,15 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             return invoices
         }
         val listResult = firebaseRepository.userInvoices()
-        listResult.forEach { item ->
-            invoices.add(buildInvoice(item))
+        listResult.forEach { firebaseInvoice ->
+            invoices.add(
+                Invoice(firebaseInvoice.id,
+                firebaseInvoice.name,
+                firebaseInvoice.fileReference?: "",
+                resolveTrimester(firebaseInvoice.trimester),
+                firebaseInvoice.state?.let { InvoiceState.valueOf(it) },
+                resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate),
+                firebaseInvoice.dbPath))
         }
         return invoices
     }
@@ -98,18 +105,6 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             fileReference = invoiceUpload.uriMetadata.displayName,
             state = InvoiceState.SENT.toString(),
             deliveredDate = Date().time
-        )
-    }
-
-    private fun buildInvoice(firebaseInvoice: FirebaseInvoice): Invoice {
-        return Invoice(
-            firebaseInvoice.id,
-            firebaseInvoice.name,
-            firebaseInvoice.fileReference?: "",
-            resolveTrimester(firebaseInvoice.trimester),
-            firebaseInvoice.state?.let { InvoiceState.valueOf(it) },
-            resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate),
-            firebaseInvoice.dbPath
         )
     }
 

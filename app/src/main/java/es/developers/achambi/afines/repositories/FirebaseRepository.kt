@@ -2,8 +2,7 @@ package es.developers.achambi.afines.repositories
 
 import android.net.Uri
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
@@ -14,6 +13,7 @@ import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.Error
+import java.lang.IllegalArgumentException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -256,4 +256,30 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             }catch (e: TimeoutException) {}
         }
     }
+
+    @Throws(Error::class)
+    fun login(email: String, password: String) {
+        try {
+            val credential = EmailAuthProvider.getCredential(email, password)
+            Tasks.await(firebaseAuth.signInWithCredential(credential))
+        }catch (e: ExecutionException) {
+            when(val cause = e.cause) {
+                is FirebaseAuthInvalidUserException -> throw Error(e.message,
+                    RepositoryError.INVALID_USER.toString())
+                is FirebaseAuthInvalidCredentialsException -> throw Error(e.message, cause.errorCode)
+                else -> throw Error(e.message, RepositoryError.GENERIC_ERROR.toString())
+            }
+        }catch (e: InterruptedException) {
+            throw Error(e.message, RepositoryError.GENERIC_ERROR.toString())
+        }
+        catch (e: TimeoutException) { }
+
+    }
+}
+
+enum class RepositoryError {
+    INVALID_USER,
+    ERROR_INVALID_EMAIL,
+    ERROR_WRONG_PASSWORD,
+    GENERIC_ERROR
 }
