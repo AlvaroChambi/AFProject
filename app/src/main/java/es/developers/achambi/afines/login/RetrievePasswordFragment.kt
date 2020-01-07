@@ -28,6 +28,7 @@ class RetrievePasswordFragment: BaseDialogFragment(), RetrievePasswordScreen {
 
     override fun onViewSetup(view: View?, savedInstanceState: Bundle?) {
         retrieve_pass_send_button.setOnClickListener {
+            retrieve_pass_email_edit_frame.error = null
             presenter.retrievePassword( retrieve_pass_email_edit_frame.editText?.text.toString())
         }
         retrieve_pass_cancel_button.setOnClickListener { dismiss() }
