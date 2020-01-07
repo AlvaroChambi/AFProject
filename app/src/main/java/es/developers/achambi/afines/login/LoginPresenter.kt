@@ -13,6 +13,11 @@ class LoginPresenter(screen: LoginScreenInterface, lifecycle: Lifecycle,
                      executor: MainExecutor,
                      private val useCase: LoginUseCase)
     : Presenter<LoginScreenInterface>(screen, lifecycle, executor) {
+    fun onViewSetup() {
+        if(useCase.isSessionAlive()) {
+            screen.showNextScreen()
+        }
+    }
 
     fun login(email: String?, password: String?) {
         screen.showProgress()

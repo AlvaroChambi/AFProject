@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AFProject</string>
     <string name="overview_activity">Overview</string>
-    <string name="login">Login</string>
+    <string name="login">Inciar sesión</string>
     <string name="invoice_menu_text">Facturas</string>
     <string name="profile_menu_text">Perfil</string>
     <string name="overview_menu_text">Inicio</string>
@@ -89,4 +89,9 @@
 
     <string name="generic_error_text">Algo ha ido mal, por favor inténtelo de nuevo mas tarde</string>
     <string name="login_user_doesnt_exist_text">No existe ninguna cuenta con ese email</string>
+    <string name="retrieve_pass_confirmation_text">Se han enviado instrucciones para cambiar tu contraseña a su email.</string>
+    <string name="retrieve_pass_header_text">Enviar email para cambiar contraseña</string>
+    <string name="retrieve_pass_message_text">Introduce el email que usaste para registrarte.</string>
+    <string name="retrieve_pass_send_text">Enviar</string>
+    <string name="forgotten_pass_text">¿Has olvidado tu contraseña?</string>
 </resources>
