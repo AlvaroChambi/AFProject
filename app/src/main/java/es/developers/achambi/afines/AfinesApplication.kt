@@ -25,6 +25,7 @@ class AfinesApplication : Application() {
         lateinit var notificationsPresenterFactory: NotificationsPresenterFactory
         lateinit var updatePasswordPresenterFactory: UpdatePasswordPresenterFactory
         lateinit var loginPresenterFactory: LoginPresenterFactory
+        lateinit var retrievePasswordPresenterFactory: RetrievePasswordPresenterFactory
     }
     override fun onCreate() {
         super.onCreate()
@@ -52,5 +53,6 @@ class AfinesApplication : Application() {
 
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)
+        retrievePasswordPresenterFactory = RetrievePasswordPresenterFactory(executor, loginUseCase)
     }
 }

@@ -273,7 +273,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             throw Error(e.message, RepositoryError.GENERIC_ERROR.toString())
         }
         catch (e: TimeoutException) { }
+    }
 
+    @Throws(Error::class)
+    fun retrievePassword(email: String) {
+        try {
+            Tasks.await(firebaseAuth.sendPasswordResetEmail(email))
+        }catch(e: ExecutionException) {
+            when(e.cause) {
+                is FirebaseAuthInvalidUserException -> throw Error(e.message,
+                    RepositoryError.INVALID_USER.toString())
+                else -> throw Error(e.message, RepositoryError.GENERIC_ERROR.toString())
+            }
+        }catch (e: InterruptedException) {
+            throw Error()
+        }catch (e: TimeoutException) {}
+    }
+
+    fun getCurrentUser(): FirebaseUser? {
+        return firebaseAuth.currentUser
     }
 }
 

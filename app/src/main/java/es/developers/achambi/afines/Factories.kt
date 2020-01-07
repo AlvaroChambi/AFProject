@@ -12,6 +12,8 @@ import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.login.LoginPresenter
 import es.developers.achambi.afines.login.LoginScreenInterface
+import es.developers.achambi.afines.login.RetrievePasswordPresenter
+import es.developers.achambi.afines.login.RetrievePasswordScreen
 import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.profile.presenter.ProfilePresenter
 import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
@@ -73,5 +75,11 @@ class UpdatePasswordPresenterFactory(private val executor: MainExecutor, private
 class LoginPresenterFactory(private val executor: MainExecutor, private val useCase: LoginUseCase) {
     fun build(screen: LoginScreenInterface, lifecycle: Lifecycle): LoginPresenter {
         return LoginPresenter(screen, lifecycle, executor, useCase)
+    }
+}
+
+class RetrievePasswordPresenterFactory(private val executor: MainExecutor, private val useCase: LoginUseCase) {
+    fun build(screen: RetrievePasswordScreen, lifecycle: Lifecycle): RetrievePasswordPresenter {
+        return RetrievePasswordPresenter(screen, lifecycle, executor, useCase)
     }
 }
