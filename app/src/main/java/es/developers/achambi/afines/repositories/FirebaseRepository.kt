@@ -13,7 +13,6 @@ import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.Error
-import java.lang.IllegalArgumentException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -44,7 +43,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         val storageReference = firestorage.reference
         val user = firebaseAuth.currentUser
         val fileReference = storageReference.child(INVOICES_PATH + "${user?.uid + "/"}/${firebaseInvoice.name}")
-        val firebaseReference = firestore.collection(user?.uid + "/")
+        val firebaseReference = firestore.collection("user/"+user?.uid + "/invoices/")
         val invoiceReference = firebaseReference.document()
         firebaseInvoice.dbPath = invoiceReference.id
 
@@ -72,7 +71,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
     fun userInvoices(): List<FirebaseInvoice> {
         val user = firebaseAuth.currentUser
-        val listRef = firestore.collection(user?.uid + "/")
+        val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
         val result = Tasks.await(listRef.get())
         if(result.isEmpty) {
             return ArrayList()
@@ -84,7 +83,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun deleteInvoice(invoice: Invoice) {
         val user = firebaseAuth.currentUser
         try {
-            val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
+            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
             Tasks.await(databaseRef.delete(), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw Error()
@@ -117,7 +116,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: TimeoutException) {}
 
         try {
-            val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
+            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(FILE_ATTRIBUTE_KEY, fileReference.path), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw Error()
@@ -163,7 +162,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun updateInvoiceMetadata(invoice: Invoice, name: String, trimester: String ) {
         try {
             val user = firebaseAuth.currentUser
-            val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
+            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(
                 NAME_ATTRIBUTE_KEY, name,
                 TRIMESTER_ATTRIBUTE_KEY, trimester),
@@ -178,7 +177,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun updateInvoiceState(invoice: Invoice, state: String, timestamp: Long) {
         try {
             val user = firebaseAuth.currentUser
-            val databaseRef = firestore.collection(user?.uid + "/").document(invoice.dbReference)
+            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(
                 PROCESSED_DATE_KEY, timestamp,
                 INVOICE_STATE_KEY, state),
