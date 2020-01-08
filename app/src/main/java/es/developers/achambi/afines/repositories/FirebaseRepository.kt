@@ -35,6 +35,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val FILE_ATTRIBUTE_KEY = "fileReference"
         const val PROCESSED_DATE_KEY = "processedDate"
         const val INVOICE_STATE_KEY = "state"
+
+        const val DEVICE_TOKEN_KEY = "token"
         private const val TIMEOUT = 3L
     }
 
@@ -156,6 +158,46 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: InterruptedException) {
             throw Error()
         }catch (e: TimeoutException) {}
+    }
+
+    @Throws
+    fun updateProfileToken(deviceToken: String) {
+        updateProfileToken(deviceToken, firebaseAuth.currentUser?.uid)
+
+    }
+
+    @Throws
+    fun updateProfileToken(deviceToken: String, uid: String?) {
+        val databaseRef = uid?.let { firestore.collection(PROFILES_PATH).document(it) }
+        try {
+            databaseRef?.let {
+                Tasks.await( databaseRef.update(
+                    DEVICE_TOKEN_KEY, deviceToken
+                ), TIMEOUT, TimeUnit.SECONDS )
+            }
+        }catch (e: ExecutionException) {
+            throw Error()
+        }catch (e: InterruptedException) {
+            throw Error()
+        }catch (e: TimeoutException) {}
+    }
+
+    @Throws
+    fun queryUserProfileByToken(deviceToken: String): List<FirebaseProfile> {
+        val query = firestore.collection(PROFILES_PATH).whereEqualTo(DEVICE_TOKEN_KEY, deviceToken)
+        val arrayList = ArrayList<FirebaseProfile>()
+        try {
+            val queryResult = Tasks.await(query.get(), TIMEOUT, TimeUnit.SECONDS)
+            if(!queryResult.isEmpty) {
+                return queryResult.toObjects(FirebaseProfile::class.java)
+            }
+
+        }catch (e: ExecutionException) {
+            throw Error()
+        }catch (e: InterruptedException) {
+            throw Error()
+        }catch (e: TimeoutException) {}
+        return arrayList
     }
 
     @Throws(Error::class)

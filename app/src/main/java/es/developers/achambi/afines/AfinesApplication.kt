@@ -1,6 +1,8 @@
 package es.developers.achambi.afines
 
 import android.app.Application
+import android.content.Context
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -26,6 +28,9 @@ class AfinesApplication : Application() {
         lateinit var updatePasswordPresenterFactory: UpdatePasswordPresenterFactory
         lateinit var loginPresenterFactory: LoginPresenterFactory
         lateinit var retrievePasswordPresenterFactory: RetrievePasswordPresenterFactory
+
+        lateinit var messagingServicePresenterFactory: MessagingServicePresenterFactory
+        const val DEFAULT_PREFERENCE = "DEFAULT_PREFERENCE"
     }
     override fun onCreate() {
         super.onCreate()
@@ -37,9 +42,10 @@ class AfinesApplication : Application() {
         val uploadPresentationBuilder = InvoiceUploadPresentationBuilder()
         val uriUtils = URIUtils()
         val profilePresentationBuilder = ProfilePresentationBuilder()
-        val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase)
+        val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
+        val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
         val notificationsUseCase = NotificationsUseCase(firebaseRepository)
-        val loginUseCase = LoginUseCase(firebaseRepository)
+        val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
 
         invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase, presentationBuilder)
         invoiceDetailsPresenterFactory = InvoiceDetailsPresenterFactory(executor, invoicesUseCase,
@@ -54,5 +60,7 @@ class AfinesApplication : Application() {
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)
         retrievePasswordPresenterFactory = RetrievePasswordPresenterFactory(executor, loginUseCase)
+        messagingServicePresenterFactory = MessagingServicePresenterFactory(executor, profileUseCase,
+            LocalBroadcastManager.getInstance(this))
     }
 }

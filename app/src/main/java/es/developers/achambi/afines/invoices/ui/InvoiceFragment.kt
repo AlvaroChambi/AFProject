@@ -1,7 +1,10 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -17,6 +20,7 @@ import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
+import es.developers.achambi.afines.services.Notifications
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var progressBar : ProgressBar
@@ -44,6 +48,13 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
+        val filter = IntentFilter(Notifications.INVOICE_REJECTED.toString())
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                presenter.refreshInvoices()
+            }
+        }
+        activity?.registerReceiver(receiver, filter)
     }
 
     override fun onViewSetup(view: View) {
