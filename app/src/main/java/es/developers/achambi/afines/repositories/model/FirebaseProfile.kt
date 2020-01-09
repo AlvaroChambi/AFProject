@@ -7,4 +7,5 @@ data class FirebaseProfile(var userId: String = "",
                            var dni: String = "",
                            var naf: String = "",
                            var ccc: String = "",
-                           var iban: String = "")
+                           var iban: String = "",
+                           var token: String = "")

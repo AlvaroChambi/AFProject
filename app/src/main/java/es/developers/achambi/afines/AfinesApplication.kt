@@ -46,8 +46,10 @@ class AfinesApplication : Application() {
         val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
         val notificationsUseCase = NotificationsUseCase(firebaseRepository)
         val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
+        val broadcastManager = LocalBroadcastManager.getInstance(this)
 
-        invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase, presentationBuilder)
+        invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase,
+            presentationBuilder, broadcastManager)
         invoiceDetailsPresenterFactory = InvoiceDetailsPresenterFactory(executor, invoicesUseCase,
             InvoiceDetailsPresentationBuilder(this, presentationBuilder)
         )
@@ -60,7 +62,7 @@ class AfinesApplication : Application() {
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)
         retrievePasswordPresenterFactory = RetrievePasswordPresenterFactory(executor, loginUseCase)
-        messagingServicePresenterFactory = MessagingServicePresenterFactory(executor, profileUseCase,
-            LocalBroadcastManager.getInstance(this))
+        messagingServicePresenterFactory = MessagingServicePresenterFactory(executor,
+            profileUseCase, broadcastManager)
     }
 }

@@ -24,9 +24,11 @@ import es.developers.achambi.afines.services.NotificationServicePresenter
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
-                              private val presentationBuilder: InvoicePresentationBuilder) {
+                              private val presentationBuilder: InvoicePresentationBuilder,
+                              private val localBroadcastManager: LocalBroadcastManager) {
     fun build( invoicesScreenInterface: InvoicesScreenInterface, lifecycle: Lifecycle ): InvoicePresenter {
-        return InvoicePresenter( invoicesScreenInterface, lifecycle, executor, invoiceUseCase, presentationBuilder )
+        return InvoicePresenter( invoicesScreenInterface, lifecycle, executor, invoiceUseCase,
+            presentationBuilder, localBroadcastManager )
     }
 }
 

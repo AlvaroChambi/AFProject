@@ -26,6 +26,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var progressBar : ProgressBar
     private lateinit var adapter: Adapter
     private lateinit var presenter: InvoicePresenter
+    private lateinit var broadcastReceiver: BroadcastReceiver
 
     companion object {
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
@@ -48,13 +49,21 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
-        val filter = IntentFilter(Notifications.INVOICE_REJECTED.toString())
-        val receiver = object : BroadcastReceiver() {
+    }
+
+    override fun onStart() {
+        super.onStart()
+        broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 presenter.refreshInvoices()
             }
         }
-        activity?.registerReceiver(receiver, filter)
+        presenter.registerBroadcast(broadcastReceiver)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.unregisterBroadcast(broadcastReceiver)
     }
 
     override fun onViewSetup(view: View) {

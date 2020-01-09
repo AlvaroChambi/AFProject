@@ -1,7 +1,10 @@
 package es.developers.achambi.afines.invoices.presenter
 
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 import android.net.Uri
 import androidx.lifecycle.Lifecycle
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
@@ -12,13 +15,14 @@ import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.services.Notifications
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                        lifecycle : Lifecycle,
                        executor: ExecutorInterface,
                        private val invoiceUseCase: InvoiceUseCase,
-                       private val invoicePresentationBuilder: InvoicePresentationBuilder
-)
+                       private val invoicePresentationBuilder: InvoicePresentationBuilder,
+                       private val broadcastManager: LocalBroadcastManager)
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
 
     fun uploadFile(uri: Uri, invoiceUpload: InvoiceUpload) {
@@ -154,5 +158,14 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
         }
         request(request , responseHandler)
+    }
+
+    fun registerBroadcast(broadcastReceiver: BroadcastReceiver) {
+        broadcastManager.registerReceiver(broadcastReceiver,
+            IntentFilter(Notifications.INVOICE_REJECTED.toString()))
+    }
+
+    fun unregisterBroadcast(broadcastReceiver: BroadcastReceiver) {
+        broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 }
