@@ -51,6 +51,7 @@ class LoginFragment: BaseFragment(), LoginScreenInterface {
 
     override fun showNextScreen() {
         startActivity(activity?.let { OverviewActivity.getStartIntent(it) })
+        activity?.finish()
     }
 
     override fun showInvalidEmail() {

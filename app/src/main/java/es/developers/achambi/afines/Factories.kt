@@ -64,7 +64,7 @@ class ProfilePresenterFactory(private val executor: MainExecutor,
 }
 
 class NotificationsPresenterFactory(private val executor: MainExecutor,
-                                    private val useCase: NotificationsUseCase){
+                                    private val useCase: ProfileUseCase){
     fun build(screen: NotificationsScreen, lifecycle: Lifecycle): NotificationsPresenter {
         return NotificationsPresenter(screen, lifecycle, executor, useCase)
     }

@@ -8,4 +8,5 @@ data class FirebaseProfile(var userId: String = "",
                            var naf: String = "",
                            var ccc: String = "",
                            var iban: String = "",
-                           var token: String = "")
+                           var token: String = "",
+                           var passwordChanged: Boolean = false)

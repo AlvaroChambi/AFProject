@@ -44,7 +44,6 @@ class AfinesApplication : Application() {
         val profilePresentationBuilder = ProfilePresentationBuilder()
         val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
         val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
-        val notificationsUseCase = NotificationsUseCase(firebaseRepository)
         val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
         val broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -57,7 +56,7 @@ class AfinesApplication : Application() {
             uploadPresentationBuilder, uriUtils)
 
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder)
-        notificationsPresenterFactory = NotificationsPresenterFactory(executor, notificationsUseCase)
+        notificationsPresenterFactory = NotificationsPresenterFactory(executor, profileUseCase)
 
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)
