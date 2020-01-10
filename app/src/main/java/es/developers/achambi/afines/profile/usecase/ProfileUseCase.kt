@@ -1,13 +1,18 @@
 package es.developers.achambi.afines.profile.usecase
 
+import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 
 class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
-                     private val invoicesUseCase: InvoiceUseCase
-) {
+                     private val invoicesUseCase: InvoiceUseCase,
+                     private val preferences: SharedPreferences) {
+    companion object {
+        const val DEVICE_TOKEN_KEY = "DEVICE_TOKEN"
+    }
     private var firebaseProfile: FirebaseProfile? = null
 
     fun getUserProfile(refresh: Boolean): FirebaseProfile? {
@@ -25,8 +30,22 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         firebaseRepository.updateUserPassword(currentPassword, newPassword)
     }
 
+    @SuppressLint("ApplySharedPref")
+    fun saveDeviceToken(deviceToken: String){
+        preferences.edit().putString(DEVICE_TOKEN_KEY, deviceToken).commit()
+    }
+
+    @SuppressLint("ApplySharedPref")
+    fun updateProfileToken(userToken: String) {
+        val preferenceToken = preferences.getString(DEVICE_TOKEN_KEY, "")
+        if(!preferenceToken.isNullOrEmpty() && userToken != preferenceToken) {
+            firebaseRepository.updateProfileToken(preferenceToken)
+        }
+    }
+
     fun logout() {
         firebaseProfile = null
+        firebaseRepository.updateProfileToken("")
         invoicesUseCase.clearCache()
         firebaseRepository.logout()
     }

@@ -35,6 +35,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val FILE_ATTRIBUTE_KEY = "fileReference"
         const val PROCESSED_DATE_KEY = "processedDate"
         const val INVOICE_STATE_KEY = "state"
+
+        const val DEVICE_TOKEN_KEY = "token"
         private const val TIMEOUT = 3L
     }
 
@@ -149,6 +151,28 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                     EMAIL_ATTRIBUTE_KEY, profileUpload.email,
                     IBAN_ATTRIBUTE_KEY, profileUpload.account,
                     NAF_ATTRIBUTE_KEY, profileUpload.naf
+                ), TIMEOUT, TimeUnit.SECONDS )
+            }
+        }catch (e: ExecutionException) {
+            throw Error()
+        }catch (e: InterruptedException) {
+            throw Error()
+        }catch (e: TimeoutException) {}
+    }
+
+    @Throws
+    fun updateProfileToken(deviceToken: String) {
+        updateProfileToken(deviceToken, firebaseAuth.currentUser?.uid)
+
+    }
+
+    @Throws
+    fun updateProfileToken(deviceToken: String, uid: String?) {
+        val databaseRef = uid?.let { firestore.collection(PROFILES_PATH).document(it) }
+        try {
+            databaseRef?.let {
+                Tasks.await( databaseRef.update(
+                    DEVICE_TOKEN_KEY, deviceToken
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
         }catch (e: ExecutionException) {

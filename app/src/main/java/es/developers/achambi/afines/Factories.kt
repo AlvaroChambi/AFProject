@@ -1,6 +1,7 @@
 package es.developers.achambi.afines
 
 import androidx.lifecycle.Lifecycle
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.home.NotificationsPresenter
@@ -19,12 +20,15 @@ import es.developers.achambi.afines.profile.presenter.ProfilePresenter
 import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
 import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
+import es.developers.achambi.afines.services.NotificationServicePresenter
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
-                              private val presentationBuilder: InvoicePresentationBuilder) {
+                              private val presentationBuilder: InvoicePresentationBuilder,
+                              private val localBroadcastManager: LocalBroadcastManager) {
     fun build( invoicesScreenInterface: InvoicesScreenInterface, lifecycle: Lifecycle ): InvoicePresenter {
-        return InvoicePresenter( invoicesScreenInterface, lifecycle, executor, invoiceUseCase, presentationBuilder )
+        return InvoicePresenter( invoicesScreenInterface, lifecycle, executor, invoiceUseCase,
+            presentationBuilder, localBroadcastManager )
     }
 }
 
@@ -81,5 +85,13 @@ class LoginPresenterFactory(private val executor: MainExecutor, private val useC
 class RetrievePasswordPresenterFactory(private val executor: MainExecutor, private val useCase: LoginUseCase) {
     fun build(screen: RetrievePasswordScreen, lifecycle: Lifecycle): RetrievePasswordPresenter {
         return RetrievePasswordPresenter(screen, lifecycle, executor, useCase)
+    }
+}
+
+class MessagingServicePresenterFactory(private val executor: MainExecutor,
+                                       private val useCase: ProfileUseCase,
+                                       private val broadcastManager: LocalBroadcastManager) {
+    fun build(): NotificationServicePresenter {
+        return NotificationServicePresenter(executor, useCase, broadcastManager)
     }
 }

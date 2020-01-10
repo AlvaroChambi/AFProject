@@ -1,7 +1,10 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -17,11 +20,13 @@ import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
+import es.developers.achambi.afines.services.Notifications
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var progressBar : ProgressBar
     private lateinit var adapter: Adapter
     private lateinit var presenter: InvoicePresenter
+    private lateinit var broadcastReceiver: BroadcastReceiver
 
     companion object {
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
@@ -44,6 +49,21 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                presenter.refreshInvoices()
+            }
+        }
+        presenter.registerBroadcast(broadcastReceiver)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.unregisterBroadcast(broadcastReceiver)
     }
 
     override fun onViewSetup(view: View) {
