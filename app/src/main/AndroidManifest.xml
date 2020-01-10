@@ -13,7 +13,7 @@
             android:name=".AfinesApplication"
             tools:ignore="GoogleAppIndexingWarning"
             android:fullBackupContent="true"
-            android:allowBackup="true">
+            android:allowBackup="false">
             <activity android:name=".LoginActivity">
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />

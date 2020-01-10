@@ -7,7 +7,7 @@ class LoginUseCase(private val firebaseRepository: FirebaseRepository,
                    private val profileUseCase: ProfileUseCase) {
     fun login(email: String, password: String) {
         firebaseRepository.login(email, password)
-        profileUseCase.updateProfileToken()
+        profileUseCase.updateProfileToken(profileUseCase.getUserProfile(false)!!.token)
     }
 
     fun retrievePassword(email: String) {

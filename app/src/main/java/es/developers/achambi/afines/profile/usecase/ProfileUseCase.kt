@@ -36,21 +36,16 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     }
 
     @SuppressLint("ApplySharedPref")
-    fun updateProfileToken() {
+    fun updateProfileToken(userToken: String) {
         val preferenceToken = preferences.getString(DEVICE_TOKEN_KEY, "")
-        if(!preferenceToken.isNullOrEmpty()) {
-            val profiles = firebaseRepository.queryUserProfileByToken(preferenceToken)
-            if(profiles.isNotEmpty()) {
-                val profile = profiles[0]
-                if(profile.token != preferenceToken) {
-                    firebaseRepository.updateProfileToken(preferenceToken)
-                }
-            }
+        if(!preferenceToken.isNullOrEmpty() && userToken != preferenceToken) {
+            firebaseRepository.updateProfileToken(preferenceToken)
         }
     }
 
     fun logout() {
         firebaseProfile = null
+        firebaseRepository.updateProfileToken("")
         invoicesUseCase.clearCache()
         firebaseRepository.logout()
     }
