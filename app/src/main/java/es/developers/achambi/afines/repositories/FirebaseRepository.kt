@@ -182,24 +182,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: TimeoutException) {}
     }
 
-    @Throws
-    fun queryUserProfileByToken(deviceToken: String): List<FirebaseProfile> {
-        val query = firestore.collection(PROFILES_PATH).whereEqualTo(DEVICE_TOKEN_KEY, deviceToken)
-        val arrayList = ArrayList<FirebaseProfile>()
-        try {
-            val queryResult = Tasks.await(query.get(), TIMEOUT, TimeUnit.SECONDS)
-            if(!queryResult.isEmpty) {
-                return queryResult.toObjects(FirebaseProfile::class.java)
-            }
-
-        }catch (e: ExecutionException) {
-            throw Error()
-        }catch (e: InterruptedException) {
-            throw Error()
-        }catch (e: TimeoutException) {}
-        return arrayList
-    }
-
     @Throws(Error::class)
     fun updateInvoiceMetadata(invoice: Invoice, name: String, trimester: String ) {
         try {
