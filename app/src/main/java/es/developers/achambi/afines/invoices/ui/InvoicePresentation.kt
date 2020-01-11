@@ -18,7 +18,8 @@ data class InvoicePresentation(
     val stateMessage: String,
     val stateColor: Int,
     val stateDetails: String,
-    val showFailedDetails: Boolean)
+    val showFailedDetails: Boolean,
+    val sort: Long)
     : SearchListData, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
@@ -27,11 +28,16 @@ data class InvoicePresentation(
         parcel.readString(),
         parcel.readInt(),
         parcel.readString(),
-        parcel.readByte() != 0.toByte()
+        parcel.readByte() != 0.toByte(),
+        parcel.readLong()
     )
 
     override fun getId(): Long {
         return keyId
+    }
+
+    override fun sortValue(): Long {
+        return sort
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -42,6 +48,7 @@ data class InvoicePresentation(
         parcel.writeInt(stateColor)
         parcel.writeString(stateDetails)
         parcel.writeByte(if (showFailedDetails) 1 else 0)
+        parcel.writeLong(sort)
     }
 
     override fun describeContents(): Int {
@@ -98,7 +105,21 @@ class InvoicePresentationBuilder(private val context: Context) {
             buildStateMessage(context, invoice.state),
             buildStateMessageColor(context, invoice.state),
             buildStateDetails(context, invoice.state, invoice.date),
-            invoice.state == InvoiceState.REJECTED)
+            invoice.state == InvoiceState.REJECTED,
+            buildSortValue(invoice.state))
+    }
+
+    private fun buildSortValue(state: InvoiceState?): Long {
+        return if(state != null) {
+            when(state) {
+                InvoiceState.SENT -> 1
+                InvoiceState.ACCEPTED -> 2
+                InvoiceState.REJECTED -> 0
+                InvoiceState.ACCOUNTED -> 2
+            }
+        } else {
+            0
+        }
     }
 
     fun build(invoices: ArrayList<Invoice>): ArrayList<InvoicePresentation> {
