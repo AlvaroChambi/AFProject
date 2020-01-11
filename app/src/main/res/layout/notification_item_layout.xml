@@ -31,7 +31,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:paddingTop="16dp"
-                android:text="Todavia no has actualizado tu contraseña"
+                android:text="@string/overview_password_change_title"
                 android:textColor="@color/text_secondary"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -39,30 +39,40 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/password_notification_message_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="Puedes actulizar tu contraseña en tu perfil, en el menu de opciones [:]"
+                android:layout_marginEnd="16dp"
+                android:text="@string/overview_password_change_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/notification_item_message" />
+
+            <TextView
+                android:id="@+id/password_notification_instructions_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/baseline_more_vert_24"
+                android:gravity="center"
+                android:text="@string/overview_password_change_instructions"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/password_notification_message_text"
+                app:layout_constraintTop_toBottomOf="@+id/password_notification_message_text"
+                android:textStyle="bold"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/card_view_action_button"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Perfil"
-                app:layout_constraintStart_toStartOf="@+id/textView11"
-                app:layout_constraintTop_toBottomOf="@+id/textView11" />
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/overview_action_button_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/password_notification_instructions_text" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>>
-
-
-
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

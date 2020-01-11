@@ -28,7 +28,7 @@ class OverviewActivity : BaseNavigationActivity(){
     override fun onStart() {
         super.onStart()
         val filter = IntentFilter()
-        filter.addAction("NAVIGATE")
+        filter.addAction(Navigation.PROFILE_DEEP_LINK.toString())
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
     }
 
@@ -60,4 +60,8 @@ class OverviewActivity : BaseNavigationActivity(){
         }
     }
 
+}
+
+enum class Navigation {
+    PROFILE_DEEP_LINK
 }

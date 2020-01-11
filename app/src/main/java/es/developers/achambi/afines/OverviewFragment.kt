@@ -1,16 +1,14 @@
 package es.developers.achambi.afines
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developer.achambi.coreframework.ui.Screen
-import es.developers.achambi.afines.home.NotificationsPresenter
+import es.developers.achambi.afines.home.OverviewPresenter
 import kotlinx.android.synthetic.main.notification_item_layout.*
 
 class OverviewFragment : BaseFragment(), NotificationsScreen {
-    private lateinit var presenter: NotificationsPresenter
+    private lateinit var presenter: OverviewPresenter
 
     companion object{
         fun newInstance() : OverviewFragment{
@@ -23,15 +21,12 @@ class OverviewFragment : BaseFragment(), NotificationsScreen {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = AfinesApplication.notificationsPresenterFactory.build(this, lifecycle)
+        presenter = AfinesApplication.overviewPresenterFactory.build(this, lifecycle)
     }
 
     override fun onViewSetup(view: View) {
         presenter.onViewSetup()
-        card_view_action_button.setOnClickListener {
-            activity?.let { it1 ->
-                LocalBroadcastManager.getInstance(it1).sendBroadcast(Intent("NAVIGATE")) }
-        }
+        card_view_action_button.setOnClickListener { presenter.navigateToProfile() }
     }
 
     override fun showUpdatePasswordNotification() {
