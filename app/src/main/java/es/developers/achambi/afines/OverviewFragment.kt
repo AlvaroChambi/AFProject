@@ -25,6 +25,7 @@ class OverviewFragment : BaseFragment(), NotificationsScreen {
     }
 
     override fun onViewSetup(view: View) {
+        activity?.setTitle(R.string.app_name)
         presenter.onViewSetup()
         card_view_action_button.setOnClickListener { presenter.navigateToProfile() }
     }

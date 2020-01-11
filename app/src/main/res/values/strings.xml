@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AFProject</string>
+    <string name="app_name">Afines</string>
     <string name="overview_activity">Overview</string>
     <string name="login">Inciar sesión</string>
     <string name="invoice_menu_text">Facturas</string>
