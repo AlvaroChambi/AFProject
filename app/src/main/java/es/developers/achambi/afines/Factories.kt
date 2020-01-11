@@ -4,8 +4,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
-import es.developers.achambi.afines.home.NotificationsPresenter
-import es.developers.achambi.afines.home.NotificationsUseCase
+import es.developers.achambi.afines.home.OverviewPresenter
 import es.developers.achambi.afines.invoices.presenter.*
 import es.developers.achambi.afines.invoices.ui.*
 import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
@@ -63,10 +62,11 @@ class ProfilePresenterFactory(private val executor: MainExecutor,
     }
 }
 
-class NotificationsPresenterFactory(private val executor: MainExecutor,
-                                    private val useCase: NotificationsUseCase){
-    fun build(screen: NotificationsScreen, lifecycle: Lifecycle): NotificationsPresenter {
-        return NotificationsPresenter(screen, lifecycle, executor, useCase)
+class OverviewPresenterFactory(private val executor: MainExecutor,
+                               private val useCase: ProfileUseCase,
+                               private val broadcastManager: LocalBroadcastManager){
+    fun build(screen: NotificationsScreen, lifecycle: Lifecycle): OverviewPresenter {
+        return OverviewPresenter(screen, lifecycle, executor, useCase, broadcastManager)
     }
 }
 

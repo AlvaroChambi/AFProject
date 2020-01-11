@@ -28,6 +28,12 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
 
     fun updatePassword(currentPassword: String, newPassword: String) {
         firebaseRepository.updateUserPassword(currentPassword, newPassword)
+        firebaseProfile?.let {
+            if(!it.passwordChanged) {
+                firebaseRepository.checkProfilePasswordFlag()
+                it.passwordChanged = true
+            }
+        }
     }
 
     @SuppressLint("ApplySharedPref")

@@ -8,7 +8,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
-import es.developers.achambi.afines.home.NotificationsUseCase
 import es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentationBuilder
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
@@ -24,7 +23,7 @@ class AfinesApplication : Application() {
         lateinit var invoiceDetailsPresenterFactory: InvoiceDetailsPresenterFactory
         lateinit var invoiceUploadPresenterFactory: InvoiceUploadPresenterFactory
         lateinit var profilePresenterFactory: ProfilePresenterFactory
-        lateinit var notificationsPresenterFactory: NotificationsPresenterFactory
+        lateinit var overviewPresenterFactory: OverviewPresenterFactory
         lateinit var updatePasswordPresenterFactory: UpdatePasswordPresenterFactory
         lateinit var loginPresenterFactory: LoginPresenterFactory
         lateinit var retrievePasswordPresenterFactory: RetrievePasswordPresenterFactory
@@ -44,7 +43,6 @@ class AfinesApplication : Application() {
         val profilePresentationBuilder = ProfilePresentationBuilder()
         val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
         val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
-        val notificationsUseCase = NotificationsUseCase(firebaseRepository)
         val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
         val broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -57,7 +55,8 @@ class AfinesApplication : Application() {
             uploadPresentationBuilder, uriUtils)
 
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder)
-        notificationsPresenterFactory = NotificationsPresenterFactory(executor, notificationsUseCase)
+        overviewPresenterFactory = OverviewPresenterFactory(executor, profileUseCase,
+            broadcastManager)
 
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)

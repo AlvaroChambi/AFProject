@@ -13,7 +13,7 @@
             android:name=".AfinesApplication"
             tools:ignore="GoogleAppIndexingWarning"
             android:fullBackupContent="true"
-            android:allowBackup="false">
+            android:allowBackup="false">  <!-- App does not handle auto sign in on fresh install -->
             <activity android:name=".LoginActivity">
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
