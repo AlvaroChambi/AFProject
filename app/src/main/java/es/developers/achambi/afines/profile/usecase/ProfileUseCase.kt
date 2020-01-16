@@ -49,6 +49,23 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         }
     }
 
+    fun increasePendingCount() {
+        getUserProfile(true)
+        val pendingCount = firebaseProfile!!.pending + 1
+        updateProfilePendingCount(pendingCount)
+    }
+
+    fun decreasePendingCount() {
+        getUserProfile(true)
+        val pendingCount = firebaseProfile!!.pending - 1
+        updateProfilePendingCount(pendingCount)
+    }
+
+    private fun updateProfilePendingCount(pendingCount: Int) {
+        firebaseRepository.updateProfilePendingCount(pendingCount)
+        firebaseProfile?.pending = pendingCount
+    }
+
     fun logout() {
         firebaseProfile = null
         firebaseRepository.updateProfileToken("")
