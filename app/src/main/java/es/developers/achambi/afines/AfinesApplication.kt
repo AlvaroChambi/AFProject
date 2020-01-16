@@ -29,6 +29,8 @@ class AfinesApplication : Application() {
         lateinit var retrievePasswordPresenterFactory: RetrievePasswordPresenterFactory
 
         lateinit var messagingServicePresenterFactory: MessagingServicePresenterFactory
+
+        lateinit var profileUseCase: ProfileUseCase
         const val DEFAULT_PREFERENCE = "DEFAULT_PREFERENCE"
     }
     override fun onCreate() {
@@ -42,7 +44,7 @@ class AfinesApplication : Application() {
         val uriUtils = URIUtils()
         val profilePresentationBuilder = ProfilePresentationBuilder()
         val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
-        val profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
+        profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
         val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
         val broadcastManager = LocalBroadcastManager.getInstance(this)
 

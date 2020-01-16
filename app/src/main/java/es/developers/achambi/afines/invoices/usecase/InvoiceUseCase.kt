@@ -1,6 +1,7 @@
 package es.developers.achambi.afines.invoices.usecase
 
 import android.net.Uri
+import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.invoices.model.DetailedInvoice
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.model.Invoice
@@ -39,6 +40,8 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             invoice?.let { firebaseRepository.updateInvoiceFile(invoice, invoiceUpload, uri) }
             invoice?.let{ firebaseRepository.updateInvoiceState(invoice,
                 InvoiceState.SENT.toString(), Date().time) }
+
+            AfinesApplication.profileUseCase.increasePendingCount()
         }
     }
 
@@ -95,6 +98,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
 
     fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload) {
         firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
+        AfinesApplication.profileUseCase.increasePendingCount()
     }
 
     private fun buildPostInvoice(invoiceUpload: InvoiceUpload): FirebaseInvoice {
