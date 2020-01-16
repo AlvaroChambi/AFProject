@@ -49,6 +49,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         val invoice = getInvoice(invoiceId)
         invoice?.let {
             firebaseRepository.deleteInvoice(it)
+            AfinesApplication.profileUseCase.decreasePendingCount()
         }
     }
 
