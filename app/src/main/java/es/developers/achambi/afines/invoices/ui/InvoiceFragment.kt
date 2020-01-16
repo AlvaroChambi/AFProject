@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -20,7 +19,6 @@ import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
-import es.developers.achambi.afines.services.Notifications
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var progressBar : ProgressBar
@@ -89,8 +87,6 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             activity?.supportFragmentManager?.let { dialog.show(it, null) }
         }
     }
-
-
 
     override fun onInvoicesLoadingError() {
         showError(Error(resources.getString(R.string.invoices_overview_error_message)))

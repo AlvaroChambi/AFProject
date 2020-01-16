@@ -46,6 +46,20 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
         request(request, responseHandler)
     }
 
+    fun downloadImage(id: Long) {
+        val handler = object : ResponseHandler<Uri?> {
+            override fun onSuccess(response: Uri?) {
+                response?.let {  }
+            }
+        }
+        val resp = object : Request<Uri?> {
+            override fun perform(): Uri? {
+                return useCase.getDownloadUrl(id)
+            }
+        }
+        request(resp, handler)
+    }
+
     fun onUserDownloadClicked(invoiceId: Long) {
         screen.showDownloadInProgress()
         val responseHandler = object : ResponseHandler<DetailedInvoice?> {

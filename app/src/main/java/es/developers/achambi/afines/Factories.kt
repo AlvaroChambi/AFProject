@@ -95,3 +95,11 @@ class MessagingServicePresenterFactory(private val executor: MainExecutor,
         return NotificationServicePresenter(executor, useCase, broadcastManager)
     }
 }
+
+class InvoiceFullScreenPresenterFactory(private val executor: MainExecutor,
+                                        private val useCase: InvoiceUseCase) {
+    fun build(screen: InvoiceFullScreenInterface, lifecycle: Lifecycle)
+            : InvoiceFullScreenPresenter {
+        return InvoiceFullScreenPresenter(screen, lifecycle, executor, useCase)
+    }
+}

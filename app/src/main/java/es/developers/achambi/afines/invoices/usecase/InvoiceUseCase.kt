@@ -58,6 +58,11 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return invoice?.fileReference?.let { firebaseRepository.getFilesBytes(it) }
     }
 
+    fun getDownloadUrl(invoiceId: Long): Uri? {
+        val invoice = getInvoice(invoiceId)
+        return invoice?.fileReference?.let{ firebaseRepository.getDownloadUrl(it) }
+    }
+
     fun getInvoice(invoiceId: Long): Invoice? {
         val result = invoices.find { it.id == invoiceId }
         if(result == null){

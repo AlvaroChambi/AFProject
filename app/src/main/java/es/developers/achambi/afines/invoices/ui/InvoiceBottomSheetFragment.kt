@@ -2,6 +2,7 @@ package es.developers.achambi.afines.invoices.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -65,7 +66,6 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
                 dismiss()
             }
         }
-
         binding = DataBindingUtil.findBinding(view)
     }
 
@@ -88,6 +88,7 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
 
     override fun showInvoice(invoicePresentation: InvoiceDetailsPresentation) {
         binding?.invoice = invoicePresentation
+        presenter.downloadImage(invoicePresentation.id)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
