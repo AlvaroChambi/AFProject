@@ -80,27 +80,33 @@
 
             <TextView
                 android:id="@+id/invoice_state_details_text"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:text="@{invoice.stateDetails}"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/invoice_state_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/invoice_state_text"
                 app:layout_constraintTop_toTopOf="@+id/invoice_state_text"
-                tools:text="Hace unos momentos" />
+                tools:text="Hace unos momentos." />
 
             <TextView
                 android:id="@+id/failed_details_text"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:textStyle="bold"
                 android:text="@string/invoice_state_failed_details"
+                android:textStyle="bold"
                 android:visibility="@{invoice.showFailedDetails ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/invoice_state_text"
-                app:layout_constraintTop_toBottomOf="@+id/invoice_state_text"
+                app:layout_constraintTop_toBottomOf="@+id/invoice_state_details_text"
                 tools:text="Por favor actualize la factura" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

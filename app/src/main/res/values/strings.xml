@@ -30,7 +30,7 @@
     <string name="invoice_state_failed">Factura no valida:</string>
     <string name="invoice_state_accounted">Factura contabilizada:</string>
 
-    <string name="invoice_state_failed_details">Por favor actualice la factura entregada</string>
+    <string name="invoice_state_failed_details">Por favor compruebe que la factura enviada no este en otro formato(ticker, albarán, etc…) y que no se vea borrosa.</string>
 
     <string name="invoice_details_edit_tag">Editar factura</string>
     <string name="invoice_details_download_tag">Descargar factura</string>
