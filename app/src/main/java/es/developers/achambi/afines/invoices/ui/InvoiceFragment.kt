@@ -82,9 +82,13 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
 
         adapter.setListener { item ->
-            val dialog = InvoiceBottomSheetFragment.newInstance(item.id)
+            /*val dialog = InvoiceBottomSheetFragment.newInstance(item.id)
             dialog.setTargetFragment(this, INVOICE_DETAILS_REQUEST_CODE)
-            activity?.supportFragmentManager?.let { dialog.show(it, null) }
+            activity?.supportFragmentManager?.let { dialog.show(it, null)
+            }*/
+            startActivityForResult(activity?.let {
+                InvoiceFullScreenActivity.getStartIntent(it, item.id, item.name) },
+                INVOICE_DETAILS_REQUEST_CODE)
         }
     }
 
@@ -178,7 +182,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             } else if(code == INVOICE_EDITED_CODE) {
                 val invoiceId: Long? = data.getLongExtra(INVOICE_ID_EXTRA_KEY, 0)
                 if (invoiceId != null) {
-                    activity?.let { startActivityForResult(EditInvoiceActivity.newInstance(it, invoiceId),
+                    activity?.let { startActivityForResult(EditInvoiceActivity.getStartIntent(it, invoiceId),
                         INVOICE_EDIT_REQUEST_CODE) }
                 }
             }else {

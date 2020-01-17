@@ -88,7 +88,6 @@ class InvoiceBottomSheetFragment : BottomSheetDialogFragment(), InvoiceDetailsSc
 
     override fun showInvoice(invoicePresentation: InvoiceDetailsPresentation) {
         binding?.invoice = invoicePresentation
-        presenter.downloadImage(invoicePresentation.id)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -9,7 +9,7 @@ import es.developers.achambi.afines.R
 
 class EditInvoiceActivity: BaseActivity() {
     companion object {
-        fun newInstance(context: Context, invoiceId: Long): Intent {
+        fun getStartIntent(context: Context, invoiceId: Long): Intent {
             val intent = Intent( context, EditInvoiceActivity::class.java )
             val args = UploadInvoiceFragment.getArguments(invoiceId)
             intent.putExtra(BASE_ARGUMENTS, args)
