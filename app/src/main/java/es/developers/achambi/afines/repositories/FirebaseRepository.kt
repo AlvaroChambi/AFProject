@@ -13,6 +13,7 @@ import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.Error
+import java.net.URI
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -288,6 +289,11 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun getFileMetadata(referencePath: String): StorageMetadata {
         val ref = firestorage.reference.child(referencePath)
         return Tasks.await(ref.metadata)
+    }
+
+    fun getDownloadUrl(referencePath: String): Uri {
+        val ref = firestorage.reference.child(referencePath)
+        return Tasks.await(ref.downloadUrl)
     }
 
     fun getFilesBytes(referencePath: String): ByteArray {

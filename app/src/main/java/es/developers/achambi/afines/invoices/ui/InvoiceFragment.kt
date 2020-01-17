@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -20,7 +19,6 @@ import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
-import es.developers.achambi.afines.services.Notifications
 
 class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var progressBar : ProgressBar
@@ -84,13 +82,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
 
         adapter.setListener { item ->
-            val dialog = InvoiceBottomSheetFragment.newInstance(item.id)
-            dialog.setTargetFragment(this, INVOICE_DETAILS_REQUEST_CODE)
-            activity?.supportFragmentManager?.let { dialog.show(it, null) }
+            startActivityForResult(activity?.let {
+                InvoiceFullScreenActivity.getStartIntent(it, item.id, item.name) },
+                INVOICE_DETAILS_REQUEST_CODE)
         }
     }
-
-
 
     override fun onInvoicesLoadingError() {
         showError(Error(resources.getString(R.string.invoices_overview_error_message)))
@@ -182,7 +178,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             } else if(code == INVOICE_EDITED_CODE) {
                 val invoiceId: Long? = data.getLongExtra(INVOICE_ID_EXTRA_KEY, 0)
                 if (invoiceId != null) {
-                    activity?.let { startActivityForResult(EditInvoiceActivity.newInstance(it, invoiceId),
+                    activity?.let { startActivityForResult(EditInvoiceActivity.getStartIntent(it, invoiceId),
                         INVOICE_EDIT_REQUEST_CODE) }
                 }
             }else {

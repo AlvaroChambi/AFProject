@@ -27,6 +27,7 @@ class AfinesApplication : Application() {
         lateinit var updatePasswordPresenterFactory: UpdatePasswordPresenterFactory
         lateinit var loginPresenterFactory: LoginPresenterFactory
         lateinit var retrievePasswordPresenterFactory: RetrievePasswordPresenterFactory
+        lateinit var invoiceFullScreenPresenterFactory: InvoiceFullScreenPresenterFactory
 
         lateinit var messagingServicePresenterFactory: MessagingServicePresenterFactory
 
@@ -65,5 +66,6 @@ class AfinesApplication : Application() {
         retrievePasswordPresenterFactory = RetrievePasswordPresenterFactory(executor, loginUseCase)
         messagingServicePresenterFactory = MessagingServicePresenterFactory(executor,
             profileUseCase, broadcastManager)
+        invoiceFullScreenPresenterFactory = InvoiceFullScreenPresenterFactory(executor, invoicesUseCase)
     }
 }
