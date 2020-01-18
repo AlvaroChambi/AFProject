@@ -10,6 +10,7 @@ import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.utils.IBANUtil
 
 class ProfilePresenter(screen: ProfileScreenInterface,
                        lifecycle: Lifecycle,
@@ -42,6 +43,14 @@ class ProfilePresenter(screen: ProfileScreenInterface,
         }
 
         request(request, responseHandler)
+    }
+
+    fun validateIban(iban: String) {
+        if(IBANUtil.isIbanValid(iban)) {
+            screen.showIbanValidated()
+        } else {
+            screen.showIbanRejected()
+        }
     }
 
     fun logout() {

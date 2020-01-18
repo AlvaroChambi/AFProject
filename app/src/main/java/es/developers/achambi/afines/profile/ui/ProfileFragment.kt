@@ -1,6 +1,8 @@
 package es.developers.achambi.afines.profile.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -52,6 +54,15 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
                 account = account_edit_text.text.toString()
             )
         }
+        account_edit_text.addTextChangedListener( object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                presenter.validateIban(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        } )
     }
 
     override fun showProfileFields(presentation: ProfilePresentation) {
@@ -180,6 +191,16 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         }
     }
 
+    override fun showIbanValidated() {
+        profile_account_edit_frame.error = null
+        profile_save_button.isEnabled = true
+    }
+
+    override fun showIbanRejected() {
+        profile_account_edit_frame.error = getString(R.string.profile_invalid_iban_message)
+        profile_save_button.isEnabled = false
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(EDIT_SAVED_STATE_KEY, editEnabled)
@@ -208,4 +229,7 @@ interface ProfileScreenInterface: Screen {
     fun showSaveAvailability(available: Boolean)
     fun showEditStateDisabled()
     fun exit()
+
+    fun showIbanValidated()
+    fun showIbanRejected()
 }
