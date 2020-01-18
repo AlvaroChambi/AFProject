@@ -35,6 +35,7 @@ class UpdatePasswordPresenter(screen: UpdatePasswordScreen,
             override fun onSuccess(response: Any?) {
                 screen.showHeaderProgressFinished()
                 screen.showPasswordUpdateSuccess()
+                screen.showFieldsCleared()
             }
 
             override fun onError(error: Error) {

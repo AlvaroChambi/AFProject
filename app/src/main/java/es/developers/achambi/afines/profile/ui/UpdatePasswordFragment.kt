@@ -25,6 +25,7 @@ interface UpdatePasswordScreen: Screen {
     fun showInvalidPasswordError()
     fun showWeakPasswordError()
     fun showConfirmationNotMatching()
+    fun showFieldsCleared()
 }
 
 class UpdatePasswordFragment: BaseFragment(), UpdatePasswordScreen {
@@ -69,6 +70,12 @@ class UpdatePasswordFragment: BaseFragment(), UpdatePasswordScreen {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun showFieldsCleared() {
+        currentPassword.text.clear()
+        newPassword.text.clear()
+        confirmationPassword.text.clear()
     }
 
     override fun showHeaderProgress() {
