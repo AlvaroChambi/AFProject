@@ -99,4 +99,6 @@
     <string name="overview_password_change_message">Recuerda cambiar tu contraseña en el menú de opciones de tu perfil:</string>
     <string name="overview_password_change_instructions">Perfil -> </string>
     <string name="overview_action_button_text">Acceder</string>
+
+    <string name="profile_invalid_iban_message">El IBAN proporcionado no es correcto.</string>
 </resources>

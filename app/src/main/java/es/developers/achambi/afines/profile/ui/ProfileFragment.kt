@@ -197,7 +197,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     }
 
     override fun showIbanRejected() {
-        profile_account_edit_frame.error = "El iban proporcionado no es correcto"
+        profile_account_edit_frame.error = getString(R.string.profile_invalid_iban_message)
         profile_save_button.isEnabled = false
     }
 
