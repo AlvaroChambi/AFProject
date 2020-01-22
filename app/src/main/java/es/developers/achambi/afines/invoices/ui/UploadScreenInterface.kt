@@ -21,4 +21,5 @@ interface UploadScreenInterface : Screen {
     fun showPhotoCaptureError()
     fun showCamera(uri: Uri)
     fun onPhotoUriCreated(uri: Uri)
+    fun showScannerScreen(uri: Uri)
 }

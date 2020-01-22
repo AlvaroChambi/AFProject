@@ -1,6 +1,7 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.Manifest
+import android.R.attr
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -15,13 +16,14 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import com.scanlibrary.ScanActivity
+import com.scanlibrary.ScanConstants
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
-
 
 class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     companion object {
@@ -155,6 +157,10 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun showScannerScreen(uri: Uri) {
+
+    }
+
     override fun onURIUpdated(uri: Uri?, fileName: String) {
         this.uri = uri
         pick_file_chip.text = fileName
@@ -220,10 +226,17 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
             //An uri was previously created over a temp file and set before the picture was taken, if the result
             // code is not ok, we'll just clear the uri value
             if(resultCode == Activity.RESULT_OK) {
-                activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
+                activity?.let { uri?.let {
+                        it1 ->/* presenter.userSelectedURI(it, it1) */
+                    startActivityForResult(ScanActivity.getStartIntent(it, it1.toString()), 500)
+                } }
+
             } else {
                 this.uri = null
             }
+        } else if(requestCode == 500 && resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = data?.getExtras()?.getParcelable(ScanConstants.SCANNED_RESULT)
+            activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
         }
     }
 

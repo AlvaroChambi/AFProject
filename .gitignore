@@ -13,3 +13,6 @@
 .externalNativeBuild
 .idea/
 openCVLibrary/
+scanlibrary/build
+scanlibrary/captures
+scanlibrary/.idea
