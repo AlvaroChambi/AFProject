@@ -7,8 +7,10 @@ import es.developer.achambi.coreframework.threading.MockExecutor
 import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
+import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.UploadScreenInterface
+import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import org.junit.Before
 import org.junit.Test
 
@@ -30,11 +32,16 @@ class UploadPresenterTest {
     private lateinit var screenInterface: UploadScreenInterface
     @Mock
     private lateinit var uri: Uri
+    @Mock
+    private lateinit var invoiceUseCase: InvoiceUseCase
+    @Mock
+    private lateinit var presentationBuilder: InvoiceUploadPresentationBuilder
     private lateinit var presenter: UploadPresenter
 
     @Before
     fun setUp() {
-        presenter = UploadPresenter(screenInterface, lifecycle,executor, uriUtils)
+        presenter = UploadPresenter(screenInterface, lifecycle,executor, uriUtils, invoiceUseCase,
+            presentationBuilder)
     }
 
     @Test
