@@ -18,11 +18,30 @@ import com.google.android.material.snackbar.Snackbar
 import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
 import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
+
+interface UploadScreenInterface : Screen {
+    fun onURIUpdated(uri: Uri?, fileName: String)
+    fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload)
+    fun onCannotSaveInvoice()
+
+    fun onInvoicePreparedToEdit(invoiceUpload: InvoiceUpload)
+
+    fun showScreenProgress()
+    fun showScreenProgressFinished()
+
+    fun showEditableInvoice(invoice: InvoiceUploadPresentation)
+    fun showErrorRetrievingInvoice()
+
+    fun showPhotoCaptureError()
+    fun showCamera(uri: Uri)
+    fun onPhotoUriCreated(uri: Uri)
+}
 
 class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     companion object {
@@ -161,10 +180,6 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun showScannerScreen(uri: Uri) {
-
-    }
-
     override fun onURIUpdated(uri: Uri?, fileName: String) {
         this.uri = uri
         pick_file_chip.text = fileName
@@ -230,18 +245,19 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
             //An uri was previously created over a temp file and set before the picture was taken, if the result
             // code is not ok, we'll just clear the uri value
             if(resultCode == Activity.RESULT_OK) {
-                activity?.let { uri?.let {
-                        it1 ->/* presenter.userSelectedURI(it, it1) */
+                activity?.let { uri?.let { it1 ->
                     startActivityForResult(ScanActivity.getStartIntent(it, it1.toString()),
-                        SCANNER_REQUEST_CODE)
-                } }
-
+                        SCANNER_REQUEST_CODE) } }
             } else {
                 this.uri = null
             }
-        } else if(requestCode == SCANNER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = data?.extras?.getParcelable(ScanConstants.SCANNED_RESULT)
-            activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
+        } else if(requestCode == SCANNER_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = data?.extras?.getParcelable(ScanConstants.SCANNED_RESULT)
+                activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
+            } else {
+                this.uri = null
+            }
         }
     }
 

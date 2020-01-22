@@ -36,10 +36,6 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
         onBitmapSelect(uri);
     }
 
-    protected int getPreferenceContent() {
-        return getIntent().getIntExtra(ScanConstants.OPEN_INTENT_PREFERENCE, 0);
-    }
-
     @Override
     public void onBitmapSelect(Uri uri) {
         ScanFragment fragment = new ScanFragment();
@@ -49,7 +45,6 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
         android.app.FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.content, fragment);
-       // fragmentTransaction.addToBackStack(ScanFragment.class.toString());
         fragmentTransaction.commit();
     }
 
