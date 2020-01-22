@@ -1,7 +1,6 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.Manifest
-import android.R.attr
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -31,6 +30,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         const val MEDIA_SEARCH_RESULT_CODE = 101
         const val PHOTO_CAPTURE_RESULT_CODE = 102
         const val CAMERA_PERMISSION_REQUEST_CODE = 103
+        const val SCANNER_REQUEST_CODE = 104
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
         private const val INVOICE_ID_KEY = "invoice_id_key"
 
@@ -80,9 +80,11 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         invoice_photo_button.setOnClickListener {
             activity?.let {
                 if (ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(it, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(
-                        arrayOf(Manifest.permission.CAMERA),
+                        arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         CAMERA_PERMISSION_REQUEST_CODE)
                 }else {
                     presenter.userPhotoFileRequested(it)
@@ -97,10 +99,12 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         grantResults: IntArray) {
         when(requestCode) {
             CAMERA_PERMISSION_REQUEST_CODE -> {
-                if ((grantResults.isNotEmpty()
-                            && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    activity?.let { presenter.userPhotoFileRequested(it) }
+                grantResults.forEach {
+                    if( it != PackageManager.PERMISSION_GRANTED ) {
+                        return
+                    }
                 }
+                activity?.let { presenter.userPhotoFileRequested(it) }
             }
         }
     }
@@ -228,14 +232,15 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
             if(resultCode == Activity.RESULT_OK) {
                 activity?.let { uri?.let {
                         it1 ->/* presenter.userSelectedURI(it, it1) */
-                    startActivityForResult(ScanActivity.getStartIntent(it, it1.toString()), 500)
+                    startActivityForResult(ScanActivity.getStartIntent(it, it1.toString()),
+                        SCANNER_REQUEST_CODE)
                 } }
 
             } else {
                 this.uri = null
             }
-        } else if(requestCode == 500 && resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = data?.getExtras()?.getParcelable(ScanConstants.SCANNED_RESULT)
+        } else if(requestCode == SCANNER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = data?.extras?.getParcelable(ScanConstants.SCANNED_RESULT)
             activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
         }
     }

@@ -5,15 +5,14 @@
     android:background="@android:color/black"
     android:orientation="vertical">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/scanButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/bottom_background_color"
         android:orientation="horizontal"
         android:padding="@dimen/bottom_bar_padding"
-        android:text="@string/scan"></Button>
+        android:text="@string/scan" />
 
     <FrameLayout
         android:layout_width="match_parent"

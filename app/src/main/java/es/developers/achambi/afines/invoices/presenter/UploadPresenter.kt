@@ -3,10 +3,8 @@ package es.developers.achambi.afines.invoices.presenter
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
-import com.scanlibrary.ScanActivity
 import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
@@ -58,7 +56,6 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
     }
 
     fun userSelectedURI(context: Context, uri: Uri) {
-        //val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
         val uriMetadata =  uriUtils.retrieveFileMetadata(context, uri)
         val displayName = uriMetadata.displayName
         if(displayName != null) {
