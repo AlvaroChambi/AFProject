@@ -15,13 +15,33 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import com.scanlibrary.ScanActivity
+import com.scanlibrary.ScanConstants
 import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.UploadPresenter
 import kotlinx.android.synthetic.main.upload_invoice_dialog_layout.*
 
+interface UploadScreenInterface : Screen {
+    fun onURIUpdated(uri: Uri?, fileName: String)
+    fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload)
+    fun onCannotSaveInvoice()
+
+    fun onInvoicePreparedToEdit(invoiceUpload: InvoiceUpload)
+
+    fun showScreenProgress()
+    fun showScreenProgressFinished()
+
+    fun showEditableInvoice(invoice: InvoiceUploadPresentation)
+    fun showErrorRetrievingInvoice()
+
+    fun showPhotoCaptureError()
+    fun showCamera(uri: Uri)
+    fun onPhotoUriCreated(uri: Uri)
+}
 
 class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     companion object {
@@ -29,6 +49,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         const val MEDIA_SEARCH_RESULT_CODE = 101
         const val PHOTO_CAPTURE_RESULT_CODE = 102
         const val CAMERA_PERMISSION_REQUEST_CODE = 103
+        const val SCANNER_REQUEST_CODE = 104
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
         private const val INVOICE_ID_KEY = "invoice_id_key"
 
@@ -78,9 +99,11 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         invoice_photo_button.setOnClickListener {
             activity?.let {
                 if (ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(it, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(
-                        arrayOf(Manifest.permission.CAMERA),
+                        arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         CAMERA_PERMISSION_REQUEST_CODE)
                 }else {
                     presenter.userPhotoFileRequested(it)
@@ -95,10 +118,12 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         grantResults: IntArray) {
         when(requestCode) {
             CAMERA_PERMISSION_REQUEST_CODE -> {
-                if ((grantResults.isNotEmpty()
-                            && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    activity?.let { presenter.userPhotoFileRequested(it) }
+                grantResults.forEach {
+                    if( it != PackageManager.PERMISSION_GRANTED ) {
+                        return
+                    }
                 }
+                activity?.let { presenter.userPhotoFileRequested(it) }
             }
         }
     }
@@ -220,6 +245,15 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
             //An uri was previously created over a temp file and set before the picture was taken, if the result
             // code is not ok, we'll just clear the uri value
             if(resultCode == Activity.RESULT_OK) {
+                activity?.let { uri?.let { it1 ->
+                    startActivityForResult(ScanActivity.getStartIntent(it, it1.toString()),
+                        SCANNER_REQUEST_CODE) } }
+            } else {
+                this.uri = null
+            }
+        } else if(requestCode == SCANNER_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = data?.extras?.getParcelable(ScanConstants.SCANNED_RESULT)
                 activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
             } else {
                 this.uri = null
