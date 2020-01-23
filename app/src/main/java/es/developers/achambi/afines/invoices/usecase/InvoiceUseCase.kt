@@ -42,6 +42,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
                 InvoiceState.SENT.toString(), Date().time) }
 
             AfinesApplication.profileUseCase.increasePendingCount()
+            AfinesApplication.profileUseCase.decreaseRejectedCount()
         }
     }
 

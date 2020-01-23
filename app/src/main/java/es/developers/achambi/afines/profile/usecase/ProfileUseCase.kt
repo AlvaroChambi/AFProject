@@ -61,6 +61,13 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         updateProfilePendingCount(pendingCount)
     }
 
+    fun decreaseRejectedCount() {
+        getUserProfile(true)
+        val rejectedCount = firebaseProfile!!.rejected - 1
+        firebaseRepository.updateProfileRejectedCount(rejectedCount)
+        firebaseProfile?.rejected = rejectedCount
+    }
+
     private fun updateProfilePendingCount(pendingCount: Int) {
         firebaseRepository.updateProfilePendingCount(pendingCount)
         firebaseProfile?.pending = pendingCount

@@ -20,7 +20,11 @@ class OverviewActivity : BaseNavigationActivity(){
         super.onCreate(savedInstanceState)
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                navigationView.selectedItemId = R.id.navigation_menu_profile
+                if(intent?.action == Navigation.PROFILE_DEEP_LINK.toString()) {
+                    navigationView.selectedItemId = R.id.navigation_menu_profile
+                } else if(intent?.action == Navigation.INVOICES_DEEP_LINK.toString()) {
+                    navigationView.selectedItemId = R.id.navigation_menu_invoice
+                }
             }
         }
     }
@@ -29,6 +33,7 @@ class OverviewActivity : BaseNavigationActivity(){
         super.onStart()
         val filter = IntentFilter()
         filter.addAction(Navigation.PROFILE_DEEP_LINK.toString())
+        filter.addAction(Navigation.INVOICES_DEEP_LINK.toString())
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
     }
 
@@ -63,5 +68,6 @@ class OverviewActivity : BaseNavigationActivity(){
 }
 
 enum class Navigation {
-    PROFILE_DEEP_LINK
+    PROFILE_DEEP_LINK,
+    INVOICES_DEEP_LINK
 }

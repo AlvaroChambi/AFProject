@@ -39,6 +39,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
         const val DEVICE_TOKEN_KEY = "token"
         const val PENDING_INVOICES_KEY = "pending"
+        const val REJECTED_INVOICES_KEY = "rejected"
         const val PASSWORD_CHANGED_FLAG = "passwordChanged"
         private const val TIMEOUT = 3L
     }
@@ -185,12 +186,28 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws
-    fun updateProfilePendingCount(increasedValue: Int) {
+    fun updateProfilePendingCount(value: Int) {
         val databaseRef = firebaseAuth.currentUser?.uid?.let { firestore.collection(PROFILES_PATH).document(it) }
         try {
             databaseRef?.let {
                 Tasks.await( databaseRef.update(
-                    PENDING_INVOICES_KEY, increasedValue
+                    PENDING_INVOICES_KEY, value
+                ), TIMEOUT, TimeUnit.SECONDS )
+            }
+        }catch (e: ExecutionException) {
+            throw Error()
+        }catch (e: InterruptedException) {
+            throw Error()
+        }catch (e: TimeoutException) {}
+    }
+
+    @Throws
+    fun updateProfileRejectedCount(value: Int) {
+        val databaseRef = firebaseAuth.currentUser?.uid?.let { firestore.collection(PROFILES_PATH).document(it) }
+        try {
+            databaseRef?.let {
+                Tasks.await( databaseRef.update(
+                    REJECTED_INVOICES_KEY, value
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
         }catch (e: ExecutionException) {

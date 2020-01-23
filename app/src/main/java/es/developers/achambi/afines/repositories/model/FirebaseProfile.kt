@@ -10,4 +10,5 @@ data class FirebaseProfile(var userId: String = "",
                            var iban: String = "",
                            var token: String = "",
                            var passwordChanged: Boolean = false,
-                           var pending: Int = 0)
+                           var pending: Int = 0,
+                           var rejected: Int = 0)

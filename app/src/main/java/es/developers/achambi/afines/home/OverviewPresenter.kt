@@ -1,6 +1,8 @@
 package es.developers.achambi.afines.home
 
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.Error
@@ -13,6 +15,7 @@ import es.developers.achambi.afines.NotificationsScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.services.Notifications
 
 class OverviewPresenter(notificationsScreen: NotificationsScreen,
                         lifecycle: Lifecycle,
@@ -28,6 +31,10 @@ class OverviewPresenter(notificationsScreen: NotificationsScreen,
                     if(!it.passwordChanged) {
                         screen.showUpdatePasswordNotification()
                     }
+
+                    if(it.rejected > 0) {
+                        screen.showRejectInvoicesNotification()
+                    }
                 }
             }
         }
@@ -42,5 +49,19 @@ class OverviewPresenter(notificationsScreen: NotificationsScreen,
 
     fun navigateToProfile() {
         broadcastManager.sendBroadcast(Intent(Navigation.PROFILE_DEEP_LINK.toString()))
+    }
+
+    fun navigateToInvoices() {
+        broadcastManager.sendBroadcast(Intent(Navigation.INVOICES_DEEP_LINK.toString()))
+    }
+
+    fun registerBroadcast(broadcastReceiver: BroadcastReceiver) {
+        broadcastManager.registerReceiver(broadcastReceiver,
+            IntentFilter(Notifications.INVOICE_REJECTED.toString())
+        )
+    }
+
+    fun unregisterBroadcast(broadcastReceiver: BroadcastReceiver) {
+        broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 }
