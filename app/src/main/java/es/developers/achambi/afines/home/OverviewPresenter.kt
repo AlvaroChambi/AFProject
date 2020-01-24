@@ -12,6 +12,9 @@ import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.Navigation
 import es.developers.achambi.afines.NotificationsScreen
+import es.developers.achambi.afines.home.model.TaxDate
+import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
+import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
@@ -21,7 +24,9 @@ class OverviewPresenter(notificationsScreen: NotificationsScreen,
                         lifecycle: Lifecycle,
                         executor: MainExecutor,
                         private val profileUseCase: ProfileUseCase,
-                        private val broadcastManager: LocalBroadcastManager)
+                        private val taxesUseCase: TaxesUseCase,
+                        private val broadcastManager: LocalBroadcastManager,
+                        private val taxesPresentationBuilder: TaxPresentationBuilder)
     : Presenter<NotificationsScreen>(notificationsScreen, lifecycle, executor) {
 
     fun onViewSetup() {
@@ -45,6 +50,17 @@ class OverviewPresenter(notificationsScreen: NotificationsScreen,
             }
         }
         request(request, responseHandler)
+
+        val taxesResponse= object : ResponseHandler<List<TaxDate>> {
+            override fun onSuccess(response: List<TaxDate>) {
+                screen.showTaxDates(taxesPresentationBuilder.build(response))
+            }
+        }
+        val taxesRequest = object : Request<List<TaxDate>> {
+            override fun perform(): List<TaxDate> {
+                return taxesUseCase.getTaxDates()
+            }
+        }
     }
 
     fun navigateToProfile() {
