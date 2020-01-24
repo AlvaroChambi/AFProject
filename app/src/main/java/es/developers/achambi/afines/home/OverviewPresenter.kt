@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -16,7 +15,6 @@ import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
-import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developers.achambi.afines.services.Notifications
 
@@ -61,6 +59,7 @@ class OverviewPresenter(notificationsScreen: NotificationsScreen,
                 return taxesUseCase.getTaxDates()
             }
         }
+        request(taxesRequest, taxesResponse)
     }
 
     fun navigateToProfile() {

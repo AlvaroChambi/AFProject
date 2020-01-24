@@ -374,9 +374,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     @Throws(Error::class)
     fun getTaxDates(): List<TaxDate> {
         try {
-            val userId = firebaseAuth.currentUser?.uid
-            val databaseRef = userId?.let { firestore.collection("taxes")
-                .document(userId).collection(NOTIFICATIONS_PATH) }
+            val databaseRef = firestore.collection("taxes")
             val result = databaseRef?.let {
                 Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
             }

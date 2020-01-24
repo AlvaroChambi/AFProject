@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/text_primary"
     android:orientation="vertical">
 
     <View
@@ -17,10 +18,11 @@
 
     <TextView
         android:id="@+id/taxes_days_left_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:gravity="end"
         android:text="10 días"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
@@ -61,11 +63,12 @@
 
     <TextView
         android:id="@+id/taxes_date_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
+        android:gravity="end"
         android:text="20 Enero 2019"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
