@@ -1,6 +1,5 @@
 package es.developers.achambi.afines.profile.presenter
 
-import android.util.Patterns
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.*
 import es.developer.achambi.coreframework.ui.Presenter
@@ -9,12 +8,14 @@ import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developers.achambi.afines.utils.IBANUtil
+import java.util.regex.Pattern
 
 class ProfilePresenter(screen: ProfileScreenInterface,
                        lifecycle: Lifecycle,
                        executor: ExecutorInterface,
                        private val useCase: ProfileUseCase,
-                       private val presentationBuilder: ProfilePresentationBuilder)
+                       private val presentationBuilder: ProfilePresentationBuilder,
+                       private val emailPattern: Pattern)
     : Presenter<ProfileScreenInterface>(screen, lifecycle, executor) {
 
     fun onDataSetup() {
@@ -51,8 +52,7 @@ class ProfilePresenter(screen: ProfileScreenInterface,
             screen.showIbanRejected()
             false
         }
-        val pattern = Patterns.EMAIL_ADDRESS
-        val emailValidated = if(pattern.matcher(email).matches()) {
+        val emailValidated = if(emailPattern.matcher(email).matches()) {
             screen.showShowEmailValidated()
             true
         } else {

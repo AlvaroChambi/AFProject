@@ -22,6 +22,7 @@ import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
 import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.services.NotificationServicePresenter
+import java.util.regex.Pattern
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
@@ -52,14 +53,16 @@ class InvoiceUploadPresenterFactory(private val executor: MainExecutor,
 
 class ProfilePresenterFactory(private val executor: MainExecutor,
                               private val useCase: ProfileUseCase,
-                              private val presentationBuilder: ProfilePresentationBuilder) {
+                              private val presentationBuilder: ProfilePresentationBuilder,
+                              private val emailPattern: Pattern) {
     fun build(screen: ProfileScreenInterface, lifecycle: Lifecycle): ProfilePresenter {
         return ProfilePresenter(
             screen,
             lifecycle,
             executor,
             useCase,
-            presentationBuilder
+            presentationBuilder,
+            emailPattern
         )
     }
 }

@@ -2,6 +2,7 @@ package es.developers.achambi.afines
 
 import android.app.Application
 import android.content.Context
+import android.util.Patterns
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,7 +62,8 @@ class AfinesApplication : Application() {
         invoiceUploadPresenterFactory = InvoiceUploadPresenterFactory(executor, invoicesUseCase,
             uploadPresentationBuilder, uriUtils)
 
-        profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder)
+        profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder,
+            Patterns.EMAIL_ADDRESS)
         overviewPresenterFactory = OverviewPresenterFactory(executor, profileUseCase, taxesUseCase,
             broadcastManager, taxesPresentationBuilder)
 
