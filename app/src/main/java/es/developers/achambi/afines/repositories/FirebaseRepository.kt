@@ -13,6 +13,7 @@ import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.Error
+import es.developers.achambi.afines.home.model.TaxDate
 import java.net.URI
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
@@ -368,6 +369,24 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: InterruptedException) {
             throw Error()
         }catch (e: TimeoutException) {}
+    }
+
+    @Throws(Error::class)
+    fun getTaxDates(): List<TaxDate> {
+        try {
+            val databaseRef = firestore.collection("taxes")
+            val result = databaseRef?.let {
+                Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
+            }
+            result?.let {
+                return result.toObjects(TaxDate::class.java)
+            }
+        }catch (e: ExecutionException) {
+            throw Error()
+        }catch (e: InterruptedException) {
+            throw Error()
+        }catch (e: TimeoutException) {}
+        throw Error()
     }
 
     fun getCurrentUser(): FirebaseUser? {

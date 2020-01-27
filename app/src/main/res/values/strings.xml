@@ -101,4 +101,12 @@
     <string name="overview_action_button_text">Acceder</string>
 
     <string name="profile_invalid_iban_message">El IBAN proporcionado no es correcto.</string>
+
+    <plurals name="taxes_days_left_text">
+        <item quantity="one">%1$s día</item>
+        <item quantity="other">%1$s días</item>
+    </plurals>
+    <string name="overview_taxes_header_text">Calendario de impuestos</string>
+    <string name="overview_rejected_invoices_header_text">Algunas de tus facturas ha sido rechazada</string>
+    <string name="overview_rejected_invoices_message_text">Comprueba tus facturas y actualiza las que hayan sido rechazadas.</string>
 </resources>

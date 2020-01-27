@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developer.achambi.coreframework.ui.Screen

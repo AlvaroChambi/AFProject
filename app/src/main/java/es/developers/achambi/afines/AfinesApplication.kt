@@ -8,6 +8,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
+import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
+import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentationBuilder
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
@@ -40,10 +42,12 @@ class AfinesApplication : Application() {
         val firebaseRepository = FirebaseRepository(FirebaseFirestore.getInstance(),
             FirebaseStorage.getInstance(), FirebaseAuth.getInstance())
         val invoicesUseCase = InvoiceUseCase(firebaseRepository)
+        val taxesUseCase = TaxesUseCase(firebaseRepository)
         val presentationBuilder = InvoicePresentationBuilder(this)
         val uploadPresentationBuilder = InvoiceUploadPresentationBuilder()
         val uriUtils = URIUtils()
         val profilePresentationBuilder = ProfilePresentationBuilder()
+        val taxesPresentationBuilder = TaxPresentationBuilder(this)
         val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
         profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
         val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
@@ -58,8 +62,8 @@ class AfinesApplication : Application() {
             uploadPresentationBuilder, uriUtils)
 
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder)
-        overviewPresenterFactory = OverviewPresenterFactory(executor, profileUseCase,
-            broadcastManager)
+        overviewPresenterFactory = OverviewPresenterFactory(executor, profileUseCase, taxesUseCase,
+            broadcastManager, taxesPresentationBuilder)
 
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)

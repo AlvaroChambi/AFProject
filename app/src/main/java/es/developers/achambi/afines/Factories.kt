@@ -5,6 +5,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.home.OverviewPresenter
+import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
+import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.invoices.presenter.*
 import es.developers.achambi.afines.invoices.ui.*
 import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
@@ -64,9 +66,12 @@ class ProfilePresenterFactory(private val executor: MainExecutor,
 
 class OverviewPresenterFactory(private val executor: MainExecutor,
                                private val useCase: ProfileUseCase,
-                               private val broadcastManager: LocalBroadcastManager){
+                               private val taxesUseCase: TaxesUseCase,
+                               private val broadcastManager: LocalBroadcastManager,
+                               private val taxPresentationBuilder: TaxPresentationBuilder){
     fun build(screen: NotificationsScreen, lifecycle: Lifecycle): OverviewPresenter {
-        return OverviewPresenter(screen, lifecycle, executor, useCase, broadcastManager)
+        return OverviewPresenter(screen, lifecycle, executor, useCase, taxesUseCase,
+            broadcastManager, taxPresentationBuilder)
     }
 }
 
