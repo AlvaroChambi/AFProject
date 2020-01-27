@@ -56,13 +56,19 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         }
         account_edit_text.addTextChangedListener( object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                presenter.validateIban(s.toString())
+                presenter.validateFields(s.toString(), email_edit_text.text.toString())
             }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         } )
+
+        email_edit_text.addTextChangedListener( object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                presenter.validateFields(s.toString(), account_edit_text.text.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     override fun showProfileFields(presentation: ProfilePresentation) {
@@ -193,12 +199,18 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
 
     override fun showIbanValidated() {
         profile_account_edit_frame.error = null
-        profile_save_button.isEnabled = true
     }
 
     override fun showIbanRejected() {
         profile_account_edit_frame.error = getString(R.string.profile_invalid_iban_message)
-        profile_save_button.isEnabled = false
+    }
+
+    override fun showShowEmailValidated() {
+        profile_email_edit_frame.error = null
+    }
+
+    override fun showEmailRejected() {
+        profile_email_edit_frame.error = getString(R.string.login_invalid_email_text)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -232,4 +244,7 @@ interface ProfileScreenInterface: Screen {
 
     fun showIbanValidated()
     fun showIbanRejected()
+
+    fun showShowEmailValidated()
+    fun showEmailRejected()
 }

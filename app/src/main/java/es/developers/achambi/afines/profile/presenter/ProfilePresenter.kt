@@ -1,10 +1,8 @@
 package es.developers.achambi.afines.profile.presenter
 
+import android.util.Patterns
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
-import es.developer.achambi.coreframework.threading.MainExecutor
-import es.developer.achambi.coreframework.threading.Request
-import es.developer.achambi.coreframework.threading.ResponseHandler
+import es.developer.achambi.coreframework.threading.*
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
@@ -14,7 +12,7 @@ import es.developers.achambi.afines.utils.IBANUtil
 
 class ProfilePresenter(screen: ProfileScreenInterface,
                        lifecycle: Lifecycle,
-                       executor: MainExecutor,
+                       executor: ExecutorInterface,
                        private val useCase: ProfileUseCase,
                        private val presentationBuilder: ProfilePresentationBuilder)
     : Presenter<ProfileScreenInterface>(screen, lifecycle, executor) {
@@ -45,12 +43,23 @@ class ProfilePresenter(screen: ProfileScreenInterface,
         request(request, responseHandler)
     }
 
-    fun validateIban(iban: String) {
-        if(IBANUtil.isIbanValid(iban)) {
+    fun validateFields(iban: String, email: String) {
+        val ibanValidated = if(IBANUtil.isIbanValid(iban)) {
             screen.showIbanValidated()
+            true
         } else {
             screen.showIbanRejected()
+            false
         }
+        val pattern = Patterns.EMAIL_ADDRESS
+        val emailValidated = if(pattern.matcher(email).matches()) {
+            screen.showShowEmailValidated()
+            true
+        } else {
+            screen.showEmailRejected()
+            false
+        }
+        screen.showSaveAvailability(ibanValidated && emailValidated)
     }
 
     fun logout() {

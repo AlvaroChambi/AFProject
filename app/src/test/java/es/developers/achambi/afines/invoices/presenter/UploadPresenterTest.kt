@@ -1,9 +1,6 @@
 package es.developers.achambi.afines.invoices.presenter
 
-import android.content.Context
 import android.net.Uri
-import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.MockExecutor
 import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
@@ -14,18 +11,10 @@ import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import org.junit.Before
 import org.junit.Test
 
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
-class UploadPresenterTest {
-    @Mock
-    private lateinit var context: Context
-    private val executor = MockExecutor()
-    @Mock
-    private lateinit var lifecycle: Lifecycle
+class UploadPresenterTest: BasePresenterTest() {
     @Mock
     private lateinit var uriUtils: URIUtils
     @Mock
