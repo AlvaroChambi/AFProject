@@ -1,22 +1,21 @@
 package es.developers.achambi.afines.profile.presenter
 
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
-import es.developer.achambi.coreframework.threading.MainExecutor
-import es.developer.achambi.coreframework.threading.Request
-import es.developer.achambi.coreframework.threading.ResponseHandler
+import es.developer.achambi.coreframework.threading.*
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developers.achambi.afines.utils.IBANUtil
+import java.util.regex.Pattern
 
 class ProfilePresenter(screen: ProfileScreenInterface,
                        lifecycle: Lifecycle,
-                       executor: MainExecutor,
+                       executor: ExecutorInterface,
                        private val useCase: ProfileUseCase,
-                       private val presentationBuilder: ProfilePresentationBuilder)
+                       private val presentationBuilder: ProfilePresentationBuilder,
+                       private val emailPattern: Pattern)
     : Presenter<ProfileScreenInterface>(screen, lifecycle, executor) {
 
     fun onDataSetup() {
@@ -45,12 +44,22 @@ class ProfilePresenter(screen: ProfileScreenInterface,
         request(request, responseHandler)
     }
 
-    fun validateIban(iban: String) {
-        if(IBANUtil.isIbanValid(iban)) {
+    fun validateFields(iban: String, email: String) {
+        val ibanValidated = if(IBANUtil.isIbanValid(iban)) {
             screen.showIbanValidated()
+            true
         } else {
             screen.showIbanRejected()
+            false
         }
+        val emailValidated = if(emailPattern.matcher(email).matches()) {
+            screen.showShowEmailValidated()
+            true
+        } else {
+            screen.showEmailRejected()
+            false
+        }
+        screen.showSaveAvailability(ibanValidated && emailValidated)
     }
 
     fun logout() {
