@@ -1,7 +1,9 @@
 language: android
 dist: trusty
 before_install:
-- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv -in keystore.jks.enc -out keystore.jks -d
+- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv
+  -in keys.tar.enc -out keys.tar -d
+- tar xf keys.tar
 - echo "sdk.dir=$ANDROID_HOME" > local.properties
 - mkdir "$ANDROID_HOME/licenses" || true
 - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
@@ -14,11 +16,24 @@ android:
   - android-sdk-license-.+
   - ".+"
 script:
-- "./gradlew assembleRelease --scan -s"
+- "./gradlew assembleDebug --scan -s assembleAndroidTest assembleDebugUnitTest"
+after_success:
+- wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+- mkdir -p /opt
+- tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+- /opt/google-cloud-sdk/install.sh --quiet
+- source /opt/google-cloud-sdk/path.bash.inc
+- gcloud components update
+
+- "gcloud auth activate-service-account --key-file afproject-1ec94-firebase-adminsdk-6f7g7-bcac716c28.json"
+- "gcloud firebase test android run --async --type instrumentation
+  --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+  --device-ids sailfish  --os-version-ids 28 --locales en_US --orientations portrait
+  --project afproject-1ec94"
 deploy:
   provider: releases
   api_key:
-    secure: "feIEcu3aI3mcpMHGjly5dWCZsJ8hleJG3mhewirNNzMI4JRmmc07kJ68Rkv9S9KgbyYIPJfhMtJRfBn1KwS6IYnr/0OV959hIc4WFyXTXs2S12YGD21r9QvJUb0AFunbyPsPDh2Dw+iw0Bk1NK8GdU5fGMbWNalWkqpGmOkuRkpe+mfiRuKwB6Gbdn1/hAL9I5FiuTpsafw55p0R1RfaorweShQK1sZzN2bddCq99NDColEKQ5G4/KgrKgfqTCL0vsC7enAmPm+hgonwS//zI9TIlMce2uAGH8KN2cRjWujcNM2abM9ycPYwb6k5NYvWIpF5T9AIQV7s+JAxMjBb+i06Iyv67hodrt04BtR0QOfAlsHZwpcctratCJEsyZp1Zw3OJ+zlQSmLDpnBzEAopAsoiGgExpxgfDnOF5sxu+u8vns2uVMUwJo3XR8dst5Wkspp71HvS/LjjD2SGOwp2DPyQvpRhDZS6q96V6XI8MXRCddfIXtc5Nn1tqwVp7fAe1xxJ0JxhbRel2FLNGJCLe/YkYqrYMh/L7TNAsvQEsHBQP4Lc4+rRK8FygN5ol3HI7kTUa7GiGG0xkaqPL+f++CeeGajJ1pEu/Qqo8ZyndaYi8oZjjvjyedkk29QFfg4CruQfdw+mpCJA11s5EscT39uL52w27MOO2OPs0xeHC8="
+    secure: feIEcu3aI3mcpMHGjly5dWCZsJ8hleJG3mhewirNNzMI4JRmmc07kJ68Rkv9S9KgbyYIPJfhMtJRfBn1KwS6IYnr/0OV959hIc4WFyXTXs2S12YGD21r9QvJUb0AFunbyPsPDh2Dw+iw0Bk1NK8GdU5fGMbWNalWkqpGmOkuRkpe+mfiRuKwB6Gbdn1/hAL9I5FiuTpsafw55p0R1RfaorweShQK1sZzN2bddCq99NDColEKQ5G4/KgrKgfqTCL0vsC7enAmPm+hgonwS//zI9TIlMce2uAGH8KN2cRjWujcNM2abM9ycPYwb6k5NYvWIpF5T9AIQV7s+JAxMjBb+i06Iyv67hodrt04BtR0QOfAlsHZwpcctratCJEsyZp1Zw3OJ+zlQSmLDpnBzEAopAsoiGgExpxgfDnOF5sxu+u8vns2uVMUwJo3XR8dst5Wkspp71HvS/LjjD2SGOwp2DPyQvpRhDZS6q96V6XI8MXRCddfIXtc5Nn1tqwVp7fAe1xxJ0JxhbRel2FLNGJCLe/YkYqrYMh/L7TNAsvQEsHBQP4Lc4+rRK8FygN5ol3HI7kTUa7GiGG0xkaqPL+f++CeeGajJ1pEu/Qqo8ZyndaYi8oZjjvjyedkk29QFfg4CruQfdw+mpCJA11s5EscT39uL52w27MOO2OPs0xeHC8=
   file_glob: true
   file: "/home/travis/build/AlvaroChambi/AFProject/app/build/outputs/apk/release/*"
   skip_cleanup: true

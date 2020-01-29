@@ -35,11 +35,12 @@ class AfinesApplication : Application() {
         lateinit var messagingServicePresenterFactory: MessagingServicePresenterFactory
 
         lateinit var profileUseCase: ProfileUseCase
+
+        val executor = MainExecutor.buildExecutor()
         const val DEFAULT_PREFERENCE = "DEFAULT_PREFERENCE"
     }
     override fun onCreate() {
         super.onCreate()
-        val executor = MainExecutor.buildExecutor()
         val firebaseRepository = FirebaseRepository(FirebaseFirestore.getInstance(),
             FirebaseStorage.getInstance(), FirebaseAuth.getInstance())
         val invoicesUseCase = InvoiceUseCase(firebaseRepository)
