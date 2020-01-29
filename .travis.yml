@@ -18,9 +18,13 @@ android:
 script:
 - "./gradlew assembleRelease --scan -s assembleAndroidTest"
 after_success:
-- wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-127.0.0-linux-x86_64.tar.gz
-- tar xf google-cloud-sdk-127.0.0-linux-x86_64.tar.gz
-- echo "y" | ./google-cloud-sdk/bin/gcloud components update beta
+- wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+- mkdir -p /opt
+- tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+- /opt/google-cloud-sdk/install.sh --quiet
+- source /opt/google-cloud-sdk/path.bash.inc
+- gcloud components update
+
 - "./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file afproject-1ec94-firebase-adminsdk-6f7g7-bcac716c28.json"
 - "./google-cloud-sdk/bin/gcloud firebase test android run --async --type instrumentation
   --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
