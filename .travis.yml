@@ -28,7 +28,7 @@ after_success:
 - "gcloud auth activate-service-account --key-file afproject-1ec94-firebase-adminsdk-6f7g7-bcac716c28.json"
 - "gcloud firebase test android run --async --type instrumentation
   --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-  --device-ids athene_f  --os-version-ids 23 --locales en_US --orientations portrait
+  --device-ids sailfish  --os-version-ids 28 --locales en_US --orientations portrait
   --project afproject-1ec94"
 deploy:
   provider: releases
