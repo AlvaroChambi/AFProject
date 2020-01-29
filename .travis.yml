@@ -25,8 +25,8 @@ after_success:
 - source /opt/google-cloud-sdk/path.bash.inc
 - gcloud components update
 
-- "./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file afproject-1ec94-firebase-adminsdk-6f7g7-bcac716c28.json"
-- "./google-cloud-sdk/bin/gcloud firebase test android run --async --type instrumentation
+- "gcloud auth activate-service-account --key-file afproject-1ec94-firebase-adminsdk-6f7g7-bcac716c28.json"
+- "gcloud firebase test android run --async --type instrumentation
   --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
   --device-ids athene_f  --os-version-ids 23 --locales en_US --orientations portrait
   --project afproject-1ec94"
