@@ -1,8 +1,7 @@
 language: android
 dist: trusty
 before_install:
-- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv
-  -in keystore.jks.enc -out keystore.jks -d
+- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv -in secrets.tar.enc -out secrets.tar -d
 - echo "sdk.dir=$ANDROID_HOME" > local.properties
 - mkdir "$ANDROID_HOME/licenses" || true
 - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
@@ -19,6 +18,7 @@ script:
 after_success:
   - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-127.0.0-linux-x86_64.tar.gz
   - tar xf google-cloud-sdk-127.0.0-linux-x86_64.tar.gz
+  - tar xf secrets.tar
   - echo "y" | ./google-cloud-sdk/bin/gcloud components update beta
   - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file afproject-1ec94-firebase-adminsdk-6f7g7-bcac716c28.json
   - ./google-cloud-sdk/bin/gcloud beta test android run --async --type instrumentation --app app/build/outputs/apk/automation/debug/app-debug.apk --test app/build/outputs/apk/androidTest/automation/debug/app-debug-androidTest.apk --device-ids athene_f  --os-version-ids 23 --locales en_US --orientations portrait --project afproject-1ec94
