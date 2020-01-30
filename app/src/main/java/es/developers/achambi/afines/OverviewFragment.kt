@@ -63,6 +63,8 @@ class OverviewFragment : BaseFragment(), NotificationsScreen {
     }
 
     override fun showTaxDates(taxes: ArrayList<TaxPresentation>) {
+        taxes_recycler_view.visibility = View.VISIBLE
+        overview_tax_dates_header.visibility = View.VISIBLE
         adapter.setData(taxes)
     }
 

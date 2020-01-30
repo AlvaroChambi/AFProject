@@ -47,7 +47,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         profile_save_button.setOnClickListener {
             presenter.saveProfile(
                 email = email_edit_text.text.toString(),
-                address = address_edit_text.text.toString(),
+                address = profile_address_edit_text.text.toString(),
                 dni = dni_edit_text.text.toString(),
                 naf = naf_edit_text.text.toString(),
                 ccc = ccc_edit_text.text.toString(),

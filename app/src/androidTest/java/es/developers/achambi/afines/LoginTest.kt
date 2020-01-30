@@ -29,13 +29,39 @@ class LoginTest: BaseTest() {
     }
 
     @Test
+    fun loginError() {
+        MockSetup.setLoginState(false)
+
+        onView(withId(R.id.login_email_edit_text)).perform(
+            clearText(), typeText("test@gmail.com"))
+        onView(withId(R.id.login_pass_edit_text)).perform(
+            clearText(), typeText("0123456"))
+        Espresso.closeSoftKeyboard()
+        onView(withId(R.id.login_button)).perform(click())
+
+        onView(withText(R.string.generic_error_text)).check(matches(isDisplayed()))
+    }
+
+    @Test
     fun retrievePasswordTest() {
-        MockSetup.setLoginState(true)
+        MockSetup.setRetrievePassResult(true)
         onView(withId(R.id.login_forgotten_password_text)).perform(click())
         onView(withId(R.id.retrieve_pass_email_edit_text)).perform(clearText(),
             typeText("test@gmail.com"))
         Espresso.closeSoftKeyboard()
         onView(withId(R.id.retrieve_pass_send_button)).perform(click())
         onView(withText(R.string.retrieve_pass_confirmation_text)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun retrievePasswordError() {
+        MockSetup.setRetrievePassResult(false)
+        onView(withId(R.id.login_forgotten_password_text)).perform(click())
+        onView(withId(R.id.retrieve_pass_email_edit_text)).perform(clearText(),
+            typeText("test@gmail.com"))
+        Espresso.closeSoftKeyboard()
+        onView(withId(R.id.retrieve_pass_send_button)).perform(click())
+
+        onView(withText(R.string.login_user_doesnt_exist_text)).check(matches(isDisplayed()))
     }
 }

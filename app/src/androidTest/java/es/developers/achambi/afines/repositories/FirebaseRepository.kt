@@ -28,9 +28,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     fun userInvoices(): List<FirebaseInvoice> {
-        val list = ArrayList<FirebaseInvoice>()
-        list.add(FirebaseInvoice(name = "invoice"))
-        return list
+        return MockSetup.getInvoices()
     }
 
     @Throws(CoreError::class)
@@ -88,7 +86,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
     @Throws(CoreError::class)
     fun retrieveCurrentUser(): FirebaseProfile? {
-        return FirebaseProfile(rejected = 1)
+        return MockSetup.getProfile()
     }
 
     @Throws(CoreError::class)
@@ -120,16 +118,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
     @Throws(CoreError::class)
     fun retrievePassword(email: String) {
-
+        MockSetup.performRetrievePassword()
     }
 
     @Throws(CoreError::class)
     fun getTaxDates(): List<TaxDate> {
-        val list = ArrayList<TaxDate>()
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_MONTH, 1)
-        list.add(TaxDate(date = calendar.time))
-        return list
+        return MockSetup.getTaxDates()
     }
 
     fun getCurrentUser(): FirebaseUser? {

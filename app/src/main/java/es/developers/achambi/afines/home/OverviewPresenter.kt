@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
