@@ -1,7 +1,7 @@
 package es.developers.achambi.afines.profile.presenter
 
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -38,7 +38,7 @@ class UpdatePasswordPresenter(screen: UpdatePasswordScreen,
                 screen.showFieldsCleared()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showHeaderProgressFinished()
                 screen.showInvalidPasswordError()

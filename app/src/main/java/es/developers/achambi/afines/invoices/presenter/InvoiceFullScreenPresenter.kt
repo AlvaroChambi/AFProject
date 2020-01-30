@@ -2,13 +2,10 @@ package es.developers.achambi.afines.invoices.presenter
 
 import android.net.Uri
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
-import es.developers.achambi.afines.invoices.model.Invoice
-import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoiceFullScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 

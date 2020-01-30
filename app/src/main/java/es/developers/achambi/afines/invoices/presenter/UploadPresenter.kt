@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -40,7 +40,7 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
                     response?.let { invoiceUploadPresentationBuilder.build(it) }?.let { screen.showEditableInvoice(it) }
                 }
 
-                override fun onError(error: Error) {
+                override fun onError(error: CoreError) {
                     super.onError(error)
                     screen.showScreenProgressFinished()
                     screen.showErrorRetrievingInvoice()

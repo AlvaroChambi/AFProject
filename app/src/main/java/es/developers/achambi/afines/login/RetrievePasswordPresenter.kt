@@ -1,7 +1,7 @@
 package es.developers.achambi.afines.login
 
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -23,7 +23,7 @@ class RetrievePasswordPresenter(screen: RetrievePasswordScreen,
                 screen.showEmailSentSuccess()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 screen.showInvalidUser()
             }
         }

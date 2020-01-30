@@ -1,7 +1,7 @@
 package es.developers.achambi.afines.login
 
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -35,7 +35,7 @@ class LoginPresenter(screen: LoginScreenInterface, lifecycle: Lifecycle,
                 screen.showNextScreen()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 screen.finishProgress()
                 val repositoryError : RepositoryError = if(error.type != null) {
                     val typeCode : String = error.type!!

@@ -6,7 +6,7 @@ import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -56,7 +56,7 @@ class ProfilePresenterTest: BasePresenterTest() {
 
     @Test
     fun `test initial profile load failed`() {
-        doThrow(Error()).`when`(profileUseCase).getUserProfile(false)
+        doThrow(CoreError()).`when`(profileUseCase).getUserProfile(false)
 
         presenter.onDataSetup()
 

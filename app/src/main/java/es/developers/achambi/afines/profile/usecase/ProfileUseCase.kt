@@ -2,7 +2,7 @@ package es.developers.achambi.afines.profile.usecase
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.FirebaseRepository
@@ -16,7 +16,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     }
     private var firebaseProfile: FirebaseProfile? = null
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun getUserProfile(refresh: Boolean): FirebaseProfile? {
         if(refresh || firebaseProfile == null) {
             firebaseProfile = firebaseRepository.retrieveCurrentUser()

@@ -17,6 +17,7 @@ class LoginTest: BaseTest() {
 
     @Test
     fun loginTest() {
+        MockSetup.setLoginState(true)
         onView(withId(R.id.login_email_edit_text)).perform(
             clearText(), typeText("test@gmail.com"))
         onView(withId(R.id.login_pass_edit_text)).perform(
@@ -29,6 +30,7 @@ class LoginTest: BaseTest() {
 
     @Test
     fun retrievePasswordTest() {
+        MockSetup.setLoginState(true)
         onView(withId(R.id.login_forgotten_password_text)).perform(click())
         onView(withId(R.id.retrieve_pass_email_edit_text)).perform(clearText(),
             typeText("test@gmail.com"))
