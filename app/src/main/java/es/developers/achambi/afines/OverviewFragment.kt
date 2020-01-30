@@ -58,7 +58,7 @@ class OverviewFragment : BaseFragment(), NotificationsScreen {
         taxes_recycler_view.layoutManager = LinearLayoutManager(activity)
         taxes_recycler_view.adapter = adapter
         presenter.onViewSetup()
-        card_view_action_button.setOnClickListener { presenter.navigateToProfile() }
+        password_notification_action_button.setOnClickListener { presenter.navigateToProfile() }
         rejected_invoice_action_button.setOnClickListener { presenter.navigateToInvoices() }
     }
 

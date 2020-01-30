@@ -35,7 +35,7 @@ class LoginFragment: BaseFragment(), LoginScreenInterface {
             presenter.login(login_email_edit_text.text.toString(),
                 login_pass_edit_text.text.toString())
         }
-        forgotten_password_text.setOnClickListener {
+        login_forgotten_password_text.setOnClickListener {
             val transaction = fragmentManager?.beginTransaction()
             transaction?.let {
                 val dialog = RetrievePasswordFragment.newInstance()

@@ -14,6 +14,8 @@ import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage,
@@ -25,7 +27,9 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     fun userInvoices(): List<FirebaseInvoice> {
-        return ArrayList()
+        val list = ArrayList<FirebaseInvoice>()
+        list.add(FirebaseInvoice(name = "invoice"))
+        return list
     }
 
     @Throws(Error::class)
@@ -83,7 +87,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
     @Throws(Error::class)
     fun retrieveCurrentUser(): FirebaseProfile? {
-        return FirebaseProfile()
+        return FirebaseProfile(rejected = 1)
     }
 
     @Throws(Error::class)
@@ -120,7 +124,11 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
     @Throws(Error::class)
     fun getTaxDates(): List<TaxDate> {
-        return ArrayList()
+        val list = ArrayList<TaxDate>()
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, 1)
+        list.add(TaxDate(date = calendar.time))
+        return list
     }
 
     fun getCurrentUser(): FirebaseUser? {
