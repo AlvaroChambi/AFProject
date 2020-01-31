@@ -6,6 +6,7 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
+import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,6 +18,7 @@ class LoginTest: BaseTest() {
 
     @Test
     fun loginTest() {
+        MockSetup.setProfile(FirebaseProfile())
         MockSetup.setLoginState(true)
         onView(withId(R.id.login_email_edit_text)).perform(
             clearText(), typeText("test@gmail.com"))

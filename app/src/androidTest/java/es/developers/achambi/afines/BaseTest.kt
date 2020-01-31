@@ -7,18 +7,22 @@ import androidx.test.espresso.IdlingResource
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
+import es.developers.achambi.afines.utils.BaseTestPresenter
 import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-open class BaseTest {
+abstract class BaseTest {
+    private lateinit var presenter: BaseTestPresenter
     private lateinit var idlingResource : IdlingResource
     @Before
     open fun setup() {
+        presenter = AfinesApplication.baseTestPresenterFactory.build()
         idlingResource = ExecutorIdlingResource(AfinesApplication.executor)
         Espresso.registerIdlingResources(idlingResource)
+        presenter.clearCache()
     }
 
     open fun beforeActivity(){}

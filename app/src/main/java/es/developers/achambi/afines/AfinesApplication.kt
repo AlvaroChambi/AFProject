@@ -33,7 +33,7 @@ class AfinesApplication : Application() {
         lateinit var invoiceFullScreenPresenterFactory: InvoiceFullScreenPresenterFactory
 
         lateinit var messagingServicePresenterFactory: MessagingServicePresenterFactory
-
+        lateinit var baseTestPresenterFactory: BaseTestPresenterFactory
         lateinit var profileUseCase: ProfileUseCase
 
         val executor = MainExecutor.buildExecutor()
@@ -74,5 +74,6 @@ class AfinesApplication : Application() {
         messagingServicePresenterFactory = MessagingServicePresenterFactory(executor,
             profileUseCase, broadcastManager)
         invoiceFullScreenPresenterFactory = InvoiceFullScreenPresenterFactory(executor, invoicesUseCase)
+        baseTestPresenterFactory = BaseTestPresenterFactory(profileUseCase)
     }
 }
