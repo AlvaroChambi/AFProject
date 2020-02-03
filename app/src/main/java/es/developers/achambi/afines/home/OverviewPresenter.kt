@@ -5,13 +5,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import es.developer.achambi.coreframework.threading.CoreError
+import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.Navigation
-import es.developers.achambi.afines.NotificationsScreen
+import es.developers.achambi.afines.OverviewScreen
 import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
@@ -19,14 +19,14 @@ import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developers.achambi.afines.services.Notifications
 
-class OverviewPresenter(notificationsScreen: NotificationsScreen,
+class OverviewPresenter(notificationsScreen: OverviewScreen,
                         lifecycle: Lifecycle,
-                        executor: MainExecutor,
+                        executor: ExecutorInterface,
                         private val profileUseCase: ProfileUseCase,
                         private val taxesUseCase: TaxesUseCase,
                         private val broadcastManager: LocalBroadcastManager,
                         private val taxesPresentationBuilder: TaxPresentationBuilder)
-    : Presenter<NotificationsScreen>(notificationsScreen, lifecycle, executor) {
+    : Presenter<OverviewScreen>(notificationsScreen, lifecycle, executor) {
 
     fun onViewSetup() {
         val responseHandler= object : ResponseHandler<FirebaseProfile?> {

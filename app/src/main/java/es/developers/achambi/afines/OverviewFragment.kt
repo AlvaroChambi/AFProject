@@ -18,7 +18,7 @@ import es.developers.achambi.afines.home.OverviewPresenter
 import es.developers.achambi.afines.home.ui.TaxPresentation
 import kotlinx.android.synthetic.main.overview_fragment_layout.*
 
-class OverviewFragment : BaseFragment(), NotificationsScreen {
+class OverviewFragment : BaseFragment(), OverviewScreen {
     private lateinit var presenter: OverviewPresenter
     private lateinit var broadcastReceiver: BroadcastReceiver
     private lateinit var adapter: Adapter
@@ -123,7 +123,7 @@ class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-interface NotificationsScreen : Screen {
+interface OverviewScreen : Screen {
     fun showUpdatePasswordNotification()
     fun showRejectInvoicesNotification()
     fun showTaxDates(taxes: ArrayList<TaxPresentation>)

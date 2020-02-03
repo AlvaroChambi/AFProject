@@ -12,6 +12,7 @@ class LoginUseCase(private val firebaseRepository: FirebaseRepository,
         profileUseCase.updateProfileToken(profileUseCase.getUserProfile(false)!!.token)
     }
 
+    @Throws(CoreError::class)
     fun retrievePassword(email: String) {
         firebaseRepository.retrievePassword(email)
     }

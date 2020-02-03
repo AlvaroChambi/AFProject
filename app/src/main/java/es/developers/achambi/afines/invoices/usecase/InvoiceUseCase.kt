@@ -1,6 +1,7 @@
 package es.developers.achambi.afines.invoices.usecase
 
 import android.net.Uri
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.invoices.model.DetailedInvoice
 import es.developers.achambi.afines.repositories.FirebaseRepository
@@ -32,6 +33,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         }
     }
 
+    @Throws(CoreError::class)
     fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
         val invoice = getInvoice(invoiceId)
         invoice?.let { firebaseRepository.updateInvoiceMetadata(invoice, invoiceUpload.name,
@@ -46,6 +48,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         }
     }
 
+    @Throws(CoreError::class)
     fun deleteInvoice(invoiceId: Long) {
         val invoice = getInvoice(invoiceId)
         invoice?.let {
@@ -72,6 +75,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return invoices.find { it.id == invoiceId }
     }
 
+    @Throws(CoreError::class)
     fun queryUserInvoices(refresh: Boolean): ArrayList<Invoice> {
         if(refresh) {
             invoices.clear()
@@ -93,6 +97,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return invoices
     }
 
+    @Throws(CoreError::class)
     fun queryUserInvoices(query: String): ArrayList<Invoice> {
         val filteredArray = ArrayList<Invoice>()
         invoices.forEach { invoice ->
@@ -103,6 +108,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return filteredArray
     }
 
+    @Throws(CoreError::class)
     fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload) {
         firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
         AfinesApplication.profileUseCase.increasePendingCount()

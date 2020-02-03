@@ -73,7 +73,7 @@ class OverviewPresenterFactory(private val executor: MainExecutor,
                                private val taxesUseCase: TaxesUseCase,
                                private val broadcastManager: LocalBroadcastManager,
                                private val taxPresentationBuilder: TaxPresentationBuilder){
-    fun build(screen: NotificationsScreen, lifecycle: Lifecycle): OverviewPresenter {
+    fun build(screen: OverviewScreen, lifecycle: Lifecycle): OverviewPresenter {
         return OverviewPresenter(screen, lifecycle, executor, useCase, taxesUseCase,
             broadcastManager, taxPresentationBuilder)
     }

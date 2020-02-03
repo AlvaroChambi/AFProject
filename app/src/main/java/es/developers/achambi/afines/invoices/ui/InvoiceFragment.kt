@@ -88,11 +88,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
     }
 
-    override fun onInvoicesLoadingError() {
+    override fun showInvoicesLoadingError() {
         showError(CoreError(resources.getString(R.string.invoices_overview_error_message)))
     }
 
-    override fun onUploadError() {
+    override fun showUploadError() {
         showSnackBackError(CoreError(resources.getString(R.string.invoices_upload_error_message)))
     }
 
@@ -192,7 +192,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             val invoiceId: Long? = data?.getLongExtra(INVOICE_ID_EXTRA_KEY, 0)
             if (invoiceId != null && invoice != null) {
-                presenter.userOverrideSelected(uri, invoice, invoiceId)
+                presenter.updateInvoice(uri, invoice, invoiceId)
             }
         }
     }

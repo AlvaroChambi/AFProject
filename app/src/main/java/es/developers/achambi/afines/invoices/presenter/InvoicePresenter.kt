@@ -36,7 +36,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
             override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showProgressFinished()
-                screen.onUploadError()
+                screen.showUploadError()
             }
         }
         val request = object : Request<Any> {
@@ -58,7 +58,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
             override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showFullScreenProgressFinished()
-                screen.onInvoicesLoadingError()
+                screen.showInvoicesLoadingError()
             }
         }
         val request = object : Request<ArrayList<Invoice>>{
@@ -81,7 +81,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
             override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showProgressFinished()
-                screen.onInvoicesLoadingError()
+                screen.showInvoicesLoadingError()
             }
         }
         val request = object : Request<ArrayList<Invoice>>{
@@ -115,7 +115,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         request(request, responseHandler)
     }
 
-    fun userOverrideSelected(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
+    fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
         screen.showProgress()
         val responseHandler = object : ResponseHandler<Any> {
             override fun onSuccess(response: Any) {

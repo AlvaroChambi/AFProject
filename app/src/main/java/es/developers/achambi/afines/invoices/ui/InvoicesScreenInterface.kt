@@ -5,8 +5,8 @@ import es.developer.achambi.coreframework.ui.Screen
 interface InvoicesScreenInterface: Screen{
     fun showInvoices(invoices: ArrayList<InvoicePresentation>)
 
-    fun onInvoicesLoadingError()
-    fun onUploadError()
+    fun showInvoicesLoadingError()
+    fun showUploadError()
 
     fun showFullScreenProgress()
     fun showProgress()

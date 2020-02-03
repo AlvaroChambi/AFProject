@@ -2,6 +2,7 @@ package es.developers.achambi.afines.invoices.presenter
 
 import android.content.Context
 import androidx.lifecycle.Lifecycle
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.MockExecutor
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -18,6 +19,8 @@ abstract class BasePresenterTest {
     protected lateinit var lifecycle: Lifecycle
     @Mock
     private lateinit var state : Lifecycle.State
+    @Mock
+    protected lateinit var broadcastManager: LocalBroadcastManager
 
     @Before
     open fun setup() {
