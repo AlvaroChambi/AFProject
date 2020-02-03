@@ -22,7 +22,7 @@ import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
 import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.services.NotificationServicePresenter
-import es.developers.achambi.afines.utils.BaseTestPresenter
+import es.developers.achambi.afines.utils.BaseUIPresenter
 import java.util.regex.Pattern
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
@@ -114,7 +114,7 @@ class InvoiceFullScreenPresenterFactory(private val executor: MainExecutor,
 }
 
 class BaseTestPresenterFactory(private val profileUseCase: ProfileUseCase) {
-    fun build(): BaseTestPresenter {
-        return BaseTestPresenter(profileUseCase)
+    fun build(): BaseUIPresenter {
+        return BaseUIPresenter(profileUseCase)
     }
 }
