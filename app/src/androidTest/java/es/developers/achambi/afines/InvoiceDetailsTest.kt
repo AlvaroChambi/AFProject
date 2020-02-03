@@ -14,7 +14,7 @@ import org.hamcrest.core.IsNot.not
 import org.junit.Rule
 import org.junit.Test
 
-class InvoiceDetailsTest: BaseTest() {
+class InvoiceDetailsTest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<InvoiceFullScreenActivity> = TestRule(
         InvoiceFullScreenActivity::class.java, this)
@@ -39,7 +39,7 @@ class InvoiceDetailsTest: BaseTest() {
     }
 }
 
-class AcceptedInvoiceTest: BaseTest() {
+class AcceptedInvoiceTest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<InvoiceFullScreenActivity> = TestRule(
         InvoiceFullScreenActivity::class.java, this)
@@ -64,7 +64,7 @@ class AcceptedInvoiceTest: BaseTest() {
     }
 }
 
-class RejectedInvoiceTest: BaseTest() {
+class RejectedInvoiceTest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<InvoiceFullScreenActivity> = TestRule(
         InvoiceFullScreenActivity::class.java, this)

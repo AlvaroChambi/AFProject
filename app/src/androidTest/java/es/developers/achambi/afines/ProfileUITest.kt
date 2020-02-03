@@ -9,7 +9,7 @@ import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import org.junit.Rule
 import org.junit.Test
 
-class ProfileUITest: BaseTest() {
+class ProfileUITest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<OverviewActivity> = TestRule(
         OverviewActivity::class.java, this)

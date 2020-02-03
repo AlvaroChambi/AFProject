@@ -15,7 +15,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-@RunWith(MockitoJUnitRunner::class)
 class ProfilePresenterTest: BasePresenterTest() {
     companion object {
         const val VALID_EMAIL = "test@gmail.com"

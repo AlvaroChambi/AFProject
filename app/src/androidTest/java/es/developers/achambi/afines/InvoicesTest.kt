@@ -5,13 +5,12 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.rule.ActivityTestRule
 import es.developers.achambi.afines.invoices.ui.Holder
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import org.junit.Rule
 import org.junit.Test
 
-class InvoicesTest: BaseTest() {
+class InvoicesTest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<OverviewActivity> = TestRule(
         OverviewActivity::class.java, this)

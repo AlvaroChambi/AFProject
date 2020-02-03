@@ -7,15 +7,15 @@ import androidx.test.espresso.IdlingResource
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
-import es.developers.achambi.afines.utils.BaseTestPresenter
+import es.developers.achambi.afines.utils.BaseUIPresenter
 import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-abstract class BaseTest {
-    private lateinit var presenter: BaseTestPresenter
+abstract class BaseUITest {
+    private lateinit var presenter: BaseUIPresenter
     private lateinit var idlingResource : IdlingResource
     @Before
     open fun setup() {
@@ -37,7 +37,7 @@ abstract class BaseTest {
 }
 
 class TestRule<T : Activity?>(activityClass: Class<T>?,
-                              private val baseTest: BaseTest)
+                              private val baseTest: BaseUITest)
     : ActivityTestRule<T>(activityClass, false) {
     override fun beforeActivityLaunched() {
         super.beforeActivityLaunched()

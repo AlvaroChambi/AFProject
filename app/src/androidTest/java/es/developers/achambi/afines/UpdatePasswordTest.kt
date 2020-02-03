@@ -8,7 +8,7 @@ import es.developers.achambi.afines.profile.ui.UpdatePasswordActivity
 import org.junit.Rule
 import org.junit.Test
 
-class UpdatePasswordTest:BaseTest() {
+class UpdatePasswordTest:BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<UpdatePasswordActivity> = TestRule(
         UpdatePasswordActivity::class.java, this

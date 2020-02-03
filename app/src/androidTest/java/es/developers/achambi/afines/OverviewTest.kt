@@ -12,7 +12,7 @@ import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList
 
-class OverviewTest: BaseTest() {
+class OverviewTest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<OverviewActivity> = TestRule(
         OverviewActivity::class.java, this
@@ -48,7 +48,7 @@ class OverviewTest: BaseTest() {
     }
 }
 
-class OverviewErrorTest: BaseTest() {
+class OverviewErrorTest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: TestRule<OverviewActivity> = TestRule(
         OverviewActivity::class.java, this

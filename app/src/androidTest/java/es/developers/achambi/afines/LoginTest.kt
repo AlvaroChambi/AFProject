@@ -10,7 +10,7 @@ import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import org.junit.Rule
 import org.junit.Test
 
-class LoginTest: BaseTest() {
+class LoginTest: BaseUITest() {
     @get:Rule
     public val customActivityTestRule: ActivityTestRule<LoginActivity> = ActivityTestRule(
         LoginActivity::class.java
