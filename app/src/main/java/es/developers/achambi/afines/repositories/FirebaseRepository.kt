@@ -66,8 +66,14 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }
 
         try {
+            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
             firebaseInvoice.fileReference = fileReference.path
-            Tasks.await(invoiceReference.set(firebaseInvoice), TIMEOUT, TimeUnit.SECONDS)
+            Tasks.await(firestore.runTransaction { transaction ->
+                val profileSnapshot = transaction.get(profileRef)
+                val increasedCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)!! + 1
+                transaction.set(invoiceReference, firebaseInvoice)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, increasedCount)
+            }, TIMEOUT, TimeUnit.SECONDS)
         }catch (e:ExecutionException) {
             throw CoreError()
         }catch (e:InterruptedException) {

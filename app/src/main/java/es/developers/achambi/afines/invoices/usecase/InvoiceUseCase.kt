@@ -111,7 +111,6 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     @Throws(CoreError::class)
     fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload) {
         firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
-        AfinesApplication.profileUseCase.increasePendingCount()
     }
 
     private fun buildPostInvoice(invoiceUpload: InvoiceUpload): FirebaseInvoice {
