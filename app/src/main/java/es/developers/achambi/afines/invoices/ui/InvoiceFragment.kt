@@ -12,7 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.*
@@ -89,11 +89,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     }
 
     override fun onInvoicesLoadingError() {
-        showError(Error(resources.getString(R.string.invoices_overview_error_message)))
+        showError(CoreError(resources.getString(R.string.invoices_overview_error_message)))
     }
 
     override fun onUploadError() {
-        showSnackBackError(Error(resources.getString(R.string.invoices_upload_error_message)))
+        showSnackBackError(CoreError(resources.getString(R.string.invoices_upload_error_message)))
     }
 
     override fun showFullScreenProgress() {

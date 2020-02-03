@@ -5,7 +5,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -33,7 +33,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 refreshInvoices()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showProgressFinished()
                 screen.onUploadError()
@@ -55,7 +55,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 screen.showInvoices( invoicePresentationBuilder.build(response) )
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showFullScreenProgressFinished()
                 screen.onInvoicesLoadingError()
@@ -78,7 +78,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 screen.showInvoices( invoicePresentationBuilder.build(response) )
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showProgressFinished()
                 screen.onInvoicesLoadingError()
@@ -102,7 +102,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 refreshInvoices()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 screen.showProgressFinished()
                 screen.showInvoiceDeleteError()
             }
@@ -124,7 +124,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 refreshInvoices()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 screen.showProgressFinished()
                 screen.showEditInvoiceError()
             }
@@ -146,7 +146,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 screen.showInvoices( invoicePresentationBuilder.build(response) )
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showProgressFinished()
             }

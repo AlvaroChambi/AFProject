@@ -58,11 +58,13 @@ class OverviewFragment : BaseFragment(), NotificationsScreen {
         taxes_recycler_view.layoutManager = LinearLayoutManager(activity)
         taxes_recycler_view.adapter = adapter
         presenter.onViewSetup()
-        card_view_action_button.setOnClickListener { presenter.navigateToProfile() }
+        password_notification_action_button.setOnClickListener { presenter.navigateToProfile() }
         rejected_invoice_action_button.setOnClickListener { presenter.navigateToInvoices() }
     }
 
     override fun showTaxDates(taxes: ArrayList<TaxPresentation>) {
+        taxes_recycler_view.visibility = View.VISIBLE
+        overview_tax_dates_header.visibility = View.VISIBLE
         adapter.setData(taxes)
     }
 

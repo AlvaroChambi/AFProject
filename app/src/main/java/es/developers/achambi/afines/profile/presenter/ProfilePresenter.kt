@@ -29,7 +29,7 @@ class ProfilePresenter(screen: ProfileScreenInterface,
                 }
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showProfileFieldsError()
             }
@@ -96,7 +96,7 @@ class ProfilePresenter(screen: ProfileScreenInterface,
                 refreshProfile()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showUpdateProgressFinished()
                 screen.showProfileUpdateError()
@@ -123,7 +123,7 @@ class ProfilePresenter(screen: ProfileScreenInterface,
                 }
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showUpdateProgressFinished()
             }

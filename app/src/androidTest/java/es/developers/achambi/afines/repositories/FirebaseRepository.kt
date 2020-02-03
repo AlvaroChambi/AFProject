@@ -6,7 +6,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
+import es.developers.achambi.afines.MockSetup
 import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
@@ -14,36 +15,38 @@ import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage,
                          private val firebaseAuth: FirebaseAuth
 ) {
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice) {
 
     }
 
     fun userInvoices(): List<FirebaseInvoice> {
-        return ArrayList()
+        return MockSetup.getInvoices()
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun deleteInvoice(invoice: Invoice) {
 
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun updateInvoiceFile(invoice: Invoice, invoiceUpload: InvoiceUpload, uri: Uri) {
 
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun logout() {
 
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun updateUserProfile(profileUpload: ProfileUpload) {
 
     }
@@ -73,20 +76,20 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun updateInvoiceMetadata(invoice: Invoice, name: String, trimester: String ) {
 
     }
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun updateInvoiceState(invoice: Invoice, state: String, timestamp: Long) {
 
     }
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun retrieveCurrentUser(): FirebaseProfile? {
-        return FirebaseProfile()
+        return MockSetup.getProfile()
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun retrieveNotifications(): List<FirebaseNotification> {
         return ArrayList()
     }
@@ -103,24 +106,24 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
        return ByteArray(0)
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun updateUserPassword(currentPassword: String, newPassword: String) {
 
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun login(email: String, password: String) {
-
+        MockSetup.performLogin()
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun retrievePassword(email: String) {
-
+        MockSetup.performRetrievePassword()
     }
 
-    @Throws(Error::class)
+    @Throws(CoreError::class)
     fun getTaxDates(): List<TaxDate> {
-        return ArrayList()
+        return MockSetup.getTaxDates()
     }
 
     fun getCurrentUser(): FirebaseUser? {

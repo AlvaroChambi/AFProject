@@ -3,7 +3,7 @@ package es.developers.achambi.afines.invoices.presenter
 import android.app.Activity
 import android.net.Uri
 import androidx.lifecycle.Lifecycle
-import es.developer.achambi.coreframework.threading.Error
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -32,7 +32,7 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
                 }
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showDetailsLoadingFinished()
                 screen.showDetailsError(presentationBuilder.buildError())
@@ -56,7 +56,7 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
                 }
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showDownloadFinished()
             }
@@ -91,7 +91,7 @@ class InvoiceDetailsPresenter(invoiceDetailsScreen: InvoiceDetailsScreen,
                 screen.showDownloadFinished()
             }
 
-            override fun onError(error: Error) {
+            override fun onError(error: CoreError) {
                 super.onError(error)
                 screen.showDownloadFinished()
                 screen.showDownloadError()
