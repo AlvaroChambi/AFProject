@@ -95,8 +95,15 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun deleteInvoice(invoice: Invoice) {
         val user = firebaseAuth.currentUser
         try {
-            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
-            Tasks.await(databaseRef.delete(), TIMEOUT, TimeUnit.SECONDS)
+            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
+                .document(invoice.dbReference)
+            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
+            Tasks.await(firestore.runTransaction { transaction ->
+                val profileSnapshot = transaction.get(profileRef)
+                val pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)!! - 1
+                transaction.delete(databaseRef)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, pendingCount)
+            }, TIMEOUT ,TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw CoreError()
         }catch (e: InterruptedException) {
@@ -192,38 +199,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws
-    fun updateProfilePendingCount(value: Int) {
-        val databaseRef = firebaseAuth.currentUser?.uid?.let { firestore.collection(PROFILES_PATH).document(it) }
-        try {
-            databaseRef?.let {
-                Tasks.await( databaseRef.update(
-                    PENDING_INVOICES_KEY, value
-                ), TIMEOUT, TimeUnit.SECONDS )
-            }
-        }catch (e: ExecutionException) {
-            throw CoreError()
-        }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
-    }
-
-    @Throws
-    fun updateProfileRejectedCount(value: Int) {
-        val databaseRef = firebaseAuth.currentUser?.uid?.let { firestore.collection(PROFILES_PATH).document(it) }
-        try {
-            databaseRef?.let {
-                Tasks.await( databaseRef.update(
-                    REJECTED_INVOICES_KEY, value
-                ), TIMEOUT, TimeUnit.SECONDS )
-            }
-        }catch (e: ExecutionException) {
-            throw CoreError()
-        }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
-    }
-
-    @Throws
     fun checkProfilePasswordFlag() {
         val databaseRef = firebaseAuth.currentUser?.uid?.let {
             firestore.collection(PROFILES_PATH).document(it) }
@@ -255,15 +230,23 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             throw CoreError()
         }catch (e: TimeoutException) {}
     }
+
     @Throws(CoreError::class)
     fun updateInvoiceState(invoice: Invoice, state: String, timestamp: Long) {
         try {
             val user = firebaseAuth.currentUser
-            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
-            Tasks.await(databaseRef.update(
-                PROCESSED_DATE_KEY, timestamp,
-                INVOICE_STATE_KEY, state),
-                TIMEOUT, TimeUnit.SECONDS)
+            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
+                .document(invoice.dbReference)
+            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
+            Tasks.await(firestore.runTransaction { transaction ->
+                val profileSnapshot = transaction.get(profileRef)
+                val pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)!! + 1
+                val rejectedCount = profileSnapshot.getLong(REJECTED_INVOICES_KEY)!! - 1
+                transaction.update(databaseRef, PROCESSED_DATE_KEY, timestamp,
+                    INVOICE_STATE_KEY, state)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, pendingCount)
+                transaction.update(profileRef, REJECTED_INVOICES_KEY, rejectedCount)
+            }, TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw CoreError()
         }catch (e: InterruptedException) {
@@ -380,7 +363,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun getTaxDates(): List<TaxDate> {
         try {
             val databaseRef = firestore.collection("taxes")
-            val result = databaseRef?.let {
+            val result = databaseRef.let {
                 Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
             }
             result?.let {
