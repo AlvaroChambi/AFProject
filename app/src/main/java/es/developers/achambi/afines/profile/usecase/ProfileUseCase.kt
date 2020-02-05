@@ -51,28 +51,8 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         }
     }
 
-    fun increasePendingCount() {
-        getUserProfile(true)
-        val pendingCount = firebaseProfile!!.pending + 1
-        updateProfilePendingCount(pendingCount)
-    }
-
-    fun decreasePendingCount() {
-        getUserProfile(true)
-        val pendingCount = firebaseProfile!!.pending - 1
-        updateProfilePendingCount(pendingCount)
-    }
-
-    fun decreaseRejectedCount() {
-        getUserProfile(true)
-        val rejectedCount = firebaseProfile!!.rejected - 1
-        firebaseRepository.updateProfileRejectedCount(rejectedCount)
-        firebaseProfile?.rejected = rejectedCount
-    }
-
-    private fun updateProfilePendingCount(pendingCount: Int) {
-        firebaseRepository.updateProfilePendingCount(pendingCount)
-        firebaseProfile?.pending = pendingCount
+    fun clearProfileCache() {
+        firebaseProfile = null
     }
 
     fun logout() {

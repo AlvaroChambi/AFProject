@@ -35,7 +35,6 @@ class InvoiceDetailsTest: BaseUITest() {
         onView(withText("pending_invoice")).check(matches(isDisplayed()))
         onView(withId(R.id.download_invoice_button)).check(matches(isDisplayed()))
         onView(withId(R.id.delete_invoice_button)).check(matches(isDisplayed()))
-        onView(withId(R.id.edit_invoice_button)).check(matches(isDisplayed()))
     }
 }
 

@@ -40,11 +40,9 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             invoiceUpload.trimester.toString()) }
         if(uri != null) {
             invoice?.let { firebaseRepository.updateInvoiceFile(invoice, invoiceUpload, uri) }
-            invoice?.let{ firebaseRepository.updateInvoiceState(invoice,
+            invoice?.let { firebaseRepository.updateRejectedInvoiceState(invoice,
                 InvoiceState.SENT.toString(), Date().time) }
-
-            AfinesApplication.profileUseCase.increasePendingCount()
-            AfinesApplication.profileUseCase.decreaseRejectedCount()
+            AfinesApplication.profileUseCase.clearProfileCache()
         }
     }
 
@@ -53,7 +51,6 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         val invoice = getInvoice(invoiceId)
         invoice?.let {
             firebaseRepository.deleteInvoice(it)
-            AfinesApplication.profileUseCase.decreasePendingCount()
         }
     }
 
@@ -111,7 +108,6 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     @Throws(CoreError::class)
     fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload) {
         firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
-        AfinesApplication.profileUseCase.increasePendingCount()
     }
 
     private fun buildPostInvoice(invoiceUpload: InvoiceUpload): FirebaseInvoice {
