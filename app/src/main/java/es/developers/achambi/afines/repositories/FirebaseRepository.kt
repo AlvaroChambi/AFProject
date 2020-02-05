@@ -70,9 +70,10 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             firebaseInvoice.fileReference = fileReference.path
             Tasks.await(firestore.runTransaction { transaction ->
                 val profileSnapshot = transaction.get(profileRef)
-                val increasedCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)!! + 1
+                var pending = profileSnapshot.getLong(PENDING_INVOICES_KEY)
+                if(pending == null) pending = 0
                 transaction.set(invoiceReference, firebaseInvoice)
-                transaction.update(profileRef, PENDING_INVOICES_KEY, increasedCount)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, ++pending)
             }, TIMEOUT, TimeUnit.SECONDS)
         }catch (e:ExecutionException) {
             throw CoreError()
@@ -100,9 +101,10 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
             Tasks.await(firestore.runTransaction { transaction ->
                 val profileSnapshot = transaction.get(profileRef)
-                val pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)!! - 1
+                var pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)
+                if(pendingCount == null) pendingCount = 0
                 transaction.delete(databaseRef)
-                transaction.update(profileRef, PENDING_INVOICES_KEY, pendingCount)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, --pendingCount)
             }, TIMEOUT ,TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw CoreError()
@@ -232,7 +234,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun updateInvoiceState(invoice: Invoice, state: String, timestamp: Long) {
+    fun updateRejectedInvoiceState(invoice: Invoice, state: String, timestamp: Long) {
         try {
             val user = firebaseAuth.currentUser
             val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
@@ -240,12 +242,14 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
             Tasks.await(firestore.runTransaction { transaction ->
                 val profileSnapshot = transaction.get(profileRef)
-                val pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)!! + 1
-                val rejectedCount = profileSnapshot.getLong(REJECTED_INVOICES_KEY)!! - 1
+                var pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)
+                var rejectedCount = profileSnapshot.getLong(REJECTED_INVOICES_KEY)
+                if(pendingCount == null) pendingCount = 0
+                if(rejectedCount == null) rejectedCount = 0
                 transaction.update(databaseRef, PROCESSED_DATE_KEY, timestamp,
                     INVOICE_STATE_KEY, state)
-                transaction.update(profileRef, PENDING_INVOICES_KEY, pendingCount)
-                transaction.update(profileRef, REJECTED_INVOICES_KEY, rejectedCount)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, ++pendingCount)
+                transaction.update(profileRef, REJECTED_INVOICES_KEY, --rejectedCount)
             }, TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
             throw CoreError()
