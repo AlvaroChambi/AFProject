@@ -4,11 +4,14 @@ import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.*
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.login.usecase.LoginUseCase
+import es.developers.achambi.afines.utils.EventLogger
 
 class RetrievePasswordPresenter(screen: RetrievePasswordScreen,
                                 lifecycle: Lifecycle,
                                 executor: ExecutorInterface,
-                                private val useCase: LoginUseCase)
+                                private val useCase: LoginUseCase,
+                                private val analytics: EventLogger
+)
     : Presenter<RetrievePasswordScreen>(screen, lifecycle, executor) {
 
     @Throws(CoreError::class)
@@ -16,6 +19,7 @@ class RetrievePasswordPresenter(screen: RetrievePasswordScreen,
         if(email.isNullOrEmpty()) {
             return screen.showInvalidUser()
         }
+        analytics.publishPasswordRetrieved()
         val responseHandler = object: ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
                 screen.showEmailSentSuccess()

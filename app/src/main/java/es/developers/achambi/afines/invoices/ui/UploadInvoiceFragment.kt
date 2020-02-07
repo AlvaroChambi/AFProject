@@ -41,6 +41,8 @@ interface UploadScreenInterface : Screen {
     fun showPhotoCaptureError()
     fun showCamera(uri: Uri)
     fun onPhotoUriCreated(uri: Uri)
+
+    fun showGallery()
 }
 
 class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
@@ -86,11 +88,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
 
     override fun onViewSetup(view: View) {
         pick_file_chip.setOnClickListener{
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = ANY_FILE
-            startActivityForResult( intent,
-                MEDIA_SEARCH_RESULT_CODE
-            )
+            presenter.userSelectedFileChip()
         }
         pick_file_chip.setOnCloseIconClickListener {
             presenter.userClearedURI()
@@ -144,6 +142,14 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         compatActivity.supportActionBar?.elevation = 0.0f
         compatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         compatActivity.supportActionBar?.setHomeAsUpIndicator(R.drawable.outline_close_24)
+    }
+
+    override fun showGallery() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = ANY_FILE
+        startActivityForResult( intent,
+            MEDIA_SEARCH_RESULT_CODE
+        )
     }
 
     override fun showPhotoCaptureError() {

@@ -19,6 +19,7 @@ import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.UploadScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.utils.EventLogger
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -28,7 +29,8 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
                       executor: ExecutorInterface,
                       private val uriUtils: URIUtils,
                       private val invoiceUseCase: InvoiceUseCase,
-                      private val invoiceUploadPresentationBuilder: InvoiceUploadPresentationBuilder)
+                      private val invoiceUploadPresentationBuilder: InvoiceUploadPresentationBuilder,
+                      private val analytics: EventLogger)
     : Presenter<UploadScreenInterface>(screenInterface, lifecycle, executor) {
 
     fun onDataSetup(invoiceId: Long?) {
@@ -53,6 +55,11 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
             }
             request(request, responseHandler)
         }
+    }
+
+    fun userSelectedFileChip() {
+        analytics.publishGallerySelected()
+        screen.showGallery()
     }
 
     fun userSelectedURI(context: Context, uri: Uri) {
@@ -88,7 +95,7 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
     }
 
     fun userPhotoFileRequested(context: Context) {
-
+        analytics.publishScannerSelected()
         try {
             // Create an image file name
             val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)

@@ -5,10 +5,12 @@ import es.developer.achambi.coreframework.threading.*
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.repositories.RepositoryError
+import es.developers.achambi.afines.utils.EventLogger
 
 class LoginPresenter(screen: LoginScreenInterface, lifecycle: Lifecycle,
                      executor: ExecutorInterface,
-                     private val useCase: LoginUseCase)
+                     private val useCase: LoginUseCase,
+                     private val analytics: EventLogger)
     : Presenter<LoginScreenInterface>(screen, lifecycle, executor) {
     fun onViewSetup() {
         if(useCase.isSessionAlive()) {
@@ -17,6 +19,7 @@ class LoginPresenter(screen: LoginScreenInterface, lifecycle: Lifecycle,
     }
 
     fun login(email: String?, password: String?) {
+        analytics.publishLoginEvent()
         screen.showProgress()
         if(email.isNullOrEmpty()) {
             screen.finishProgress()

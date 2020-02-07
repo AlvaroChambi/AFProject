@@ -51,9 +51,11 @@
             android:textColor="@android:color/white" />
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/doneButton"
-        style="@style/AppTheme"
+        style="@style/Base.TextAppearance.MaterialComponents.Button"
+        android:backgroundTint="@color/secondary"
+        android:textColor="@color/text_primary"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
