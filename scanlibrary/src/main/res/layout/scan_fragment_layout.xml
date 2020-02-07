@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <Button
-        style="@style/Base.TextAppearance.MaterialComponents.Button"
+        style="@style/Widget.AppCompat.Button"
         android:backgroundTint="@color/secondary"
         android:textColor="@color/text_primary"
         android:id="@+id/scanButton"

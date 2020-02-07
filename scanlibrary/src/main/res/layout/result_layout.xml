@@ -53,15 +53,15 @@
 
     <Button
         android:id="@+id/doneButton"
-        style="@style/Base.TextAppearance.MaterialComponents.Button"
-        android:backgroundTint="@color/secondary"
-        android:textColor="@color/text_primary"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/secondary"
         android:orientation="horizontal"
         android:padding="@dimen/bottom_bar_padding"
-        android:text="@string/done" />
+        android:text="@string/done"
+        android:textColor="@color/text_primary" />
 
 
     <FrameLayout
