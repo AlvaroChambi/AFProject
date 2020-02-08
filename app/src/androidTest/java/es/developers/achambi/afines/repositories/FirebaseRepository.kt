@@ -15,12 +15,13 @@ import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import java.util.*
+import es.developers.achambi.afines.utils.EventLogger
 import kotlin.collections.ArrayList
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage,
-                         private val firebaseAuth: FirebaseAuth
+                         private val firebaseAuth: FirebaseAuth,
+                         private val analytics: EventLogger
 ) {
     @Throws(CoreError::class)
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice) {
