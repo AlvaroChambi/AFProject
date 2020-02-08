@@ -146,7 +146,6 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
     fun refreshInvoices() {
         screen.showProgress()
-        analytics.publishInvoiceRefreshed()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showProgressFinished()

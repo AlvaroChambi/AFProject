@@ -8,6 +8,7 @@ import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.UploadScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Before
 import org.junit.Test
 
@@ -26,11 +27,12 @@ class UploadPresenterTest: BasePresenterTest() {
     @Mock
     private lateinit var presentationBuilder: InvoiceUploadPresentationBuilder
     private lateinit var presenter: UploadPresenter
+    @Mock
+    private lateinit var logger: EventLogger
 
-    @Before
-    fun setUp() {
+    override fun setup() {
         presenter = UploadPresenter(screenInterface, lifecycle,executor, uriUtils, invoiceUseCase,
-            presentationBuilder)
+            presentationBuilder, logger)
     }
 
     @Test

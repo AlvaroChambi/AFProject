@@ -2,10 +2,12 @@ package es.developers.achambi.afines.invoices.presenter
 
 import android.net.Uri
 import es.developer.achambi.coreframework.threading.CoreError
+import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
+import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -18,11 +20,13 @@ class InvoicePresenterTest: BasePresenterTest() {
     private lateinit var invoiceUseCase: InvoiceUseCase
     @Mock
     private lateinit var builder: InvoicePresentationBuilder
+    @Mock
+    private lateinit var logger: EventLogger
 
     override fun setup() {
         super.setup()
         presenter = InvoicePresenter(screen, lifecycle, executor, invoiceUseCase, builder,
-            broadcastManager)
+            broadcastManager, logger)
     }
 
     @Test
@@ -126,6 +130,8 @@ class InvoicePresenterTest: BasePresenterTest() {
     fun `test update invoice success`() {
         val uri = mock(Uri::class.java)
         val upload = mock(InvoiceUpload::class.java)
+        val metadata = mock(URIMetadata::class.java)
+        `when`(upload.uriMetadata).thenReturn(metadata)
         `when`(invoiceUseCase.queryUserInvoices(true)).thenReturn(ArrayList())
         `when`(builder.build(ArrayList())).thenReturn(ArrayList())
 
@@ -141,6 +147,8 @@ class InvoicePresenterTest: BasePresenterTest() {
     fun `test update invoice error`() {
         val uri = mock(Uri::class.java)
         val upload = mock(InvoiceUpload::class.java)
+        val metadata = mock(URIMetadata::class.java)
+        `when`(upload.uriMetadata).thenReturn(metadata)
         doThrow(CoreError()).`when`(invoiceUseCase).updateInvoice(uri, upload, 0)
 
         presenter.updateInvoice(uri, upload, 0)

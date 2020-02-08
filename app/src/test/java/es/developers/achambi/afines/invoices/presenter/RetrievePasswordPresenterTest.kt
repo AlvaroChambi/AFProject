@@ -4,6 +4,7 @@ import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.login.RetrievePasswordPresenter
 import es.developers.achambi.afines.login.RetrievePasswordScreen
 import es.developers.achambi.afines.login.usecase.LoginUseCase
+import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -14,10 +15,12 @@ class RetrievePasswordPresenterTest: BasePresenterTest() {
     private lateinit var screen: RetrievePasswordScreen
     @Mock
     private lateinit var useCase: LoginUseCase
+    @Mock
+    private lateinit var logger: EventLogger
 
     override fun setup() {
         super.setup()
-        presenter = RetrievePasswordPresenter(screen, lifecycle, executor, useCase)
+        presenter = RetrievePasswordPresenter(screen, lifecycle, executor, useCase, logger)
     }
 
     @Test
