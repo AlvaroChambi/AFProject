@@ -6,6 +6,7 @@ import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -20,11 +21,13 @@ class OverviewPresenterTest: BasePresenterTest() {
     private lateinit var taxesUseCase: TaxesUseCase
     @Mock
     private lateinit var builder: TaxPresentationBuilder
+    @Mock
+    private lateinit var logger: EventLogger
 
     override fun setup() {
         super.setup()
         presenter = OverviewPresenter(screen, lifecycle, executor, profileUseCase, taxesUseCase,
-            broadcastManager, builder)
+            broadcastManager, builder, logger)
     }
 
     @Test

@@ -5,6 +5,7 @@ import es.developers.achambi.afines.login.LoginPresenter
 import es.developers.achambi.afines.login.LoginScreenInterface
 import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.repositories.RepositoryError
+import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -15,11 +16,12 @@ class LoginPresenterTest: BasePresenterTest() {
     private lateinit var screen: LoginScreenInterface
     @Mock
     private lateinit var useCase: LoginUseCase
-
+    @Mock
+    private lateinit var logger: EventLogger
 
     override fun setup() {
         super.setup()
-        presenter = LoginPresenter(screen, lifecycle, executor, useCase)
+        presenter = LoginPresenter(screen, lifecycle, executor, useCase, logger)
     }
 
     @Test

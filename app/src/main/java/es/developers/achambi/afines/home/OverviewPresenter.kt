@@ -18,6 +18,7 @@ import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developers.achambi.afines.services.Notifications
+import es.developers.achambi.afines.utils.EventLogger
 
 class OverviewPresenter(notificationsScreen: OverviewScreen,
                         lifecycle: Lifecycle,
@@ -25,7 +26,8 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
                         private val profileUseCase: ProfileUseCase,
                         private val taxesUseCase: TaxesUseCase,
                         private val broadcastManager: LocalBroadcastManager,
-                        private val taxesPresentationBuilder: TaxPresentationBuilder)
+                        private val taxesPresentationBuilder: TaxPresentationBuilder,
+                        private val analytics: EventLogger)
     : Presenter<OverviewScreen>(notificationsScreen, lifecycle, executor) {
 
     fun onViewSetup() {
@@ -65,10 +67,12 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
 
     fun navigateToProfile() {
         broadcastManager.sendBroadcast(Intent(Navigation.PROFILE_DEEP_LINK.toString()))
+        analytics.publishProfileDeeplinkSelected()
     }
 
     fun navigateToInvoices() {
         broadcastManager.sendBroadcast(Intent(Navigation.INVOICES_DEEP_LINK.toString()))
+        analytics.publishInvoicesDeeplinkSelected()
     }
 
     fun registerBroadcast(broadcastReceiver: BroadcastReceiver) {

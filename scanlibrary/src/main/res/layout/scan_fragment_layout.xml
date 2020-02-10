@@ -5,7 +5,10 @@
     android:background="@android:color/black"
     android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
+    <Button
+        style="@style/Widget.AppCompat.Button"
+        android:backgroundTint="@color/secondary"
+        android:textColor="@color/text_primary"
         android:id="@+id/scanButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -23,15 +23,18 @@ import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.services.NotificationServicePresenter
 import es.developers.achambi.afines.utils.BaseUIPresenter
+import es.developers.achambi.afines.utils.EventLogger
 import java.util.regex.Pattern
+import kotlin.math.log
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
                               private val presentationBuilder: InvoicePresentationBuilder,
-                              private val localBroadcastManager: LocalBroadcastManager) {
+                              private val localBroadcastManager: LocalBroadcastManager,
+                              private val logger: EventLogger) {
     fun build( invoicesScreenInterface: InvoicesScreenInterface, lifecycle: Lifecycle ): InvoicePresenter {
         return InvoicePresenter( invoicesScreenInterface, lifecycle, executor, invoiceUseCase,
-            presentationBuilder, localBroadcastManager )
+            presentationBuilder, localBroadcastManager, logger )
     }
 }
 
@@ -46,16 +49,18 @@ class InvoiceDetailsPresenterFactory(private val executor: MainExecutor,
 class InvoiceUploadPresenterFactory(private val executor: MainExecutor,
                                     private val invoiceUseCase: InvoiceUseCase,
                                     private val presentationBuilder: InvoiceUploadPresentationBuilder,
-                                    private val uriUtils: URIUtils) {
+                                    private val uriUtils: URIUtils,
+                                    private val logger: EventLogger) {
     fun build(uploadScreenInterface: UploadScreenInterface, lifecycle: Lifecycle): UploadPresenter {
-        return UploadPresenter(uploadScreenInterface, lifecycle, executor, uriUtils, invoiceUseCase, presentationBuilder)
+        return UploadPresenter(uploadScreenInterface, lifecycle, executor, uriUtils, invoiceUseCase, presentationBuilder, logger)
     }
 }
 
 class ProfilePresenterFactory(private val executor: MainExecutor,
                               private val useCase: ProfileUseCase,
                               private val presentationBuilder: ProfilePresentationBuilder,
-                              private val emailPattern: Pattern) {
+                              private val emailPattern: Pattern,
+                              private val logger: EventLogger) {
     fun build(screen: ProfileScreenInterface, lifecycle: Lifecycle): ProfilePresenter {
         return ProfilePresenter(
             screen,
@@ -63,7 +68,8 @@ class ProfilePresenterFactory(private val executor: MainExecutor,
             executor,
             useCase,
             presentationBuilder,
-            emailPattern
+            emailPattern,
+            logger
         )
     }
 }
@@ -72,28 +78,33 @@ class OverviewPresenterFactory(private val executor: MainExecutor,
                                private val useCase: ProfileUseCase,
                                private val taxesUseCase: TaxesUseCase,
                                private val broadcastManager: LocalBroadcastManager,
-                               private val taxPresentationBuilder: TaxPresentationBuilder){
+                               private val taxPresentationBuilder: TaxPresentationBuilder,
+                               private val logger: EventLogger){
     fun build(screen: OverviewScreen, lifecycle: Lifecycle): OverviewPresenter {
         return OverviewPresenter(screen, lifecycle, executor, useCase, taxesUseCase,
-            broadcastManager, taxPresentationBuilder)
+            broadcastManager, taxPresentationBuilder, logger)
     }
 }
 
-class UpdatePasswordPresenterFactory(private val executor: MainExecutor, private val useCase: ProfileUseCase) {
+class UpdatePasswordPresenterFactory(private val executor: MainExecutor, private val useCase: ProfileUseCase,
+                                     private val logger: EventLogger) {
     fun build(screen: UpdatePasswordScreen, lifecycle: Lifecycle): UpdatePasswordPresenter {
-        return UpdatePasswordPresenter(screen, lifecycle, executor, useCase)
+        return UpdatePasswordPresenter(screen, lifecycle, executor, useCase, logger)
     }
 }
 
-class LoginPresenterFactory(private val executor: MainExecutor, private val useCase: LoginUseCase) {
+class LoginPresenterFactory(private val executor: MainExecutor, private val useCase: LoginUseCase,
+                            private val eventLogger: EventLogger) {
     fun build(screen: LoginScreenInterface, lifecycle: Lifecycle): LoginPresenter {
-        return LoginPresenter(screen, lifecycle, executor, useCase)
+        return LoginPresenter(screen, lifecycle, executor, useCase, eventLogger)
     }
 }
 
-class RetrievePasswordPresenterFactory(private val executor: MainExecutor, private val useCase: LoginUseCase) {
+class RetrievePasswordPresenterFactory(private val executor: MainExecutor,
+                                       private val useCase: LoginUseCase,
+                                       private val logger: EventLogger) {
     fun build(screen: RetrievePasswordScreen, lifecycle: Lifecycle): RetrievePasswordPresenter {
-        return RetrievePasswordPresenter(screen, lifecycle, executor, useCase)
+        return RetrievePasswordPresenter(screen, lifecycle, executor, useCase, logger)
     }
 }
 

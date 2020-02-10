@@ -16,17 +16,20 @@ import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.services.Notifications
+import es.developers.achambi.afines.utils.EventLogger
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                        lifecycle : Lifecycle,
                        executor: ExecutorInterface,
                        private val invoiceUseCase: InvoiceUseCase,
                        private val invoicePresentationBuilder: InvoicePresentationBuilder,
-                       private val broadcastManager: LocalBroadcastManager)
+                       private val broadcastManager: LocalBroadcastManager,
+                       private val analytics: EventLogger)
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
 
     fun uploadFile(uri: Uri, invoiceUpload: InvoiceUpload) {
         screen.showProgress()
+        analytics.publishInvoiceCreated()
         val responseHandler = object: ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
                 screen.showProgressFinished()
@@ -72,6 +75,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
     fun queryInvoices(query: String) {
         screen.showProgress()
+        analytics.publishInvoiceQuery()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showProgressFinished()
@@ -95,6 +99,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
     fun deleteRequested(invoiceId: Long) {
         screen.showProgress()
+        analytics.publishInvoiceDeleted()
         val responseHandler = object : ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
                 screen.showInvoiceDeleted()
@@ -117,6 +122,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
 
     fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
         screen.showProgress()
+        analytics.publishInvoiceUpdated(invoiceUpload.uriMetadata.displayName)
         val responseHandler = object : ResponseHandler<Any> {
             override fun onSuccess(response: Any) {
                 screen.showProgressFinished()

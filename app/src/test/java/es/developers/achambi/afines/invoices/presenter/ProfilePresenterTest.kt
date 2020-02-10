@@ -7,6 +7,7 @@ import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.CoreError
+import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -29,11 +30,13 @@ class ProfilePresenterTest: BasePresenterTest() {
     private lateinit var profilePresentationBuilder: ProfilePresentationBuilder
     @Mock
     private lateinit var pattern: Pattern
+    @Mock
+    private lateinit var logger: EventLogger
 
     override fun setup() {
         super.setup()
         presenter = ProfilePresenter(screen, lifecycle, executor, profileUseCase,
-            profilePresentationBuilder, pattern)
+            profilePresentationBuilder, pattern, logger)
     }
 
     @Test

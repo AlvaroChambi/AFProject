@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Patterns
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -19,6 +20,7 @@ import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
+import es.developers.achambi.afines.utils.EventLogger
 
 class AfinesApplication : Application() {
     companion object {
@@ -41,8 +43,9 @@ class AfinesApplication : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        val analytics = EventLogger(FirebaseAnalytics.getInstance(this))
         val firebaseRepository = FirebaseRepository(FirebaseFirestore.getInstance(),
-            FirebaseStorage.getInstance(), FirebaseAuth.getInstance())
+            FirebaseStorage.getInstance(), FirebaseAuth.getInstance(), analytics)
         val invoicesUseCase = InvoiceUseCase(firebaseRepository)
         val taxesUseCase = TaxesUseCase(firebaseRepository)
         val presentationBuilder = InvoicePresentationBuilder(this)
@@ -56,21 +59,21 @@ class AfinesApplication : Application() {
         val broadcastManager = LocalBroadcastManager.getInstance(this)
 
         invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase,
-            presentationBuilder, broadcastManager)
+            presentationBuilder, broadcastManager, analytics)
         invoiceDetailsPresenterFactory = InvoiceDetailsPresenterFactory(executor, invoicesUseCase,
             InvoiceDetailsPresentationBuilder(this, presentationBuilder)
         )
         invoiceUploadPresenterFactory = InvoiceUploadPresenterFactory(executor, invoicesUseCase,
-            uploadPresentationBuilder, uriUtils)
+            uploadPresentationBuilder, uriUtils, analytics)
 
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder,
-            Patterns.EMAIL_ADDRESS)
+            Patterns.EMAIL_ADDRESS, analytics)
         overviewPresenterFactory = OverviewPresenterFactory(executor, profileUseCase, taxesUseCase,
-            broadcastManager, taxesPresentationBuilder)
+            broadcastManager, taxesPresentationBuilder, analytics)
 
-        updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase)
-        loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase)
-        retrievePasswordPresenterFactory = RetrievePasswordPresenterFactory(executor, loginUseCase)
+        updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase, analytics)
+        loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase, analytics)
+        retrievePasswordPresenterFactory = RetrievePasswordPresenterFactory(executor, loginUseCase, analytics)
         messagingServicePresenterFactory = MessagingServicePresenterFactory(executor,
             profileUseCase, broadcastManager)
         invoiceFullScreenPresenterFactory = InvoiceFullScreenPresenterFactory(executor, invoicesUseCase)

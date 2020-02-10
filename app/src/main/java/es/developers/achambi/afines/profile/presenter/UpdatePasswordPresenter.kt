@@ -8,11 +8,13 @@ import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
+import es.developers.achambi.afines.utils.EventLogger
 
 class UpdatePasswordPresenter(screen: UpdatePasswordScreen,
                               lifecycle: Lifecycle,
                               executor: MainExecutor,
-                              private val useCase: ProfileUseCase)
+                              private val useCase: ProfileUseCase,
+                              private val analytics: EventLogger)
     :Presenter<UpdatePasswordScreen>(screen, lifecycle, executor) {
 
     fun userSaved(currentPassword: String, newPassword: String,
@@ -30,6 +32,7 @@ class UpdatePasswordPresenter(screen: UpdatePasswordScreen,
             return screen.showConfirmationNotMatching()
         }
 
+        analytics.publishPasswordUpdated()
         screen.showHeaderProgress()
         val responseHandler = object : ResponseHandler<Any?> {
             override fun onSuccess(response: Any?) {

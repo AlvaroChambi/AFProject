@@ -7,6 +7,7 @@ import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.utils.EventLogger
 import es.developers.achambi.afines.utils.IBANUtil
 import java.util.regex.Pattern
 
@@ -15,7 +16,8 @@ class ProfilePresenter(screen: ProfileScreenInterface,
                        executor: ExecutorInterface,
                        private val useCase: ProfileUseCase,
                        private val presentationBuilder: ProfilePresentationBuilder,
-                       private val emailPattern: Pattern)
+                       private val emailPattern: Pattern,
+                       private val analytics: EventLogger)
     : Presenter<ProfileScreenInterface>(screen, lifecycle, executor) {
 
     fun onDataSetup() {
@@ -63,6 +65,7 @@ class ProfilePresenter(screen: ProfileScreenInterface,
     }
 
     fun logout() {
+        analytics.publishLogoutEvent()
         val responseHandler = object: ResponseHandler<Any?> {
             override fun onSuccess(response: Any?) {
                 screen.exit()
@@ -79,6 +82,7 @@ class ProfilePresenter(screen: ProfileScreenInterface,
     fun saveProfile( email: String, address: String, dni: String,
                      naf: String, ccc: String, account: String) {
         screen.showUpdateProgress()
+        analytics.publishProfileUpdated()
         screen.showSaveAvailability(false)
         val upload = ProfileUpload.Builder()
             .email(email)

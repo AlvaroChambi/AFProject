@@ -1,6 +1,7 @@
 package es.developers.achambi.afines.repositories
 
 import android.net.Uri
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,13 +15,15 @@ import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.home.model.TaxDate
+import es.developers.achambi.afines.utils.EventLogger
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage,
-                         private val firebaseAuth: FirebaseAuth) {
+                         private val firebaseAuth: FirebaseAuth,
+                         private val analytics: EventLogger) {
     companion object {
         const val INVOICES_PATH = "invoices/"
         const val PROFILES_PATH = "profiles"
@@ -56,13 +59,14 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             Tasks.await(fileReference.putFile(uri),TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: TimeoutException) {
             /*On a timeout (no network connection for example) the operation will be performed locally and will be
             synchronized with the server when the connection is available. So we will just ignore this and treat it
             as a successful operation*/
+            Crashlytics.logException(e)
         }
 
         try {
@@ -75,17 +79,19 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 transaction.set(invoiceReference, firebaseInvoice)
                 transaction.update(profileRef, PENDING_INVOICES_KEY, ++pending)
             }, TIMEOUT, TimeUnit.SECONDS)
+            analytics.publishTransaction(user.uid)
         }catch (e:ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e:InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     fun userInvoices(): List<FirebaseInvoice> {
         val user = firebaseAuth.currentUser
         val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
         val result = Tasks.await(listRef.get())
+        analytics.publishReadEvent(user?.uid)
         if(result.isEmpty) {
             return ArrayList()
         }
@@ -106,20 +112,21 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 transaction.delete(databaseRef)
                 transaction.update(profileRef, PENDING_INVOICES_KEY, --pendingCount)
             }, TIMEOUT ,TimeUnit.SECONDS)
+            analytics.publishTransaction(user.uid)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
 
         try {
             val storageRef = firestorage.reference.child(invoice.fileReference)
             Tasks.await(storageRef.delete(), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws(CoreError::class)
@@ -131,19 +138,20 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             Tasks.await(fileReference.putFile(uri), TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
 
         try {
             val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(FILE_ATTRIBUTE_KEY, fileReference.path), TIMEOUT, TimeUnit.SECONDS)
+            analytics.publishWriteEvent(user?.uid)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws(CoreError::class)
@@ -151,9 +159,9 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             firebaseAuth.signOut()
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: TimeoutException) {}
     }
 
@@ -172,11 +180,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                     NAF_ATTRIBUTE_KEY, profileUpload.naf
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
+            analytics.publishWriteEvent(userId)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws
@@ -193,11 +202,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                     DEVICE_TOKEN_KEY, deviceToken
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
+            analytics.publishWriteEvent(uid)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws
@@ -210,11 +220,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                     PASSWORD_CHANGED_FLAG, true
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
+            analytics.publishWriteEvent(firebaseAuth.currentUser?.uid)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws(CoreError::class)
@@ -226,11 +237,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 NAME_ATTRIBUTE_KEY, name,
                 TRIMESTER_ATTRIBUTE_KEY, trimester),
                 TIMEOUT, TimeUnit.SECONDS)
+            analytics.publishWriteEvent(user?.uid)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws(CoreError::class)
@@ -251,11 +263,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 transaction.update(profileRef, PENDING_INVOICES_KEY, ++pendingCount)
                 transaction.update(profileRef, REJECTED_INVOICES_KEY, --rejectedCount)
             }, TIMEOUT, TimeUnit.SECONDS)
+            analytics.publishTransaction(user.uid)
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
     @Throws(CoreError::class)
     fun retrieveCurrentUser(): FirebaseProfile? {
@@ -263,16 +276,16 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val userId = firebaseAuth.currentUser?.uid
             val databaseRef = userId?.let { firestore.collection(PROFILES_PATH).document(it) }
             val result = databaseRef?.let {
-                Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
-            }
+                Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS) }
+            analytics.publishReadEvent(userId)
             result?.let {
                 return result.toObject(FirebaseProfile::class.java)
             }
         } catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
         throw CoreError()
     }
 
@@ -285,14 +298,15 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val result = databaseRef?.let {
                 Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
             }
+            analytics.publishReadEvent(userId)
             result?.let {
                 return result.toObjects(FirebaseNotification::class.java)
             }
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
         throw CoreError()
     }
 
@@ -323,10 +337,10 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 Tasks.await(user.reauthenticate(credential), TIMEOUT, TimeUnit.SECONDS)
                 Tasks.await(user.updatePassword(newPassword), TIMEOUT, TimeUnit.SECONDS)
             } catch (e: ExecutionException) {
-                throw CoreError()
+                throw CoreError(e.message)
             }catch (e: InterruptedException) {
-                throw CoreError()
-            }catch (e: TimeoutException) {}
+                throw CoreError(e.message)
+            }catch (e: TimeoutException) {Crashlytics.logException(e)}
         }
     }
 
@@ -345,7 +359,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: InterruptedException) {
             throw CoreError(e.message, RepositoryError.GENERIC_ERROR.toString())
         }
-        catch (e: TimeoutException) { }
+        catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws(CoreError::class)
@@ -359,8 +373,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 else -> throw CoreError(e.message, RepositoryError.GENERIC_ERROR.toString())
             }
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws(CoreError::class)
@@ -370,14 +384,15 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val result = databaseRef.let {
                 Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
             }
+            analytics.publishReadEvent(firebaseAuth.currentUser?.uid)
             result?.let {
                 return result.toObjects(TaxDate::class.java)
             }
         }catch (e: ExecutionException) {
-            throw CoreError()
+            throw CoreError(e.message)
         }catch (e: InterruptedException) {
-            throw CoreError()
-        }catch (e: TimeoutException) {}
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
         throw CoreError()
     }
 
