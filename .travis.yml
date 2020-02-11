@@ -1,8 +1,7 @@
 language: android
 dist: trusty
 before_install:
-- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv
-  -in keys.tar.enc -out keys.tar -d
+- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv -in keys.tar.enc -out keys.tar -d
 - tar xf keys.tar
 - echo "sdk.dir=$ANDROID_HOME" > local.properties
 - mkdir "$ANDROID_HOME/licenses" || true
@@ -25,7 +24,7 @@ after_success:
 - source /opt/google-cloud-sdk/path.bash.inc
 - gcloud components update
 
-- "gcloud auth activate-service-account --key-file afproject-1ec94-firebase-adminsdk-6f7g7-bcac716c28.json"
+- "gcloud auth activate-service-account --key-file afproject-private-key.json"
 - "gcloud firebase test android run --async --type instrumentation
   --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
   --device-ids sailfish  --os-version-ids 28 --locales en_US --orientations portrait
