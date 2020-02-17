@@ -3,4 +3,9 @@
     <color name="color_state_approved">#008000</color>
     <color name="color_state_pending">#1E90FF</color>
     <color name="color_state_failed">#E03616</color>
+
+    <color name="primary">#344955</color>
+    <color name="primary_dark">#233F34</color>
+    <color name="primary_light">#4A6572</color>
+    <color name="secondary">#F9AA33</color>
 </resources>

@@ -14,7 +14,7 @@
             tools:ignore="GoogleAppIndexingWarning"
             android:fullBackupContent="true"
             android:allowBackup="false">  <!-- App does not handle auto sign in on fresh install -->
-            <activity android:name=".LoginActivity">
+            <activity android:name=".TestOverviewActivity">
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
                     <category android:name="android.intent.category.LAUNCHER" />
@@ -55,5 +55,8 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 </manifest>

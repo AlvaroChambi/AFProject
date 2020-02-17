@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppBaseTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
+    <style name="AppBaseTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
@@ -12,5 +12,73 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <style name="H1Headline">
+        <item name="android:fontFamily">@font/work_sans_light</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">96sp</item>
+    </style>
+    <style name="H2Headline">
+        <item name="android:fontFamily">@font/work_sans_semibold</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">68sp</item>
+    </style>
+    <style name="H3Headline">
+        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">48sp</item>
+    </style>
+    <style name="H4Headline">
+        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">34sp</item>
+    </style>
+    <style name="H5Headline">
+        <item name="android:fontFamily">@font/work_sans_bold</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="H6Headline">
+        <item name="android:fontFamily">@font/work_sans_medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="Subtitle1">
+        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="Subtitle2">
+        <item name="android:fontFamily">@font/work_sans_medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="Body1">
+        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="Body2">
+        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="Caption">
+        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="Button">
+        <item name="android:fontFamily">@font/work_sans_medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="Overline">
+        <item name="android:fontFamily">@font/work_sans_semibold</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 </resources>

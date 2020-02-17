@@ -3,6 +3,8 @@ package es.developers.achambi.afines.login
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.ui.BaseFragment
@@ -28,7 +30,7 @@ class LoginFragment: BaseFragment(), LoginScreenInterface {
     }
 
     override fun onViewSetup(view: View) {
-        presenter.onViewSetup()
+       /* presenter.onViewSetup()
         login_button.setOnClickListener {
             login_email_edit_frame.error = null
             login_pass_edit_frame.error = null
@@ -42,11 +44,12 @@ class LoginFragment: BaseFragment(), LoginScreenInterface {
                 dialog.setTargetFragment(this, RETRIEVE_PASSWORD_REQUEST_CODE)
                 dialog.show(it, null)
             }
-        }
+        }*/
     }
 
+
     override val layoutResource: Int
-        get() = R.layout.login_fragment_layout
+        get() = R.layout.cards_layout_fragment
 
     override fun showNextScreen() {
         startActivity(activity?.let { OverviewActivity.getStartIntent(it) })

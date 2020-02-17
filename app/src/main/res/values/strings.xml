@@ -109,4 +109,10 @@
     <string name="overview_taxes_header_text">Calendario de impuestos</string>
     <string name="overview_rejected_invoices_header_text">Algunas de tus facturas ha sido rechazada</string>
     <string name="overview_rejected_invoices_message_text">Comprueba tus facturas y actualiza las que hayan sido rechazadas.</string>
+
+    <string-array name="array_name">
+        <item>Primer trimestre: 25 de Marzo hasta 25 de Junio</item>
+        <item>Primer trimestre: 25 de Marzo hasta 25 de Junio</item>
+        <item>Primer trimestre: 25 de Marzo hasta 25 de Junio</item>
+    </string-array>
 </resources>

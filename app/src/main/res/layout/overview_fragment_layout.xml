@@ -31,6 +31,7 @@
                 android:text="@string/overview_rejected_invoices_header_text"
                 android:textColor="@color/text_secondary"
                 android:textStyle="bold"
+                android:fontFamily="@font/"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -84,6 +85,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:fontFamily="@font/work_sans_black"
                 android:paddingTop="16dp"
                 android:text="@string/overview_password_change_title"
                 android:textColor="@color/text_secondary"

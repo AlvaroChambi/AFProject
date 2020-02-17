@@ -73,10 +73,11 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     private lateinit var presenter: UploadPresenter
 
     override val layoutResource: Int
-        get() = R.layout.upload_invoice_dialog_layout
+        get() = R.layout.new_upload_layout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         presenter = AfinesApplication.invoiceUploadPresenterFactory.build(this, lifecycle)
         invoiceId = arguments?.getLong(INVOICE_ID_KEY)
     }
@@ -87,7 +88,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     }
 
     override fun onViewSetup(view: View) {
-        pick_file_chip.setOnClickListener{
+       /* pick_file_chip.setOnClickListener{
             presenter.userSelectedFileChip()
         }
         pick_file_chip.setOnCloseIconClickListener {
@@ -107,7 +108,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
                     presenter.userPhotoFileRequested(it)
                 }
             }
-        }
+        }*/
     }
 
     override fun onRequestPermissionsResult(
@@ -170,7 +171,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.action_save) {
+        /*if(item.itemId == R.id.action_save) {
             activity?.let { presenter.userSaveSelected(
                     it, uri, file_name_edit_text.text.toString(),
                     invoice_trimester_selector.getChecked())
@@ -182,7 +183,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
                         file_name_edit_text.text.toString(),
                         invoice_trimester_selector.getChecked())
             }
-        }
+        }*/
         return super.onOptionsItemSelected(item)
     }
 
@@ -224,7 +225,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     override fun showEditableInvoice(invoice: InvoiceUploadPresentation) {
         pick_file_chip.text = invoice.file
         file_name_edit_text.setText(invoice.name)
-        invoice_trimester_selector.setTrimester(invoice.trimester)
+       // invoice_trimester_selector.setTrimester(invoice.trimester)
     }
 
     override fun showErrorRetrievingInvoice() {
