@@ -1,23 +1,19 @@
 package es.developers.achambi.afines.home
 
-import android.content.BroadcastReceiver
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.IntentFilter
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.ExecutorInterface
-import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.Navigation
 import es.developers.achambi.afines.OverviewScreen
-import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
-import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import es.developers.achambi.afines.services.Notifications
+import es.developers.achambi.afines.repositories.model.UserOverview
 import es.developers.achambi.afines.utils.EventLogger
 
 class OverviewPresenter(notificationsScreen: OverviewScreen,
@@ -31,38 +27,28 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
     : Presenter<OverviewScreen>(notificationsScreen, lifecycle, executor) {
 
     fun onViewSetup() {
-        val responseHandler= object : ResponseHandler<FirebaseProfile?> {
-            override fun onSuccess(response: FirebaseProfile?) {
-                response?.let {
-                    if(!it.passwordChanged) {
-                        screen.showUpdatePasswordNotification()
-                    }
-
-                    if(it.rejected > 0) {
-                        screen.showRejectInvoicesNotification()
-                    }
+        val responseHandler= object : ResponseHandler<UserOverview> {
+            @SuppressLint("DefaultLocale")
+            override fun onSuccess(response: UserOverview) {
+                response.counters?.let {
+                    screen.showInvoicesCount( it.approved.toString(),
+                        it.pending.toString(),
+                        it.rejected.toString() )
+                }
+                response.profile?.let {
+                    if(it.ccc.isNotEmpty()) screen.showCCCValue(it.ccc.toUpperCase())
+                    if(it.naf.isNotEmpty()) screen.showNAFValue(it.naf.toUpperCase())
+                    if(it.iban.isNotEmpty()) screen.showIbanValue(it.iban.toUpperCase())
                 }
             }
         }
 
-        val request= object : Request<FirebaseProfile?> {
-            override fun perform(): FirebaseProfile? {
-                return profileUseCase.getUserProfile(false)
+        val request= object : Request<UserOverview> {
+            override fun perform(): UserOverview {
+                return profileUseCase.getUserOverview()
             }
         }
         request(request, responseHandler)
-
-        val taxesResponse= object : ResponseHandler<List<TaxDate>> {
-            override fun onSuccess(response: List<TaxDate>) {
-                screen.showTaxDates(taxesPresentationBuilder.build(response))
-            }
-        }
-        val taxesRequest = object : Request<List<TaxDate>> {
-            override fun perform(): List<TaxDate> {
-                return taxesUseCase.getTaxDates()
-            }
-        }
-        request(taxesRequest, taxesResponse)
     }
 
     fun navigateToProfile() {
@@ -73,15 +59,5 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
     fun navigateToInvoices() {
         broadcastManager.sendBroadcast(Intent(Navigation.INVOICES_DEEP_LINK.toString()))
         analytics.publishInvoicesDeeplinkSelected()
-    }
-
-    fun registerBroadcast(broadcastReceiver: BroadcastReceiver) {
-        broadcastManager.registerReceiver(broadcastReceiver,
-            IntentFilter(Notifications.INVOICE_REJECTED.toString())
-        )
-    }
-
-    fun unregisterBroadcast(broadcastReceiver: BroadcastReceiver) {
-        broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 }

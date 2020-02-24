@@ -59,9 +59,14 @@
     <string name="profile_email_hint_text">Email</string>
     <string name="profile_address_hint_text">Dirección</string>
     <string name="profile_dni_hint_text">Dni</string>
-    <string name="profile_naf_hint_text">Naf</string>
-    <string name="profile_ccc_hint_text">ccc</string>
+    <string name="profile_naf_hint_text">NAF</string>
+    <string name="profile_ccc_hint_text">CCC</string>
+    <string name="profile_iban_hint_text">IBAN</string>
     <string name="profile_bank_account_hint_text">Cuenta bancaria</string>
+
+    <string name="overview_personal_card_naf_subtitle">Nº afiliación seg. social</string>
+    <string name="overview_personal_card_ccc_subtitle">Cód. cuenta de cotización</string>
+    <string name="overview_personal_card_iban_subtitle">Nº cuenta bancaria</string>
 
     <string name="password_hint_text">Contraseña</string>
 
@@ -109,4 +114,11 @@
     <string name="overview_taxes_header_text">Calendario de impuestos</string>
     <string name="overview_rejected_invoices_header_text">Algunas de tus facturas ha sido rechazada</string>
     <string name="overview_rejected_invoices_message_text">Comprueba tus facturas y actualiza las que hayan sido rechazadas.</string>
+
+    <string name="overview_invoices_sent_text">Facturas enviadas</string>
+    <string name="overview_invoices_approved_text">Facturas aprobadas</string>
+    <string name="overview_invoices_rejected_text">Facturas rechazadas</string>
+
+    <string name="my_invoices_header_text">MIS FACTURAS</string>
+    <string name="my_profile_header_text">MIS DATOS</string>
 </resources>

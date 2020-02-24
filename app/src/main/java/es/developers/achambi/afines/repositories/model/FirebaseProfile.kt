@@ -11,4 +11,5 @@ data class FirebaseProfile(var userId: String = "",
                            var token: String = "",
                            var passwordChanged: Boolean = false,
                            var pending: Int = 0,
-                           var rejected: Int = 0)
+                           var rejected: Int = 0,
+                           var approved: Int = 0)

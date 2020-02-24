@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white_background">
+
+    <es.developers.achambi.afines.ui.TrimesterHeaderView
+        android:id="@+id/trimesterHeaderView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/trimester_card_tax_name_text"
+        style="@style/H5Headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="MIS FACTURAS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trimesterHeaderView" />
+
+    <View
+        android:id="@+id/view4"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/primary_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trimester_card_tax_name_text" />
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="5dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_state_pending"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view4" />
+
+    <TextView
+        android:id="@+id/trimester_card_invoice_sent_text"
+        style="@style/Subtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/overview_invoices_sent_text"
+        app:layout_constraintBottom_toBottomOf="@+id/view5"
+        app:layout_constraintStart_toEndOf="@+id/view5"
+        app:layout_constraintTop_toTopOf="@+id/view5" />
+
+    <TextView
+        android:id="@+id/trimester_card_invoice_approved_text"
+        style="@style/Subtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/overview_invoices_approved_text"
+        app:layout_constraintBottom_toBottomOf="@+id/view6"
+        app:layout_constraintStart_toEndOf="@+id/view6"
+        app:layout_constraintTop_toTopOf="@+id/view6" />
+
+    <TextView
+        android:id="@+id/trimester_card_invoice_rejected_text"
+        style="@style/Subtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/overview_invoices_rejected_text"
+        app:layout_constraintBottom_toBottomOf="@+id/view7"
+        app:layout_constraintStart_toEndOf="@+id/view7"
+        app:layout_constraintTop_toTopOf="@+id/view7" />
+
+    <TextView
+        android:id="@+id/trimester_card_sent_count_text"
+        style="@style/Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/trimester_card_invoice_sent_text"
+        app:layout_constraintEnd_toEndOf="@+id/trimester_card_approved_count_text"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/trimester_card_approved_count_text"
+        app:layout_constraintTop_toTopOf="@+id/trimester_card_invoice_sent_text"
+        tools:text="10" />
+
+    <TextView
+        android:id="@+id/trimester_card_approved_count_text"
+        style="@style/Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/trimester_card_invoice_approved_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/trimester_card_invoice_approved_text"
+        app:layout_constraintTop_toTopOf="@+id/trimester_card_invoice_approved_text"
+        tools:text="11" />
+
+    <TextView
+        android:id="@+id/trimester_card_rejected_count_text"
+        style="@style/Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/trimester_card_invoice_rejected_text"
+        app:layout_constraintEnd_toEndOf="@+id/trimester_card_approved_count_text"
+        app:layout_constraintStart_toStartOf="@+id/trimester_card_approved_count_text"
+        app:layout_constraintTop_toTopOf="@+id/trimester_card_invoice_rejected_text"
+        tools:text="12" />
+
+    <View
+        android:id="@+id/view6"
+        android:layout_width="5dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/color_state_approved"
+        app:layout_constraintStart_toStartOf="@+id/view5"
+        app:layout_constraintTop_toBottomOf="@+id/view5" />
+
+    <View
+        android:id="@+id/view7"
+        android:layout_width="5dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/color_state_failed"
+        app:layout_constraintStart_toStartOf="@+id/view6"
+        app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+    <TextView
+        android:id="@+id/trimester_card_action_text"
+        style="@style/Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
+        android:text="VER TODAS"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view7" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
