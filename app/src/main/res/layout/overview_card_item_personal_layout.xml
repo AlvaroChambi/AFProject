@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white_background">
+
+    <TextView
+        android:id="@+id/personal_card_header_text"
+        style="@style/H5Headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="MIS DATOS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view4"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/primary_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/personal_card_header_text" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/iban_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="textView13,personal_card_iban_text,view12,personal_card_iban_value_text"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/ccc_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="textView12,view11,personal_card_ccc_text,personal_card_ccc_value_text"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/naf_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="view10,textView11,personal_card_naf_text,personal_card_naf_value_text"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/personal_card_naf_value_text"
+        style="@style/Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/textView11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/personal_card_naf_text"
+        tools:text="67023333332" />
+
+    <TextView
+        android:id="@+id/personal_card_ccc_value_text"
+        style="@style/Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/textView12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/personal_card_ccc_text"
+        tools:text="3223333332" />
+
+    <TextView
+        android:id="@+id/personal_card_iban_value_text"
+        style="@style/Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/textView13"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/personal_card_iban_text"
+        tools:text="ES4587654445654" />
+
+    <TextView
+        android:id="@+id/personal_card_action_text"
+        style="@style/Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/my_profile_button_text"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+    <TextView
+        android:id="@+id/personal_card_naf_text"
+        style="@style/Subtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/profile_naf_hint_text"
+        app:layout_constraintEnd_toStartOf="@+id/personal_card_naf_value_text"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/view10"
+        app:layout_constraintTop_toBottomOf="@+id/view4" />
+
+    <TextView
+        android:id="@+id/personal_card_ccc_text"
+        style="@style/Subtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/profile_ccc_hint_text"
+        app:layout_constraintStart_toEndOf="@+id/view11"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <TextView
+        android:id="@+id/personal_card_iban_text"
+        style="@style/Subtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/profile_iban_hint_text"
+        app:layout_constraintEnd_toStartOf="@+id/personal_card_naf_value_text"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/view12"
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+    <View
+        android:id="@+id/view10"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/secondary"
+        app:layout_constraintBottom_toBottomOf="@+id/textView11"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/personal_card_naf_text" />
+
+    <View
+        android:id="@+id/view11"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/secondary"
+        app:layout_constraintBottom_toBottomOf="@+id/textView12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/personal_card_ccc_text" />
+
+    <View
+        android:id="@+id/view12"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/secondary"
+        app:layout_constraintBottom_toBottomOf="@+id/textView13"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/personal_card_iban_text" />
+
+    <TextView
+        android:id="@+id/textView11"
+        style="@style/Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/overview_personal_card_naf_subtitle"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/personal_card_naf_text"
+        app:layout_constraintTop_toBottomOf="@+id/personal_card_naf_text" />
+
+    <TextView
+        android:id="@+id/textView12"
+        style="@style/Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/overview_personal_card_ccc_subtitle"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/personal_card_ccc_text"
+        app:layout_constraintTop_toBottomOf="@+id/personal_card_ccc_text" />
+
+    <TextView
+        android:id="@+id/textView13"
+        style="@style/Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/overview_personal_card_iban_subtitle"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/personal_card_iban_text"
+        app:layout_constraintTop_toBottomOf="@+id/personal_card_iban_text" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,27 +1,17 @@
 package es.developers.achambi.afines
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SortedList
-import androidx.recyclerview.widget.SortedListAdapterCallback
-import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developer.achambi.coreframework.threading.CoreError
+import es.developer.achambi.coreframework.ui.BaseRequestFragment
 import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.home.OverviewPresenter
-import es.developers.achambi.afines.home.ui.TaxPresentation
+import kotlinx.android.synthetic.main.overview_card_item_invoices_layout.*
+import kotlinx.android.synthetic.main.overview_card_item_personal_layout.*
 import kotlinx.android.synthetic.main.overview_fragment_layout.*
 
-class OverviewFragment : BaseFragment(), OverviewScreen {
+class OverviewFragment : BaseRequestFragment(), OverviewScreen {
     private lateinit var presenter: OverviewPresenter
-    private lateinit var broadcastReceiver: BroadcastReceiver
-    private lateinit var adapter: Adapter
 
     companion object{
         fun newInstance() : OverviewFragment{
@@ -35,96 +25,61 @@ class OverviewFragment : BaseFragment(), OverviewScreen {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = AfinesApplication.overviewPresenterFactory.build(this, lifecycle)
-        adapter = Adapter()
     }
 
-    override fun onStart() {
-        super.onStart()
-        broadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                showRejectInvoicesNotification()
-            }
-        }
-        presenter.registerBroadcast(broadcastReceiver)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter.unregisterBroadcast(broadcastReceiver)
+    override fun getLoadingFrame(): Int {
+        return R.id.overview_content_layout
     }
 
     override fun onViewSetup(view: View) {
-        activity?.setTitle(R.string.app_name)
-        taxes_recycler_view.layoutManager = LinearLayoutManager(activity)
-        taxes_recycler_view.adapter = adapter
         presenter.onViewSetup()
-        password_notification_action_button.setOnClickListener { presenter.navigateToProfile() }
-        rejected_invoice_action_button.setOnClickListener { presenter.navigateToInvoices() }
+        invoices_trimester_card_action_text.setOnClickListener { presenter.navigateToInvoices() }
+        personal_card_action_text.setOnClickListener { presenter.navigateToProfile() }
     }
 
-    override fun showTaxDates(taxes: ArrayList<TaxPresentation>) {
-        taxes_recycler_view.visibility = View.VISIBLE
-        overview_tax_dates_header.visibility = View.VISIBLE
-        adapter.setData(taxes)
+    override fun showInvoicesCount(approved: String, sent: String, rejected: String) {
+        trimester_card_sent_count_text.text = sent
+        trimester_card_approved_count_text.text = approved
+        trimester_card_rejected_count_text.text = rejected
     }
 
-    override fun showUpdatePasswordNotification() {
-        update_password_frame.visibility = View.VISIBLE
+    override fun showIbanValue(iban: String) {
+        iban_group.visibility = View.VISIBLE
+        overview_card_personal.visibility = View.VISIBLE
+        personal_card_iban_value_text.text = iban
     }
 
-    override fun showRejectInvoicesNotification() {
-        rejected_invoices_frame.visibility = View.VISIBLE
-    }
-}
-
-class Adapter : RecyclerView.Adapter<Holder>() {
-    private val data: SortedList<TaxPresentation>
-    init {
-        data = SortedList(TaxPresentation::class.java,
-            object : SortedListAdapterCallback<TaxPresentation>(this) {
-            override fun areItemsTheSame(
-                item1: TaxPresentation,
-                item2: TaxPresentation
-            ): Boolean = item1.id == item2.id
-
-            override fun compare(o1: TaxPresentation, o2: TaxPresentation): Int = o1.sortValue.compareTo(o2.sortValue)
-
-            override fun areContentsTheSame(
-                oldItem: TaxPresentation,
-                newItem: TaxPresentation
-            ): Boolean = oldItem.id == newItem.id
-        })
-    }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.tax_date_item_layout, parent, false)
-        return Holder(view)
+    override fun showCCCValue(ccc: String) {
+        ccc_group.visibility = View.VISIBLE
+        overview_card_personal.visibility = View.VISIBLE
+        personal_card_ccc_value_text.text = ccc
     }
 
-    override fun getItemCount(): Int {
-        return data.size()
+    override fun showNAFValue(naf: String) {
+        naf_group.visibility = View.VISIBLE
+        overview_card_personal.visibility = View.VISIBLE
+        personal_card_naf_value_text.text = naf
     }
 
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.bind( data.get(position) )
+    override fun showLoading() {
+        startLoading()
     }
 
-    fun setData(taxes: ArrayList<TaxPresentation>) {
-        data.addAll(taxes)
+    override fun showLoadingFinished() {
+        hideLoading()
     }
-}
 
-class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(taxDate: TaxPresentation) {
-        itemView.findViewById<TextView>(R.id.taxes_name_text).text = taxDate.name
-        itemView.findViewById<TextView>(R.id.taxes_trimester_text).text = taxDate.trimester
-        itemView.findViewById<TextView>(R.id.taxes_days_left_text).text = taxDate.daysLeft
-        itemView.findViewById<TextView>(R.id.taxes_date_text).text = taxDate.date
+    override fun showLoadingFailed(error: CoreError) {
+        showError(error)
     }
 }
 
 interface OverviewScreen : Screen {
-    fun showUpdatePasswordNotification()
-    fun showRejectInvoicesNotification()
-    fun showTaxDates(taxes: ArrayList<TaxPresentation>)
+    fun showInvoicesCount(approved: String, sent: String, rejected: String)
+    fun showIbanValue(iban: String)
+    fun showCCCValue(ccc: String)
+    fun showNAFValue(naf: String)
+    fun showLoading()
+    fun showLoadingFinished()
+    fun showLoadingFailed(error: CoreError)
 }

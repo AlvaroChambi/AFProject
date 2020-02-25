@@ -15,6 +15,7 @@ import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.home.model.TaxDate
+import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import es.developers.achambi.afines.utils.EventLogger
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
@@ -387,6 +388,26 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             analytics.publishReadEvent(firebaseAuth.currentUser?.uid)
             result?.let {
                 return result.toObjects(TaxDate::class.java)
+            }
+        }catch (e: ExecutionException) {
+            throw CoreError(e.message)
+        }catch (e: InterruptedException) {
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
+        throw CoreError()
+    }
+
+    @Throws(CoreError::class)
+    fun getCounters(trimester: String, year: String): InvoiceCounters {
+        try {
+            val userId = firebaseAuth.currentUser?.uid
+            val databaseRef = firestore.collection("user/"+ userId.toString() + "/counters/")
+            val result = Tasks.await(databaseRef.whereEqualTo("trimester", trimester)
+                .whereEqualTo("year", year).get(), TIMEOUT, TimeUnit.SECONDS)
+            analytics.publishReadEvent(userId)
+            result?.let {
+                val parsed = result.toObjects(InvoiceCounters::class.java)
+                return parsed[0]
             }
         }catch (e: ExecutionException) {
             throw CoreError(e.message)

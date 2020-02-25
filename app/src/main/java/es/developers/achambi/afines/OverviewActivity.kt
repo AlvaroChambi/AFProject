@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.MenuItem
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.ui.navigation.BaseNavigationActivity
@@ -31,6 +31,7 @@ class OverviewActivity : BaseNavigationActivity(){
 
     override fun onStart() {
         super.onStart()
+        navigationView.setBackgroundColor(ContextCompat.getColor(this,R.color.primary))
         val filter = IntentFilter()
         filter.addAction(Navigation.PROFILE_DEEP_LINK.toString())
         filter.addAction(Navigation.INVOICES_DEEP_LINK.toString())

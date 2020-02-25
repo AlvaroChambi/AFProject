@@ -3,10 +3,15 @@ package es.developers.achambi.afines.profile.usecase
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import es.developer.achambi.coreframework.threading.CoreError
+import es.developers.achambi.afines.invoices.ui.Trimester
+import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.repositories.model.InvoiceCounters
+import es.developers.achambi.afines.repositories.model.UserOverview
+import java.util.*
 
 class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
                      private val invoicesUseCase: InvoiceUseCase,
@@ -15,6 +20,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         const val DEVICE_TOKEN_KEY = "DEVICE_TOKEN"
     }
     private var firebaseProfile: FirebaseProfile? = null
+    private var counters: InvoiceCounters? = null
 
     @Throws(CoreError::class)
     fun getUserProfile(refresh: Boolean): FirebaseProfile? {
@@ -22,6 +28,22 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
             firebaseProfile = firebaseRepository.retrieveCurrentUser()
         }
         return firebaseProfile
+    }
+
+    @Throws(CoreError::class)
+    fun getUserOverview(): UserOverview {
+        val profile = getUserProfile(false)
+        val counters = getUserInvoiceCounters()
+        return UserOverview(counters, profile)
+    }
+
+    private fun getUserInvoiceCounters(): InvoiceCounters? {
+        if(counters == null) {
+            val trimester = TrimesterUtils.getCurrentTrimester()
+            val year = Calendar.getInstance().get(Calendar.YEAR)
+            counters = firebaseRepository.getCounters(trimester.toString(), year.toString())
+        }
+        return counters
     }
 
     fun updateProfile(profileUpload: ProfileUpload) {
