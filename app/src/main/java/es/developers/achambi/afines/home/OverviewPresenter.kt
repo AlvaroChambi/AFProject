@@ -10,8 +10,6 @@ import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.Navigation
 import es.developers.achambi.afines.OverviewScreen
-import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
-import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.UserOverview
 import es.developers.achambi.afines.utils.EventLogger
@@ -20,9 +18,7 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
                         lifecycle: Lifecycle,
                         executor: ExecutorInterface,
                         private val profileUseCase: ProfileUseCase,
-                        private val taxesUseCase: TaxesUseCase,
                         private val broadcastManager: LocalBroadcastManager,
-                        private val taxesPresentationBuilder: TaxPresentationBuilder,
                         private val analytics: EventLogger)
     : Presenter<OverviewScreen>(notificationsScreen, lifecycle, executor) {
 

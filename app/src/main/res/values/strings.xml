@@ -121,4 +121,6 @@
 
     <string name="my_invoices_header_text">MIS FACTURAS</string>
     <string name="my_profile_header_text">MIS DATOS</string>
+    <string name="my_invoices_button_text">VER TODAS</string>
+    <string name="my_profile_button_text">VER PERFIL</string>
 </resources>

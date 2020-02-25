@@ -1,6 +1,5 @@
 package es.developers.achambi.afines
 
-import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.view.View
 import es.developer.achambi.coreframework.ui.BaseFragment
@@ -11,7 +10,6 @@ import kotlinx.android.synthetic.main.overview_card_item_personal_layout.*
 
 class OverviewFragment : BaseFragment(), OverviewScreen {
     private lateinit var presenter: OverviewPresenter
-    private lateinit var broadcastReceiver: BroadcastReceiver
 
     companion object{
         fun newInstance() : OverviewFragment{
@@ -29,6 +27,8 @@ class OverviewFragment : BaseFragment(), OverviewScreen {
 
     override fun onViewSetup(view: View) {
         presenter.onViewSetup()
+        invoices_trimester_card_action_text.setOnClickListener { presenter.navigateToInvoices() }
+        personal_card_action_text.setOnClickListener { presenter.navigateToProfile() }
     }
 
     override fun showInvoicesCount(approved: String, sent: String, rejected: String) {

@@ -76,13 +76,11 @@ class ProfilePresenterFactory(private val executor: MainExecutor,
 
 class OverviewPresenterFactory(private val executor: MainExecutor,
                                private val useCase: ProfileUseCase,
-                               private val taxesUseCase: TaxesUseCase,
                                private val broadcastManager: LocalBroadcastManager,
-                               private val taxPresentationBuilder: TaxPresentationBuilder,
                                private val logger: EventLogger){
     fun build(screen: OverviewScreen, lifecycle: Lifecycle): OverviewPresenter {
-        return OverviewPresenter(screen, lifecycle, executor, useCase, taxesUseCase,
-            broadcastManager, taxPresentationBuilder, logger)
+        return OverviewPresenter(screen, lifecycle, executor, useCase,
+            broadcastManager, logger)
     }
 }
 
