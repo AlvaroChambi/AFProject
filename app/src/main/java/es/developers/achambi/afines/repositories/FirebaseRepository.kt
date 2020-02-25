@@ -5,6 +5,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import es.developers.achambi.afines.invoices.model.Invoice
@@ -17,9 +18,11 @@ import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import es.developers.achambi.afines.utils.EventLogger
+import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.collections.ArrayList
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage,
@@ -383,7 +386,9 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             val databaseRef = firestore.collection("taxes")
             val result = databaseRef.let {
-                Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
+                Tasks.await(it.whereGreaterThan("date", Date())
+                    .orderBy("date", Query.Direction.ASCENDING)
+                    .get(), TIMEOUT, TimeUnit.SECONDS)
             }
             analytics.publishReadEvent(firebaseAuth.currentUser?.uid)
             result?.let {

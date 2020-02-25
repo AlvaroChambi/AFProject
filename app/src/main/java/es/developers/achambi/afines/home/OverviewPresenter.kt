@@ -12,7 +12,9 @@ import es.developer.achambi.coreframework.ui.Presenter
 import es.developers.achambi.afines.Navigation
 import es.developers.achambi.afines.OverviewScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
+import es.developers.achambi.afines.repositories.model.NotificationType
 import es.developers.achambi.afines.repositories.model.UserOverview
+import es.developers.achambi.afines.ui.OverviewPresentationBuilder
 import es.developers.achambi.afines.utils.EventLogger
 
 class OverviewPresenter(notificationsScreen: OverviewScreen,
@@ -20,6 +22,7 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
                         executor: ExecutorInterface,
                         private val profileUseCase: ProfileUseCase,
                         private val broadcastManager: LocalBroadcastManager,
+                        private val presentationBuilder: OverviewPresentationBuilder,
                         private val analytics: EventLogger)
     : Presenter<OverviewScreen>(notificationsScreen, lifecycle, executor) {
 
@@ -29,15 +32,16 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
             @SuppressLint("DefaultLocale")
             override fun onSuccess(response: UserOverview) {
                 screen.showLoadingFinished()
-                response.counters?.let {
-                    screen.showInvoicesCount( it.approved.toString(),
-                        it.pending.toString(),
-                        it.rejected.toString() )
-                }
-                response.profile?.let {
-                    if(it.ccc.isNotEmpty()) screen.showCCCValue(it.ccc.toUpperCase())
-                    if(it.naf.isNotEmpty()) screen.showNAFValue(it.naf.toUpperCase())
-                    if(it.iban.isNotEmpty()) screen.showIbanValue(it.iban.toUpperCase())
+                val presentation = presentationBuilder.build(response)
+                screen.showInvoicesCount( presentation.approvedCount,
+                    presentation.pendingCount,
+                    presentation.rejectedCount)
+                if(presentation.ccc.isNotEmpty()) screen.showCCCValue(presentation.ccc)
+                if(presentation.naf.isNotEmpty()) screen.showNAFValue(presentation.naf)
+                if(presentation.iban.isNotEmpty()) screen.showIbanValue(presentation.iban)
+
+                if(presentation.notification.isNotEmpty()) {
+                    screen.showNotification(presentation.notification, presentation.type)
                 }
             }
 
@@ -54,6 +58,15 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
             }
         }
         request(request, responseHandler)
+    }
+
+    fun notificationGoToSelected(type: NotificationType) {
+        when(type) {
+            NotificationType.INVOICE_REJECTED -> navigateToInvoices()
+            NotificationType.PASS_NOT_UPDATED -> navigateToProfile()
+            NotificationType.TAX_DATE_REMINDER -> {}
+            NotificationType.NONE -> {}
+        }
     }
 
     fun navigateToProfile() {
