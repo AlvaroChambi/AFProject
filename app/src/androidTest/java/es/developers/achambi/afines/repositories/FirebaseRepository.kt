@@ -15,6 +15,7 @@ import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import es.developers.achambi.afines.utils.EventLogger
 import kotlin.collections.ArrayList
 
@@ -125,6 +126,11 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     @Throws(CoreError::class)
     fun getTaxDates(): List<TaxDate> {
         return MockSetup.getTaxDates()
+    }
+
+    @Throws(CoreError::class)
+    fun getCounters(trimester: String, year: String): InvoiceCounters {
+        return MockSetup.getCounters()
     }
 
     fun getCurrentUser(): FirebaseUser? {

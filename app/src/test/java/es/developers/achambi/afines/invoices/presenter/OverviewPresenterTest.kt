@@ -6,8 +6,10 @@ import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.repositories.model.UserOverview
 import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.*
 
@@ -18,42 +20,47 @@ class OverviewPresenterTest: BasePresenterTest() {
     @Mock
     private lateinit var profileUseCase: ProfileUseCase
     @Mock
-    private lateinit var taxesUseCase: TaxesUseCase
-    @Mock
-    private lateinit var builder: TaxPresentationBuilder
-    @Mock
     private lateinit var logger: EventLogger
 
     override fun setup() {
         super.setup()
-        presenter = OverviewPresenter(screen, lifecycle, executor, profileUseCase, taxesUseCase,
-            broadcastManager, builder, logger)
+        presenter = OverviewPresenter(screen, lifecycle, executor, profileUseCase,
+            broadcastManager, logger)
     }
 
     @Test
-    fun `test rejected notification should be displayed`() {
-        `when`(profileUseCase.getUserProfile(false)).thenReturn(FirebaseProfile(rejected = 1))
+    fun `test invalid ccc`() {
+        `when`(profileUseCase.getUserOverview()).thenReturn( UserOverview( null,
+            FirebaseProfile(iban = "iban", naf = "naf") ))
 
         presenter.onViewSetup()
 
-        verify(screen, times(1)).showRejectInvoicesNotification()
+        verify(screen, never()).showCCCValue("")
+        verify(screen, times(1)).showIbanValue("IBAN")
+        verify(screen, times(1)).showNAFValue("NAF")
     }
 
     @Test
-    fun `test password updated pending`() {
-        `when`(profileUseCase.getUserProfile(false)).thenReturn(FirebaseProfile(passwordChanged = false))
+    fun `test invalid naf`() {
+        `when`(profileUseCase.getUserOverview()).thenReturn( UserOverview( null,
+            FirebaseProfile(iban = "iban", ccc = "ccc")))
 
         presenter.onViewSetup()
 
-        verify(screen, times(1)).showUpdatePasswordNotification()
+        verify(screen, times(0)).showNAFValue("")
+        verify(screen, times(1)).showIbanValue("IBAN")
+        verify(screen, times(1)).showCCCValue("CCC")
     }
 
     @Test
-    fun `test tax dates request success`() {
-        `when`(taxesUseCase.getTaxDates()).thenReturn(ArrayList())
+    fun `test invalid iban`() {
+        `when`(profileUseCase.getUserOverview()).thenReturn( UserOverview(null,
+            FirebaseProfile(ccc = "ccc", naf = "naf")))
 
         presenter.onViewSetup()
 
-        verify(screen, times(1)).showTaxDates(ArrayList())
+        verify(screen, times(0)).showIbanValue("")
+        verify(screen, times(1)).showCCCValue("CCC")
+        verify(screen, times(1)).showNAFValue("NAF")
     }
 }

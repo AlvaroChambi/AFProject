@@ -5,6 +5,7 @@ import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.repositories.model.InvoiceCounters
 
 class MockSetup {
     companion object {
@@ -13,6 +14,7 @@ class MockSetup {
         private var loginSuccess = false
         private var retrievePassSuccess = false
         private var profile: FirebaseProfile? = null
+        private var counters: InvoiceCounters? = null
 
         fun setProfile(profile: FirebaseProfile?) {
             this.profile = profile
@@ -66,6 +68,19 @@ class MockSetup {
             } else {
                 return taxDates as ArrayList<TaxDate>
             }
+        }
+
+        @Throws(CoreError::class)
+        fun getCounters(): InvoiceCounters {
+            if(counters == null) {
+                throw CoreError()
+            } else {
+                return counters as InvoiceCounters
+            }
+        }
+
+        fun setCOunters(counters: InvoiceCounters) {
+            this.counters = counters
         }
     }
 }

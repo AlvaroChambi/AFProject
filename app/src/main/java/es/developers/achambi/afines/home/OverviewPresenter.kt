@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
@@ -23,9 +24,11 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
     : Presenter<OverviewScreen>(notificationsScreen, lifecycle, executor) {
 
     fun onViewSetup() {
+        screen.showLoading()
         val responseHandler= object : ResponseHandler<UserOverview> {
             @SuppressLint("DefaultLocale")
             override fun onSuccess(response: UserOverview) {
+                screen.showLoadingFinished()
                 response.counters?.let {
                     screen.showInvoicesCount( it.approved.toString(),
                         it.pending.toString(),
@@ -36,6 +39,12 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
                     if(it.naf.isNotEmpty()) screen.showNAFValue(it.naf.toUpperCase())
                     if(it.iban.isNotEmpty()) screen.showIbanValue(it.iban.toUpperCase())
                 }
+            }
+
+            override fun onError(error: CoreError) {
+                super.onError(error)
+                screen.showLoadingFinished()
+                screen.showLoadingFailed(error)
             }
         }
 
