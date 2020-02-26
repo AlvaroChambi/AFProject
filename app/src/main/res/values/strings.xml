@@ -1,4 +1,6 @@
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">Afines</string>
     <string name="overview_activity">Overview</string>
     <string name="login">Inciar sesión</string>
@@ -100,20 +102,18 @@
     <string name="retrieve_pass_send_text">Enviar</string>
     <string name="forgotten_pass_text">¿Has olvidado tu contraseña?</string>
 
-    <string name="overview_password_change_title">Todavia no has actualizado tu contraseña</string>
-    <string name="overview_password_change_message">Recuerda cambiar tu contraseña en el menú de opciones de tu perfil:</string>
+    <string name="overview_password_change_message">Recuerda cambiar tu contraseña en el menú de opciones de tu perfil.</string>
     <string name="overview_password_change_instructions">Perfil -> </string>
     <string name="overview_action_button_text">Acceder</string>
 
     <string name="profile_invalid_iban_message">El IBAN proporcionado no es correcto.</string>
 
     <plurals name="taxes_days_left_text">
-        <item quantity="one">%1$s día</item>
-        <item quantity="other">%1$s días</item>
+        <item quantity="one">Queda %1$s día para presentar: %2$s</item>
+        <item quantity="other">Quedan %1$s días para presentar: %2$s</item>
     </plurals>
     <string name="overview_taxes_header_text">Calendario de impuestos</string>
-    <string name="overview_rejected_invoices_header_text">Algunas de tus facturas ha sido rechazada</string>
-    <string name="overview_rejected_invoices_message_text">Comprueba tus facturas y actualiza las que hayan sido rechazadas.</string>
+    <string name="overview_rejected_invoices_message_text">Alguna de tus facturas ha sido rechazada, por favor comprueba tus facturas y actualizalas si es necesario.</string>
 
     <string name="overview_invoices_sent_text">Facturas enviadas</string>
     <string name="overview_invoices_approved_text">Facturas aprobadas</string>
@@ -123,4 +123,6 @@
     <string name="my_profile_header_text">MIS DATOS</string>
     <string name="my_invoices_button_text">VER TODAS</string>
     <string name="my_profile_button_text">VER PERFIL</string>
+    <string name="overview_notification_go_to_text">IR</string>
+    <string name="overview_notification_header_text">Notificaciones</string>
 </resources>

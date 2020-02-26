@@ -6,14 +6,18 @@ import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.ui.BaseRequestFragment
 import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.home.OverviewPresenter
+import es.developers.achambi.afines.repositories.model.NotificationType
 import kotlinx.android.synthetic.main.overview_card_item_invoices_layout.*
 import kotlinx.android.synthetic.main.overview_card_item_personal_layout.*
 import kotlinx.android.synthetic.main.overview_fragment_layout.*
+import kotlinx.android.synthetic.main.overview_notification_layout.*
 
 class OverviewFragment : BaseRequestFragment(), OverviewScreen {
     private lateinit var presenter: OverviewPresenter
+    private lateinit var notificationType: NotificationType
 
     companion object{
+        const val NOTIFICATION_TYPE_SAVED_STATE = "NOTIFICATION_TYPE_SAVED_STATE"
         fun newInstance() : OverviewFragment{
             return OverviewFragment()
         }
@@ -24,7 +28,15 @@ class OverviewFragment : BaseRequestFragment(), OverviewScreen {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        savedInstanceState?.let {
+            notificationType = NotificationType.values()[it.getInt(NOTIFICATION_TYPE_SAVED_STATE)]
+        }
         presenter = AfinesApplication.overviewPresenterFactory.build(this, lifecycle)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(NOTIFICATION_TYPE_SAVED_STATE, notificationType.ordinal)
     }
 
     override fun getLoadingFrame(): Int {
@@ -35,6 +47,8 @@ class OverviewFragment : BaseRequestFragment(), OverviewScreen {
         presenter.onViewSetup()
         invoices_trimester_card_action_text.setOnClickListener { presenter.navigateToInvoices() }
         personal_card_action_text.setOnClickListener { presenter.navigateToProfile() }
+        overview_notification_go_to_button.setOnClickListener {
+            presenter.notificationGoToSelected(notificationType) }
     }
 
     override fun showInvoicesCount(approved: String, sent: String, rejected: String) {
@@ -61,6 +75,12 @@ class OverviewFragment : BaseRequestFragment(), OverviewScreen {
         personal_card_naf_value_text.text = naf
     }
 
+    override fun showNotification(message: String, type: NotificationType) {
+        overview_notification_message_text.text = message
+        overview_notification_go_to_button.visibility = View.VISIBLE
+        notificationType = type
+    }
+
     override fun showLoading() {
         startLoading()
     }
@@ -82,4 +102,5 @@ interface OverviewScreen : Screen {
     fun showLoading()
     fun showLoadingFinished()
     fun showLoadingFailed(error: CoreError)
+    fun showNotification(message: String, type: NotificationType)
 }

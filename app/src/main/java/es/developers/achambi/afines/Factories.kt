@@ -22,6 +22,7 @@ import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
 import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.services.NotificationServicePresenter
+import es.developers.achambi.afines.ui.OverviewPresentationBuilder
 import es.developers.achambi.afines.utils.BaseUIPresenter
 import es.developers.achambi.afines.utils.EventLogger
 import java.util.regex.Pattern
@@ -77,10 +78,11 @@ class ProfilePresenterFactory(private val executor: MainExecutor,
 class OverviewPresenterFactory(private val executor: MainExecutor,
                                private val useCase: ProfileUseCase,
                                private val broadcastManager: LocalBroadcastManager,
+                               private val builder: OverviewPresentationBuilder,
                                private val logger: EventLogger){
     fun build(screen: OverviewScreen, lifecycle: Lifecycle): OverviewPresenter {
         return OverviewPresenter(screen, lifecycle, executor, useCase,
-            broadcastManager, logger)
+            broadcastManager, builder, logger)
     }
 }
 

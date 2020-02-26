@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
+import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.invoices.ui.InvoiceDetailsPresentationBuilder
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
@@ -18,6 +19,7 @@ import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
+import es.developers.achambi.afines.ui.OverviewPresentationBuilder
 import es.developers.achambi.afines.utils.EventLogger
 
 class AfinesApplication : Application() {
@@ -35,6 +37,7 @@ class AfinesApplication : Application() {
         lateinit var messagingServicePresenterFactory: MessagingServicePresenterFactory
         lateinit var baseTestPresenterFactory: BaseTestPresenterFactory
         lateinit var profileUseCase: ProfileUseCase
+        lateinit var taxesUseCase: TaxesUseCase
 
         val executor = MainExecutor.buildExecutor()
         const val DEFAULT_PREFERENCE = "DEFAULT_PREFERENCE"
@@ -50,7 +53,8 @@ class AfinesApplication : Application() {
         val uriUtils = URIUtils()
         val profilePresentationBuilder = ProfilePresentationBuilder()
         val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
-        profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, preferences)
+        taxesUseCase = TaxesUseCase(firebaseRepository)
+        profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, taxesUseCase ,preferences)
         val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
         val broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -65,7 +69,7 @@ class AfinesApplication : Application() {
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder,
             Patterns.EMAIL_ADDRESS, analytics)
         overviewPresenterFactory = OverviewPresenterFactory(executor, profileUseCase,
-            broadcastManager, analytics)
+            broadcastManager, OverviewPresentationBuilder(this), analytics)
 
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase, analytics)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase, analytics)
