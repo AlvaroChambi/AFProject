@@ -17,6 +17,7 @@ import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.*
 import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
+import es.developers.achambi.afines.databinding.InvoiceMinimalItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
 
@@ -62,6 +63,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     override fun onStop() {
         super.onStop()
         presenter.unregisterBroadcast(broadcastReceiver)
+    }
+
+    override fun getHeaderLayoutResource(): Int {
+        return R.layout.invoices_header_layout
     }
 
     override fun onViewSetup(view: View) {
@@ -209,15 +214,15 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     }
 }
 
-class Holder(val binding: InvoiceItemLayoutBinding): RecyclerView.ViewHolder(binding.root)
+class Holder(val binding: InvoiceMinimalItemLayoutBinding): RecyclerView.ViewHolder(binding.root)
 
 class Adapter: SearchAdapterDecorator<InvoicePresentation, Holder>() {
     override fun getLayoutResource(): Int {
-        return R.layout.invoice_item_layout
+        return R.layout.invoice_minimal_item_layout
     }
 
     override fun createViewHolder(rootView: View): Holder? {
-        val binding = DataBindingUtil.bind<InvoiceItemLayoutBinding>(rootView)
+        val binding = DataBindingUtil.bind<InvoiceMinimalItemLayoutBinding>(rootView)
         return binding?.let { Holder(it) }
     }
 

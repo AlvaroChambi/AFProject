@@ -27,10 +27,10 @@
     <string name="upload_name_error_title">¡Nos faltan datos!</string>
     <string name="upload_name_error_message">Antes de guardar tienes que subir la factura.</string>
 
-    <string name="invoice_state_delivered">Factura entregada:</string>
-    <string name="invoice_state_processed">Factura aprobada:</string>
-    <string name="invoice_state_failed">Factura no valida:</string>
-    <string name="invoice_state_accounted">Factura contabilizada:</string>
+    <string name="invoice_state_delivered">Enviada</string>
+    <string name="invoice_state_processed">Aprobada</string>
+    <string name="invoice_state_failed">Rechazada</string>
+    <string name="invoice_state_accounted">Aprobada</string>
 
     <string name="invoice_state_failed_details">Por favor compruebe que la factura enviada no este en otro formato (ticket, albarán, etc…) y que no se vea borrosa.</string>
 
