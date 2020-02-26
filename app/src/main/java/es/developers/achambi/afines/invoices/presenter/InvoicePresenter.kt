@@ -14,9 +14,13 @@ import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
+import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.services.Notifications
 import es.developers.achambi.afines.utils.EventLogger
+import java.time.Year
+import java.util.*
+import kotlin.collections.ArrayList
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                        lifecycle : Lifecycle,
@@ -50,7 +54,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         request(request, responseHandler)
     }
 
-    fun showInvoices() {
+    fun showInvoices(trimester: Trimester) {
         screen.showFullScreenProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
@@ -66,7 +70,8 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<ArrayList<Invoice>>{
             override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices(refresh = false)
+                return invoiceUseCase.queryUserInvoices(Calendar.getInstance().get(Calendar.YEAR),
+                    trimester )
             }
 
         }
@@ -145,7 +150,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     }
 
     fun refreshInvoices() {
-        screen.showProgress()
+        /*screen.showProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showProgressFinished()
@@ -163,7 +168,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
             }
 
         }
-        request(request , responseHandler)
+        request(request , responseHandler)*/
     }
 
     fun registerBroadcast(broadcastReceiver: BroadcastReceiver) {

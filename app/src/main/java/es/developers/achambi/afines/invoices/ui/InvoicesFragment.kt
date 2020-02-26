@@ -1,21 +1,38 @@
 package es.developers.achambi.afines.invoices.ui
 
+import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developers.achambi.afines.R
 import kotlinx.android.synthetic.main.invoices_header_layout.*
 
 class InvoicesFragment: BaseFragment() {
-    override fun onViewSetup(view: View) {
+    private lateinit var pagerAdapter: InvoicesPagerAdapter
+    override val layoutResource: Int
+        get() = R.layout.invoices_header_layout
 
+    companion object {
+        fun newInstance(): InvoicesFragment {
+            return InvoicesFragment()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        pagerAdapter = InvoicesPagerAdapter(childFragmentManager)
+    }
+
+    override fun onViewSetup(view: View) {
         invoices_tab_layout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-
+                invoices_view_pager.currentItem = tab.position
+                invoices_trimester_header_view.setTrimester(Trimester.values()[tab.position])
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -25,22 +42,21 @@ class InvoicesFragment: BaseFragment() {
             override fun onTabReselected(tab: TabLayout.Tab) {
 
             }
-
         })
+        invoices_view_pager.addOnPageChangeListener(
+            TabLayout.TabLayoutOnPageChangeListener(invoices_tab_layout))
+        invoices_view_pager.adapter = pagerAdapter
     }
-
-    override val layoutResource: Int
-        get() = R.layout.invoices_header_layout
 }
 
-class InvoicesPagerAdapter(fm: FragmentManager, private var tabCount: Int) :
+class InvoicesPagerAdapter(fm: FragmentManager) :
     FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int): Fragment {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       return InvoiceFragment.newInstance(position)
     }
 
     override fun getCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return 4
     }
 
 }

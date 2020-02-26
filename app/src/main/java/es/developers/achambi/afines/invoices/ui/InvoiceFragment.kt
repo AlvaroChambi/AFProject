@@ -16,7 +16,6 @@ import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.*
-import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
 import es.developers.achambi.afines.databinding.InvoiceMinimalItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
@@ -26,8 +25,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var adapter: Adapter
     private lateinit var presenter: InvoicePresenter
     private lateinit var broadcastReceiver: BroadcastReceiver
+    private var trimester= Trimester.EMPTY
 
     companion object {
+        private const val TRIMESTER_EXTRA_KEY = "TRIMESTER_EXTRA_KEY"
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
         const val FILE_EXTRA_CODE = "FILE_EXTRA_CODE"
         const val URI_EXTRA_CODE = "URI_EXTRA_CODE"
@@ -40,13 +41,24 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         const val INVOICE_OPERATION_KEY = "INVOICE_OPERATION_KEY"
         const val INVOICE_DELETED_CODE = 104
         const val INVOICE_EDITED_CODE = 105
-        fun newInstance(): InvoiceFragment {
-            return InvoiceFragment()
+        fun newInstance(trimester: Int): InvoiceFragment {
+            val fragment = InvoiceFragment()
+            fragment.arguments = getArguments(trimester)
+            return fragment
+        }
+
+        private fun getArguments(trimester: Int): Bundle {
+            val bundle = Bundle()
+            bundle.putInt(TRIMESTER_EXTRA_KEY, trimester)
+            return bundle
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let {
+            trimester = Trimester.values()[it.getInt(TRIMESTER_EXTRA_KEY)]
+        }
         presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
     }
 
@@ -65,13 +77,8 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         presenter.unregisterBroadcast(broadcastReceiver)
     }
 
-    override fun getHeaderLayoutResource(): Int {
-        return R.layout.invoices_header_layout
-    }
-
     override fun onViewSetup(view: View) {
         super.onViewSetup(view)
-        activity?.setTitle(R.string.invoices_screen_title)
         val refreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh_layout)
         refreshLayout.setOnRefreshListener {
             refreshLayout.isRefreshing = false
@@ -79,12 +86,14 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
 
         progressBar = view.findViewById(R.id.horizontal_progress_bar)
+
+        /*
         view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
         view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
             startActivityForResult(activity?.let {
                 UploadInvoiceActivity.getStartIntent( it ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }, INVOICE_UPLOAD_DIALOG_CODE )
-        }
+        }*/
 
         adapter.setListener { item ->
             startActivityForResult(activity?.let {
@@ -151,17 +160,17 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     }
 
     override fun onSearchFinished() {
-        presenter.showInvoices()
+        presenter.showInvoices(trimester)
     }
 
     override fun onDataSetup() {
         super.onDataSetup()
-        presenter.showInvoices()
+        presenter.showInvoices(trimester)
     }
 
     override fun onRetry() {
         super.onRetry()
-        presenter.showInvoices()
+        presenter.showInvoices(trimester)
     }
 
     override fun provideAdapter(): SearchAdapterDecorator<InvoicePresentation, Holder> {

@@ -102,6 +102,18 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return result.toObjects(FirebaseInvoice::class.java)
     }
 
+    fun fetchInvoices(start: Long, end: Long): List<FirebaseInvoice> {
+        val user = firebaseAuth.currentUser
+        val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
+        val result = Tasks.await(listRef.whereGreaterThan("id", start)
+            .whereLessThan("id", end).get())
+        analytics.publishReadEvent(user?.uid)
+        if(result.isEmpty) {
+            return ArrayList()
+        }
+        return result.toObjects(FirebaseInvoice::class.java)
+    }
+
     @Throws(CoreError::class)
     fun deleteInvoice(invoice: Invoice) {
         val user = firebaseAuth.currentUser

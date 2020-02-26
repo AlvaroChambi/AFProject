@@ -12,9 +12,11 @@ import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.InvoiceState
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     private val invoices = ArrayList<Invoice>()
+    private val cachedInvoices = HashMap<Trimester, ArrayList<Invoice>>()
 
     fun clearCache() {
         invoices.clear()
@@ -103,6 +105,33 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             }
         }
         return filteredArray
+    }
+
+    @Throws(CoreError::class)
+    fun queryUserInvoices(year: Int, trimester: Trimester): ArrayList<Invoice> {
+        var trimesterInvoices = cachedInvoices[trimester]
+        if(trimesterInvoices != null) {
+            return trimesterInvoices
+        }
+        val calendar = Calendar.getInstance()
+        calendar.set(year, trimester.start, 1, 0 ,0)
+        val start = calendar.time
+        calendar.set(year, trimester.end, 1, 0, 0)
+        val end = calendar.time
+        val result = firebaseRepository.fetchInvoices(start.time, end.time)
+        trimesterInvoices = ArrayList()
+        result.forEach { firebaseInvoice ->
+            trimesterInvoices.add(
+                Invoice(firebaseInvoice.id,
+                    firebaseInvoice.name,
+                    firebaseInvoice.fileReference?: "",
+                    resolveTrimester(firebaseInvoice.trimester),
+                    firebaseInvoice.state?.let { InvoiceState.valueOf(it) },
+                    firebaseInvoice.id,
+                    firebaseInvoice.dbPath))
+        }
+        cachedInvoices[trimester] = trimesterInvoices
+        return trimesterInvoices
     }
 
     @Throws(CoreError::class)
