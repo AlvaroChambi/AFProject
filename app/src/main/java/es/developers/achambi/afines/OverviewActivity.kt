@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -67,7 +66,19 @@ class OverviewActivity : AppCompatActivity(),
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when(p0.itemId) {
             R.id.navigation_menu_profile -> replaceFragment(ProfileFragment.newInstance())
-            R.id.navigation_menu_invoice -> replaceFragment(InvoicesFragment.newInstance())
+            R.id.navigation_menu_invoice -> {
+                //Transition will only be performed between OverviewFragment and Invoices Fragment
+                if(bottom_navigation.selectedItemId == R.id.navigation_menu_home) {
+                    val manager = supportFragmentManager
+                    manager.beginTransaction()
+                        .addSharedElement(findViewById(R.id.trimesterHeaderView),
+                            getString(R.string.overview_to_invoices_transition_name))
+                        .replace(R.id.navigation_fragment_frame,
+                            InvoicesFragment.newInstance(), null).commit()
+                } else {
+                    replaceFragment(InvoicesFragment.newInstance())
+                }
+            }
             R.id.navigation_menu_home -> replaceFragment(OverviewFragment.newInstance())
         }
         return true

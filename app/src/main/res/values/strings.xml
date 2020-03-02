@@ -125,4 +125,11 @@
     <string name="my_profile_button_text">VER PERFIL</string>
     <string name="overview_notification_go_to_text">IR</string>
     <string name="overview_notification_header_text">Notificaciones</string>
+
+    <string name="invoices_tab_first_trimester_name">1ºT</string>
+    <string name="invoices_tab_second_trimester_name">2ºT</string>
+    <string name="invoices_tab_third_trimester_name">3ºT</string>
+    <string name="invoices_tab_forth_trimester_name">4ºT</string>
+
+    <string name="overview_to_invoices_transition_name">header_transition</string>
 </resources>

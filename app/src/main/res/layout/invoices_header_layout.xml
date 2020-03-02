@@ -8,6 +8,7 @@
 
     <es.developers.achambi.afines.ui.TrimesterHeaderView
         android:id="@+id/invoices_trimester_header_view"
+        android:transitionName="@string/overview_to_invoices_transition_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/invoices_tab_layout"
@@ -26,22 +27,22 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1º T" />
+            android:text="@string/invoices_tab_first_trimester_name" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2º T" />
+            android:text="@string/invoices_tab_second_trimester_name" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3º T" />
+            android:text="@string/invoices_tab_third_trimester_name" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4º T" />
+            android:text="@string/invoices_tab_forth_trimester_name" />
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager.widget.ViewPager

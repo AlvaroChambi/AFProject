@@ -8,6 +8,7 @@
 
     <es.developers.achambi.afines.ui.TrimesterHeaderView
         android:id="@+id/trimesterHeaderView"
+        android:transitionName="@string/overview_to_invoices_transition_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
