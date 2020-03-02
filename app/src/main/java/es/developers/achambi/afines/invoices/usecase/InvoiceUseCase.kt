@@ -36,7 +36,14 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     @Throws(CoreError::class)
-    fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
+    fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload): ArrayList<Invoice>{
+        val id = firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
+        fetchInvoice(id)?.let { invoices.add(it) }
+        return invoices
+    }
+
+    @Throws(CoreError::class)
+    fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long): ArrayList<Invoice>{
         val invoice = getInvoice(invoiceId)
         invoice?.let { firebaseRepository.updateInvoiceMetadata(invoice, invoiceUpload.name,
             invoiceUpload.trimester.toString()) }
@@ -46,14 +53,21 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
                 InvoiceState.SENT.toString(), Date().time) }
             AfinesApplication.profileUseCase.clearProfileCache()
         }
+        invoices.remove(invoice)
+        fetchInvoice(invoiceId)?.let {
+            invoices.add(it)
+        }
+        return invoices
     }
 
     @Throws(CoreError::class)
-    fun deleteInvoice(invoiceId: Long) {
+    fun deleteInvoice(invoiceId: Long): ArrayList<Invoice>{
         val invoice = getInvoice(invoiceId)
         invoice?.let {
             firebaseRepository.deleteInvoice(it)
         }
+        invoices.remove(invoice)
+        return invoices
     }
 
     fun getFileBytes(invoiceId: Long): ByteArray? {
@@ -72,6 +86,22 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             invoices.addAll(queryUserInvoices(false))
         }
         return invoices.find { it.id == invoiceId }
+    }
+
+    @Throws(CoreError::class)
+    fun fetchInvoice(invoiceId: Long): Invoice? {
+        val firebaseInvoice = firebaseRepository.fetchInvoice(invoiceId)
+        var invoice: Invoice? = null
+        firebaseInvoice?.let {
+            invoice = Invoice(it.id,
+                it.name,
+                it.fileReference?: "",
+                resolveTrimester(it.trimester),
+                it.state?.let { InvoiceState.valueOf(it) },
+                resolveDate(it.deliveredDate, it.processedDate),
+                it.dbPath)
+        }
+        return invoice
     }
 
     @Throws(CoreError::class)
@@ -108,8 +138,11 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     @Throws(CoreError::class)
-    fun queryUserInvoices(year: Int, trimester: Trimester): ArrayList<Invoice> {
+    fun queryUserInvoices(year: Int, trimester: Trimester, refresh: Boolean): ArrayList<Invoice> {
         var trimesterInvoices = cachedInvoices[trimester]
+        if(refresh) {
+            trimesterInvoices?.clear()
+        }
         if(trimesterInvoices != null) {
             return trimesterInvoices
         }
@@ -132,11 +165,6 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         }
         cachedInvoices[trimester] = trimesterInvoices
         return trimesterInvoices
-    }
-
-    @Throws(CoreError::class)
-    fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload) {
-        firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
     }
 
     private fun buildPostInvoice(invoiceUpload: InvoiceUpload): FirebaseInvoice {

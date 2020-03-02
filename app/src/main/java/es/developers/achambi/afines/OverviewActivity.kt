@@ -1,5 +1,6 @@
 package es.developers.achambi.afines
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -58,6 +59,15 @@ class OverviewActivity : AppCompatActivity(),
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == INVOICE_UPLOAD_DIALOG_CODE && resultCode == Activity.RESULT_OK) {
+            val invoices = InvoicesFragment.newInstance()
+            supportFragmentManager.beginTransaction().replace(R.id.navigation_fragment_frame,
+                invoices).commitNow()
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
@@ -86,11 +96,8 @@ class OverviewActivity : AppCompatActivity(),
 
     private fun replaceFragment(fragment: Fragment) {
         val manager = supportFragmentManager
-        manager.beginTransaction()
-            .replace(
-                R.id.navigation_fragment_frame,
-                fragment, null)
-            .commit()
+        manager.beginTransaction().replace(R.id.navigation_fragment_frame,
+                fragment, null).commit()
     }
 
     private fun provideEntryFragment(): Fragment {

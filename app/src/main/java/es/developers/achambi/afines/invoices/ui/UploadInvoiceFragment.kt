@@ -162,10 +162,12 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-            takePictureIntent.resolveActivity(activity?.packageManager)?.also {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-                startActivityForResult(takePictureIntent, PHOTO_CAPTURE_RESULT_CODE)
-            }
+            (activity?.packageManager?.let {
+                takePictureIntent.resolveActivity(it)?.also {
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                    startActivityForResult(takePictureIntent, PHOTO_CAPTURE_RESULT_CODE)
+                }
+            })
         }
     }
 

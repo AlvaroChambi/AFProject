@@ -66,7 +66,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         super.onStart()
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                presenter.refreshInvoices()
+                presenter.refreshInvoices(trimester)
             }
         }
         presenter.registerBroadcast(broadcastReceiver)
@@ -82,19 +82,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         val refreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh_layout)
         refreshLayout.setOnRefreshListener {
             refreshLayout.isRefreshing = false
-            presenter.refreshInvoices()
+            presenter.refreshInvoices(trimester)
         }
 
         progressBar = view.findViewById(R.id.horizontal_progress_bar)
-
-        /*
-        view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
-        view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
-            startActivityForResult(activity?.let {
-                UploadInvoiceActivity.getStartIntent( it ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }, INVOICE_UPLOAD_DIALOG_CODE )
-        }*/
-
         adapter.setListener { item ->
             startActivityForResult(activity?.let {
                 InvoiceFullScreenActivity.getStartIntent(it, item.id, item.name) },
@@ -184,7 +175,8 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             val invoice: InvoiceUpload? = data?.getParcelableExtra(FILE_EXTRA_CODE)
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
-        } else if(requestCode == INVOICE_DETAILS_REQUEST_CODE) {
+        }
+        else if(requestCode == INVOICE_DETAILS_REQUEST_CODE) {
             val code = data?.getIntExtra(INVOICE_OPERATION_KEY, 0)
             if(code == INVOICE_DELETED_CODE) {
                 val invoiceId = data.getLongExtra(DELETED_INVOICE_ID_KEY, 0)
@@ -201,7 +193,8 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
                     message?.let { it1 -> Snackbar.make(it, it1, Snackbar.LENGTH_SHORT).show() }
                 }
             }
-        } else if(requestCode == INVOICE_EDIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        }
+        else if(requestCode == INVOICE_EDIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val invoice: InvoiceUpload? = data?.getParcelableExtra(FILE_EXTRA_CODE)
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             val invoiceId: Long? = data?.getLongExtra(INVOICE_ID_EXTRA_KEY, 0)

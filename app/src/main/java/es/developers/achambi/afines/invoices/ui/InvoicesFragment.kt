@@ -1,5 +1,6 @@
 package es.developers.achambi.afines.invoices.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.ChangeTransform
@@ -10,24 +11,23 @@ import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import es.developer.achambi.coreframework.ui.BaseFragment
 import es.developers.achambi.afines.R
-import kotlinx.android.synthetic.main.invoices_header_layout.*
+import kotlinx.android.synthetic.main.invoices_fragment_layout.*
 
 class DetailsTransition: TransitionSet() {
     init{
         ordering = (ORDERING_TOGETHER)
-        addTransition( ChangeBounds() )
-            .addTransition(ChangeTransform())
+        addTransition( ChangeBounds() ).addTransition(ChangeTransform())
     }
 }
 
 class InvoicesFragment: BaseFragment() {
     private lateinit var pagerAdapter: InvoicesPagerAdapter
+    private var trimester: Int = 0
     override val layoutResource: Int
-        get() = R.layout.invoices_header_layout
+        get() = R.layout.invoices_fragment_layout
 
     companion object {
         fun newInstance(): InvoicesFragment {
@@ -43,9 +43,11 @@ class InvoicesFragment: BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pagerAdapter = InvoicesPagerAdapter(childFragmentManager)
+        trimester = TrimesterUtils.getCurrentTrimester().ordinal
     }
 
     override fun onViewSetup(view: View) {
+        invoices_tab_layout.selectTab(invoices_tab_layout.getTabAt(trimester))
         invoices_tab_layout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -67,6 +69,13 @@ class InvoicesFragment: BaseFragment() {
         invoices_view_pager.addOnPageChangeListener(
             TabLayout.TabLayoutOnPageChangeListener(invoices_tab_layout))
         invoices_view_pager.adapter = pagerAdapter
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        invoices_tab_layout.selectTab(invoices_tab_layout.getTabAt(trimester))
+        val current = pagerAdapter.getItem(trimester)
+        current.onActivityResult(requestCode, resultCode, data)
     }
 }
 
