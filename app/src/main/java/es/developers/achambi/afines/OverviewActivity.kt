@@ -34,7 +34,6 @@ class OverviewActivity : AppCompatActivity(),
         if (savedInstanceState == null) {
             replaceFragment(provideEntryFragment())
         }
-        bottom_navigation.inflateMenu(provideMenuResource())
         bottom_navigation.setOnNavigationItemSelectedListener(this)
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -54,7 +53,6 @@ class OverviewActivity : AppCompatActivity(),
                 UploadInvoiceActivity.getStartIntent( this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 , INVOICE_UPLOAD_DIALOG_CODE )
         }
-        bottom_navigation.setBackgroundColor(ContextCompat.getColor(this,R.color.primary))
         val filter = IntentFilter()
         filter.addAction(Navigation.PROFILE_DEEP_LINK.toString())
         filter.addAction(Navigation.INVOICES_DEEP_LINK.toString())
@@ -64,10 +62,6 @@ class OverviewActivity : AppCompatActivity(),
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
-    }
-
-    private fun provideMenuResource(): Int {
-        return R.menu.bottom_navigation_menu
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
