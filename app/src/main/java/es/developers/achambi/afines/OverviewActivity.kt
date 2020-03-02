@@ -64,7 +64,8 @@ class OverviewActivity : AppCompatActivity(),
         if(requestCode == INVOICE_UPLOAD_DIALOG_CODE && resultCode == Activity.RESULT_OK) {
             val invoices = InvoicesFragment.newInstance()
             supportFragmentManager.beginTransaction().replace(R.id.navigation_fragment_frame,
-                invoices).commitNow()
+                invoices)
+            data?.let { intent.putExtras(data) }
         }
     }
 

@@ -74,8 +74,6 @@ class InvoicesFragment: BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         invoices_tab_layout.selectTab(invoices_tab_layout.getTabAt(trimester))
-        val current = pagerAdapter.getItem(trimester)
-        current.onActivityResult(requestCode, resultCode, data)
     }
 }
 

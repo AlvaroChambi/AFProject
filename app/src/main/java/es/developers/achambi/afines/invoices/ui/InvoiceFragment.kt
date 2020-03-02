@@ -60,6 +60,11 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             trimester = Trimester.values()[it.getInt(TRIMESTER_EXTRA_KEY)]
         }
         presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
+        activity?.intent?.let {
+            val invoice: InvoiceUpload? = it.getParcelableExtra(FILE_EXTRA_CODE)
+            val uri: Uri? = it.getParcelableExtra(URI_EXTRA_CODE)
+            uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
+        }
     }
 
     override fun onStart() {
