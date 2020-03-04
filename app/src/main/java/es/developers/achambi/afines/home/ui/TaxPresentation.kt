@@ -1,7 +1,7 @@
 package es.developers.achambi.afines.home.ui
 
 import android.content.Context
-import es.developer.achambi.coreframework.utils.DateFormatUtils
+import es.developers.achambi.afines.utils.DateFormatUtils
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.invoices.ui.Trimester

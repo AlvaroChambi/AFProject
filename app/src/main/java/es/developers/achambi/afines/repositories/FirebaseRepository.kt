@@ -52,14 +52,13 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice) {
+    fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice): Long {
         val storageReference = firestorage.reference
         val user = firebaseAuth.currentUser
         val fileReference = storageReference.child(INVOICES_PATH + "${user?.uid + "/"}/${firebaseInvoice.name}")
         val firebaseReference = firestore.collection("user/"+user?.uid + "/invoices/")
         val invoiceReference = firebaseReference.document()
         firebaseInvoice.dbPath = invoiceReference.id
-
         try {
             Tasks.await(fileReference.putFile(uri),TIMEOUT, TimeUnit.SECONDS)
         }catch (e: ExecutionException) {
@@ -89,12 +88,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e:InterruptedException) {
             throw CoreError(e.message)
         }catch (e: TimeoutException) {Crashlytics.logException(e)}
+        return firebaseInvoice.id
     }
 
     fun userInvoices(): List<FirebaseInvoice> {
         val user = firebaseAuth.currentUser
         val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
         val result = Tasks.await(listRef.get())
+        analytics.publishReadEvent(user?.uid)
+        if(result.isEmpty) {
+            return ArrayList()
+        }
+        return result.toObjects(FirebaseInvoice::class.java)
+    }
+
+    fun fetchInvoices(start: Long, end: Long): List<FirebaseInvoice> {
+        val user = firebaseAuth.currentUser
+        val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
+        val result = Tasks.await(listRef.whereGreaterThan("id", start)
+            .whereLessThan("id", end).get())
         analytics.publishReadEvent(user?.uid)
         if(result.isEmpty) {
             return ArrayList()
@@ -414,6 +426,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 val parsed = result.toObjects(InvoiceCounters::class.java)
                 return parsed[0]
             }
+        }catch (e: ExecutionException) {
+            throw CoreError(e.message)
+        }catch (e: InterruptedException) {
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
+        throw CoreError()
+    }
+
+    @Throws(CoreError::class)
+    fun fetchInvoice(invoiceId: Long): FirebaseInvoice? {
+        try {
+            val userId = firebaseAuth.currentUser?.uid
+            val invoicesRef = firestore.collection("user/"+userId.toString()+"/invoices/")
+            val result = Tasks.await(invoicesRef.whereEqualTo("id", invoiceId).get(),
+                TIMEOUT, TimeUnit.SECONDS)
+            if(result.isEmpty) {
+                return null
+            }
+            return result.toObjects(FirebaseInvoice::class.java)[0]
         }catch (e: ExecutionException) {
             throw CoreError(e.message)
         }catch (e: InterruptedException) {

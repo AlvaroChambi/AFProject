@@ -14,15 +14,17 @@ import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
+import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.services.Notifications
 import es.developers.achambi.afines.utils.EventLogger
+import kotlin.collections.ArrayList
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                        lifecycle : Lifecycle,
                        executor: ExecutorInterface,
                        private val invoiceUseCase: InvoiceUseCase,
-                       private val invoicePresentationBuilder: InvoicePresentationBuilder,
+                       private val presentationBuilder: InvoicePresentationBuilder,
                        private val broadcastManager: LocalBroadcastManager,
                        private val analytics: EventLogger)
     : Presenter<InvoicesScreenInterface>(screenInterface,lifecycle,executor){
@@ -30,10 +32,10 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     fun uploadFile(uri: Uri, invoiceUpload: InvoiceUpload) {
         screen.showProgress()
         analytics.publishInvoiceCreated()
-        val responseHandler = object: ResponseHandler<Any> {
-            override fun onSuccess(response: Any) {
+        val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
+            override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showProgressFinished()
-                refreshInvoices()
+                screen.showInvoices(presentationBuilder.build(response))
             }
 
             override fun onError(error: CoreError) {
@@ -42,20 +44,20 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 screen.showUploadError()
             }
         }
-        val request = object : Request<Any> {
-            override fun perform(): Any {
+        val request = object : Request<ArrayList<Invoice>> {
+            override fun perform(): ArrayList<Invoice> {
                 return invoiceUseCase.uploadUserFiles(uri, invoiceUpload)
             }
         }
         request(request, responseHandler)
     }
 
-    fun showInvoices() {
+    fun showInvoices(trimester: Trimester) {
         screen.showFullScreenProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showFullScreenProgressFinished()
-                screen.showInvoices( invoicePresentationBuilder.build(response) )
+                screen.showInvoices( presentationBuilder.build(response) )
             }
 
             override fun onError(error: CoreError) {
@@ -66,31 +68,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<ArrayList<Invoice>>{
             override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices(refresh = false)
-            }
-
-        }
-        request(request , responseHandler)
-    }
-
-    fun queryInvoices(query: String) {
-        screen.showProgress()
-        analytics.publishInvoiceQuery()
-        val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
-            override fun onSuccess(response: ArrayList<Invoice>) {
-                screen.showProgressFinished()
-                screen.showInvoices( invoicePresentationBuilder.build(response) )
-            }
-
-            override fun onError(error: CoreError) {
-                super.onError(error)
-                screen.showProgressFinished()
-                screen.showInvoicesLoadingError()
-            }
-        }
-        val request = object : Request<ArrayList<Invoice>>{
-            override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices(query)
+                return invoiceUseCase.queryUserInvoices(trimester, false)
             }
 
         }
@@ -100,11 +78,11 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     fun deleteRequested(invoiceId: Long) {
         screen.showProgress()
         analytics.publishInvoiceDeleted()
-        val responseHandler = object : ResponseHandler<Any> {
-            override fun onSuccess(response: Any) {
+        val responseHandler = object : ResponseHandler<ArrayList<Invoice>> {
+            override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showInvoiceDeleted()
                 screen.showProgressFinished()
-                refreshInvoices()
+                screen.showInvoices(presentationBuilder.build(response))
             }
 
             override fun onError(error: CoreError) {
@@ -112,8 +90,8 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
                 screen.showInvoiceDeleteError()
             }
         }
-        val request = object : Request<Any> {
-            override fun perform(): Any {
+        val request = object : Request<ArrayList<Invoice>> {
+            override fun perform(): ArrayList<Invoice> {
                 return invoiceUseCase.deleteInvoice(invoiceId)
             }
         }
@@ -123,11 +101,11 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
     fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long) {
         screen.showProgress()
         analytics.publishInvoiceUpdated(invoiceUpload.uriMetadata.displayName)
-        val responseHandler = object : ResponseHandler<Any> {
-            override fun onSuccess(response: Any) {
+        val responseHandler = object : ResponseHandler<ArrayList<Invoice>> {
+            override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showProgressFinished()
                 screen.showEditInvoiceSuccess()
-                refreshInvoices()
+                screen.showInvoices(presentationBuilder.build(response))
             }
 
             override fun onError(error: CoreError) {
@@ -136,20 +114,20 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
             }
         }
 
-        val request = object : Request<Any> {
-            override fun perform(): Any {
+        val request = object : Request<ArrayList<Invoice>> {
+            override fun perform(): ArrayList<Invoice> {
                 return invoiceUseCase.updateInvoice(uri, invoiceUpload, invoiceId)
             }
         }
         request(request, responseHandler)
     }
 
-    fun refreshInvoices() {
+    fun refreshInvoices(trimester: Trimester) {
         screen.showProgress()
         val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
             override fun onSuccess(response: ArrayList<Invoice>) {
                 screen.showProgressFinished()
-                screen.showInvoices( invoicePresentationBuilder.build(response) )
+                screen.showInvoices( presentationBuilder.build(response) )
             }
 
             override fun onError(error: CoreError) {
@@ -159,7 +137,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<ArrayList<Invoice>>{
             override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices(refresh = true)
+                return invoiceUseCase.queryUserInvoices(trimester, true)
             }
 
         }

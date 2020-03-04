@@ -16,7 +16,7 @@ import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.*
-import es.developers.achambi.afines.databinding.InvoiceItemLayoutBinding
+import es.developers.achambi.afines.databinding.InvoiceMinimalItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
 
@@ -25,8 +25,10 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     private lateinit var adapter: Adapter
     private lateinit var presenter: InvoicePresenter
     private lateinit var broadcastReceiver: BroadcastReceiver
+    private var trimester= Trimester.EMPTY
 
     companion object {
+        private const val TRIMESTER_EXTRA_KEY = "TRIMESTER_EXTRA_KEY"
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
         const val FILE_EXTRA_CODE = "FILE_EXTRA_CODE"
         const val URI_EXTRA_CODE = "URI_EXTRA_CODE"
@@ -39,13 +41,24 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         const val INVOICE_OPERATION_KEY = "INVOICE_OPERATION_KEY"
         const val INVOICE_DELETED_CODE = 104
         const val INVOICE_EDITED_CODE = 105
-        fun newInstance(): InvoiceFragment {
-            return InvoiceFragment()
+        fun newInstance(trimester: Int): InvoiceFragment {
+            val fragment = InvoiceFragment()
+            fragment.arguments = getArguments(trimester)
+            return fragment
+        }
+
+        private fun getArguments(trimester: Int): Bundle {
+            val bundle = Bundle()
+            bundle.putInt(TRIMESTER_EXTRA_KEY, trimester)
+            return bundle
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let {
+            trimester = Trimester.values()[it.getInt(TRIMESTER_EXTRA_KEY)]
+        }
         presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
     }
 
@@ -53,7 +66,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         super.onStart()
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                presenter.refreshInvoices()
+                presenter.refreshInvoices(trimester)
             }
         }
         presenter.registerBroadcast(broadcastReceiver)
@@ -66,21 +79,13 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
 
     override fun onViewSetup(view: View) {
         super.onViewSetup(view)
-        activity?.setTitle(R.string.invoices_screen_title)
         val refreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh_layout)
         refreshLayout.setOnRefreshListener {
             refreshLayout.isRefreshing = false
-            presenter.refreshInvoices()
+            presenter.refreshInvoices(trimester)
         }
 
         progressBar = view.findViewById(R.id.horizontal_progress_bar)
-        view.findViewById<View>(R.id.base_search_floating_button).visibility = View.VISIBLE
-        view.findViewById<View>(R.id.base_search_floating_button).setOnClickListener {
-            startActivityForResult(activity?.let {
-                UploadInvoiceActivity.getStartIntent( it ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }, INVOICE_UPLOAD_DIALOG_CODE )
-        }
-
         adapter.setListener { item ->
             startActivityForResult(activity?.let {
                 InvoiceFullScreenActivity.getStartIntent(it, item.id, item.name) },
@@ -141,22 +146,14 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
     }
 
-    override fun onQueryTextSubmitted(query: String) {
-        presenter.queryInvoices(query)
-    }
-
-    override fun onSearchFinished() {
-        presenter.showInvoices()
-    }
-
     override fun onDataSetup() {
         super.onDataSetup()
-        presenter.showInvoices()
+        presenter.showInvoices(trimester)
     }
 
     override fun onRetry() {
         super.onRetry()
-        presenter.showInvoices()
+        presenter.refreshInvoices(trimester)
     }
 
     override fun provideAdapter(): SearchAdapterDecorator<InvoicePresentation, Holder> {
@@ -170,7 +167,8 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             val invoice: InvoiceUpload? = data?.getParcelableExtra(FILE_EXTRA_CODE)
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
-        } else if(requestCode == INVOICE_DETAILS_REQUEST_CODE) {
+        }
+        else if(requestCode == INVOICE_DETAILS_REQUEST_CODE) {
             val code = data?.getIntExtra(INVOICE_OPERATION_KEY, 0)
             if(code == INVOICE_DELETED_CODE) {
                 val invoiceId = data.getLongExtra(DELETED_INVOICE_ID_KEY, 0)
@@ -187,7 +185,8 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
                     message?.let { it1 -> Snackbar.make(it, it1, Snackbar.LENGTH_SHORT).show() }
                 }
             }
-        } else if(requestCode == INVOICE_EDIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        }
+        else if(requestCode == INVOICE_EDIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val invoice: InvoiceUpload? = data?.getParcelableExtra(FILE_EXTRA_CODE)
             val uri: Uri? = data?.getParcelableExtra(URI_EXTRA_CODE)
             val invoiceId: Long? = data?.getLongExtra(INVOICE_ID_EXTRA_KEY, 0)
@@ -209,15 +208,15 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     }
 }
 
-class Holder(val binding: InvoiceItemLayoutBinding): RecyclerView.ViewHolder(binding.root)
+class Holder(val binding: InvoiceMinimalItemLayoutBinding): RecyclerView.ViewHolder(binding.root)
 
 class Adapter: SearchAdapterDecorator<InvoicePresentation, Holder>() {
     override fun getLayoutResource(): Int {
-        return R.layout.invoice_item_layout
+        return R.layout.invoice_minimal_item_layout
     }
 
     override fun createViewHolder(rootView: View): Holder? {
-        val binding = DataBindingUtil.bind<InvoiceItemLayoutBinding>(rootView)
+        val binding = DataBindingUtil.bind<InvoiceMinimalItemLayoutBinding>(rootView)
         return binding?.let { Holder(it) }
     }
 

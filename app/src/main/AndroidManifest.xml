@@ -21,15 +21,21 @@
                 </intent-filter>
             </activity>
         <activity android:name=".OverviewActivity"/>
-        <activity android:name=".invoices.ui.UploadInvoiceActivity"
+        <activity
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge"
+            android:name=".invoices.ui.UploadInvoiceActivity"
             android:parentActivityName=".OverviewActivity">
         </activity>
-        <activity android:name=".invoices.ui.EditInvoiceActivity"
+        <activity
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge"
+            android:name=".invoices.ui.EditInvoiceActivity"
             android:parentActivityName=".OverviewActivity">
         </activity>
 
         <activity android:name=".profile.ui.UpdatePasswordActivity"/>
-        <activity android:name=".invoices.ui.InvoiceFullScreenActivity"/>
+        <activity
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge"
+            android:name=".invoices.ui.InvoiceFullScreenActivity"/>
 
         <service android:name=".services.FirebaseNotificationService">
             <intent-filter>

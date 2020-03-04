@@ -5,10 +5,12 @@ import android.os.Parcelable
 import es.developer.achambi.coreframework.utils.ParcelUtil
 import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developers.achambi.afines.invoices.ui.Trimester
+import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 
+//TODO Trimester shouldn't be needed here
 data class InvoiceUpload(var uriMetadata: URIMetadata = URIMetadata(),
                          var name: String = "",
-                         var trimester: Trimester = Trimester.EMPTY) : Parcelable {
+                         var trimester: Trimester = TrimesterUtils.getCurrentTrimester()) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(URIMetadata::class.java.classLoader),
         parcel.readString(),

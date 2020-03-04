@@ -27,10 +27,10 @@
     <string name="upload_name_error_title">¡Nos faltan datos!</string>
     <string name="upload_name_error_message">Antes de guardar tienes que subir la factura.</string>
 
-    <string name="invoice_state_delivered">Factura entregada:</string>
-    <string name="invoice_state_processed">Factura aprobada:</string>
-    <string name="invoice_state_failed">Factura no valida:</string>
-    <string name="invoice_state_accounted">Factura contabilizada:</string>
+    <string name="invoice_state_delivered">Enviada</string>
+    <string name="invoice_state_processed">Aprobada</string>
+    <string name="invoice_state_failed">Rechazada</string>
+    <string name="invoice_state_accounted">Aprobada</string>
 
     <string name="invoice_state_failed_details">Por favor compruebe que la factura enviada no este en otro formato (ticket, albarán, etc…) y que no se vea borrosa.</string>
 
@@ -125,4 +125,14 @@
     <string name="my_profile_button_text">VER PERFIL</string>
     <string name="overview_notification_go_to_text">IR</string>
     <string name="overview_notification_header_text">Notificaciones</string>
+
+    <string name="invoices_tab_first_trimester_name">1ºT</string>
+    <string name="invoices_tab_second_trimester_name">2ºT</string>
+    <string name="invoices_tab_third_trimester_name">3ºT</string>
+    <string name="invoices_tab_forth_trimester_name">4ºT</string>
+
+    <string name="invoices_header_trimester_dates_from_to">Desde el %1$s hasta el %2$s</string>
+    <string name="invoices_header_trimester_dates_from">Hasta el %1$s</string>
+
+    <string name="overview_to_invoices_transition_name">header_transition</string>
 </resources>
