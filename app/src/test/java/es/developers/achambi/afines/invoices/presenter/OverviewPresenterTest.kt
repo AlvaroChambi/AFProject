@@ -4,7 +4,9 @@ import es.developers.achambi.afines.OverviewScreen
 import es.developers.achambi.afines.home.OverviewPresenter
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
+import es.developers.achambi.afines.repositories.model.NotificationType
 import es.developers.achambi.afines.repositories.model.UserOverview
+import es.developers.achambi.afines.ui.OverviewPresentation
 import es.developers.achambi.afines.ui.OverviewPresentationBuilder
 import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
@@ -29,8 +31,11 @@ class OverviewPresenterTest: BasePresenterTest() {
 
     @Test
     fun `test invalid ccc`() {
-        `when`(profileUseCase.getUserOverview()).thenReturn( UserOverview( null,
-            FirebaseProfile(iban = "iban", naf = "naf"), null ))
+        val overview = UserOverview( null,
+            FirebaseProfile(), null )
+        `when`(profileUseCase.getUserOverview()).thenReturn(overview)
+        `when`(builder.build(overview)).thenReturn(OverviewPresentation("", "IBAN", "NAF",
+            "", "", "", "", NotificationType.NONE))
 
         presenter.onViewSetup()
 
@@ -41,8 +46,11 @@ class OverviewPresenterTest: BasePresenterTest() {
 
     @Test
     fun `test invalid naf`() {
-        `when`(profileUseCase.getUserOverview()).thenReturn( UserOverview( null,
-            FirebaseProfile(iban = "iban", ccc = "ccc"), null))
+        val overview = UserOverview( null,
+            FirebaseProfile(), null )
+        `when`(profileUseCase.getUserOverview()).thenReturn(overview)
+        `when`(builder.build(overview)).thenReturn(OverviewPresentation("CCC", "IBAN", "",
+            "", "", "", "", NotificationType.NONE))
 
         presenter.onViewSetup()
 
@@ -53,8 +61,11 @@ class OverviewPresenterTest: BasePresenterTest() {
 
     @Test
     fun `test invalid iban`() {
-        `when`(profileUseCase.getUserOverview()).thenReturn( UserOverview(null,
-            FirebaseProfile(ccc = "ccc", naf = "naf"), null))
+        val overview = UserOverview( null,
+            FirebaseProfile(), null )
+        `when`(profileUseCase.getUserOverview()).thenReturn(overview)
+        `when`(builder.build(overview)).thenReturn(OverviewPresentation("CCC", "", "NAF",
+            "", "", "", "", NotificationType.NONE))
 
         presenter.onViewSetup()
 

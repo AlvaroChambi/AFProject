@@ -3,12 +3,15 @@ package es.developers.achambi.afines.invoices.presenter
 import android.net.Uri
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.utils.URIMetadata
+import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.InvoicePresentationBuilder
 import es.developers.achambi.afines.invoices.ui.InvoicesScreenInterface
+import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.utils.EventLogger
 import org.junit.Test
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.*
 
@@ -33,13 +36,13 @@ class InvoicePresenterTest: BasePresenterTest() {
     fun `test invoice upload success`() {
         val uri = mock(Uri::class.java)
         val upload = mock(InvoiceUpload::class.java)
-        `when`(invoiceUseCase.queryUserInvoices(true)).thenReturn(ArrayList())
+        `when`(invoiceUseCase.uploadUserFiles(uri, upload)).thenReturn(ArrayList())
         `when`(builder.build(ArrayList())).thenReturn(ArrayList())
 
         presenter.uploadFile(uri, upload)
 
-        verify(screen, times(2)).showProgress()
-        verify(screen, times(2)).showProgressFinished()
+        verify(screen, times(1)).showProgress()
+        verify(screen, times(1)).showProgressFinished()
         verify(screen, times(1)).showInvoices(ArrayList())
     }
 
@@ -58,10 +61,11 @@ class InvoicePresenterTest: BasePresenterTest() {
 
     @Test
     fun `test initial invoices request success`() {
-        `when`(invoiceUseCase.queryUserInvoices(false)).thenReturn(ArrayList())
+        `when`(invoiceUseCase.queryUserInvoices(Trimester.FIRST_TRIMESTER,
+            false)).thenReturn(ArrayList())
         `when`(builder.build(ArrayList())).thenReturn(ArrayList())
 
-        presenter.showInvoices()
+        presenter.showInvoices(Trimester.FIRST_TRIMESTER)
 
         verify(screen, times(1)).showFullScreenProgress()
         verify(screen, times(1)).showFullScreenProgressFinished()
@@ -70,9 +74,10 @@ class InvoicePresenterTest: BasePresenterTest() {
 
     @Test
     fun `test initial invoices request error`() {
-        doThrow(CoreError()).`when`(invoiceUseCase).queryUserInvoices(false)
+        doThrow(CoreError()).`when`(invoiceUseCase).queryUserInvoices(
+            Trimester.FIRST_TRIMESTER, false)
 
-        presenter.showInvoices()
+        presenter.showInvoices(Trimester.FIRST_TRIMESTER)
 
         verify(screen, times(1)).showFullScreenProgress()
         verify(screen, times(1)).showFullScreenProgressFinished()
@@ -80,37 +85,14 @@ class InvoicePresenterTest: BasePresenterTest() {
     }
 
     @Test
-    fun `test query invoice success`() {
-        `when`(invoiceUseCase.queryUserInvoices("invoice")).thenReturn(ArrayList())
-        `when`(builder.build(ArrayList())).thenReturn(ArrayList())
-
-        presenter.queryInvoices("invoice")
-
-        verify(screen, times(1)).showProgress()
-        verify(screen, times(1)).showProgressFinished()
-        verify(screen, times(1)).showInvoices(ArrayList())
-    }
-
-    @Test
-    fun `test query invoices error`() {
-        doThrow(CoreError()).`when`(invoiceUseCase).queryUserInvoices("invoice")
-
-        presenter.queryInvoices("invoice")
-
-        verify(screen, times(1)).showProgress()
-        verify(screen, times(1)).showProgressFinished()
-        verify(screen, times(1)).showInvoicesLoadingError()
-    }
-
-    @Test
     fun `test delete invoice success`() {
-        `when`(invoiceUseCase.queryUserInvoices(true)).thenReturn(ArrayList())
         `when`(builder.build(ArrayList())).thenReturn(ArrayList())
+        `when`(invoiceUseCase.deleteInvoice(0)).thenReturn(ArrayList())
 
         presenter.deleteRequested(0)
 
-        verify(screen, times(2)).showProgress()
-        verify(screen, times(2)).showProgressFinished()
+        verify(screen, times(1)).showProgress()
+        verify(screen, times(1)).showProgressFinished()
         verify(screen, times(1)).showInvoices(ArrayList())
         verify(screen, times(1)).showInvoiceDeleted()
     }
@@ -132,13 +114,13 @@ class InvoicePresenterTest: BasePresenterTest() {
         val upload = mock(InvoiceUpload::class.java)
         val metadata = mock(URIMetadata::class.java)
         `when`(upload.uriMetadata).thenReturn(metadata)
-        `when`(invoiceUseCase.queryUserInvoices(true)).thenReturn(ArrayList())
         `when`(builder.build(ArrayList())).thenReturn(ArrayList())
+        `when`(invoiceUseCase.updateInvoice(uri, upload, 0)).thenReturn(ArrayList())
 
         presenter.updateInvoice(uri, upload, 0)
 
-        verify(screen, times(2)).showProgress()
-        verify(screen, times(2)).showProgressFinished()
+        verify(screen, times(1)).showProgress()
+        verify(screen, times(1)).showProgressFinished()
         verify(screen, times(1)).showInvoices(ArrayList())
         verify(screen, times(1)).showEditInvoiceSuccess()
     }
