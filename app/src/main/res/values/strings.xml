@@ -131,5 +131,8 @@
     <string name="invoices_tab_third_trimester_name">3ºT</string>
     <string name="invoices_tab_forth_trimester_name">4ºT</string>
 
+    <string name="invoices_header_trimester_dates_from_to">Desde el %1$s hasta el %2$s</string>
+    <string name="invoices_header_trimester_dates_from">Hasta el %1$s</string>
+
     <string name="overview_to_invoices_transition_name">header_transition</string>
 </resources>

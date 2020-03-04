@@ -10,7 +10,7 @@ import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
 import es.developer.achambi.coreframework.threading.ResponseHandler
 import es.developer.achambi.coreframework.ui.Presenter
-import es.developer.achambi.coreframework.utils.DateFormatUtils
+import es.developers.achambi.afines.utils.DateFormatUtils
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.BuildConfig
 import es.developers.achambi.afines.invoices.model.Invoice

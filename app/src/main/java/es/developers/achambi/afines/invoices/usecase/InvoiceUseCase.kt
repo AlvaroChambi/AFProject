@@ -2,7 +2,7 @@ package es.developers.achambi.afines.invoices.usecase
 
 import android.net.Uri
 import es.developer.achambi.coreframework.threading.CoreError
-import es.developer.achambi.coreframework.utils.DateFormatUtils
+import es.developers.achambi.afines.utils.DateFormatUtils
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.invoices.model.DetailedInvoice
 import es.developers.achambi.afines.repositories.FirebaseRepository
@@ -55,6 +55,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     @Throws(CoreError::class)
     fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long): ArrayList<Invoice>{
         val invoice = getInvoice(invoiceId)
+        val trimester = TrimesterUtils.getTrimester(Date(invoiceId))
         invoice?.let { firebaseRepository.updateInvoiceMetadata(invoice, invoiceUpload.name,
             invoiceUpload.trimester.toString()) }
         if(uri != null) {
@@ -63,22 +64,22 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
                 InvoiceState.SENT.toString(), Date().time) }
             AfinesApplication.profileUseCase.clearProfileCache()
         }
-        cachedInvoices[invoiceUpload.trimester]?.remove(invoice)
+        cachedInvoices[trimester]?.remove(invoice)
         fetchInvoice(invoiceId)?.let {
-            cachedInvoices[invoiceUpload.trimester]?.add(it)
+            cachedInvoices[trimester]?.add(it)
         }
-        return cachedInvoices[invoiceUpload.trimester]!!
+        return cachedInvoices[trimester]!!
     }
 
     @Throws(CoreError::class)
     fun deleteInvoice(invoiceId: Long): ArrayList<Invoice>{
-        /**TODO Check when the invoice trimester is null**/
         val invoice = getInvoice(invoiceId)
+        val trimester = TrimesterUtils.getTrimester(Date(invoiceId))
         invoice?.let {
             firebaseRepository.deleteInvoice(it)
         }
-        cachedInvoices[invoice?.trimester]?.remove(invoice)
-        return cachedInvoices[invoice?.trimester]!!
+        cachedInvoices[trimester]?.remove(invoice)
+        return cachedInvoices[trimester]!!
     }
 
     fun getFileBytes(invoiceId: Long): ByteArray? {
@@ -92,16 +93,16 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     //TODO Here i was querying the whole list when the invoice wasn't found, check if it's really needed
-    //TODO Also check the trimester here
     fun getInvoice(invoiceId: Long): Invoice? {
         var result: Invoice? = null
+        val trimester = TrimesterUtils.getTrimester(Date(invoiceId))
         for((_, v) in cachedInvoices) {
             result = v.find { it.id == invoiceId }
             if(  result != null ) { break }
         }
         if(result == null){
             result = fetchInvoice(invoiceId)
-            result?.let { cachedInvoices[result.trimester]?.add(it) }
+            result?.let { cachedInvoices[trimester]?.add(it) }
         }
         return result
     }

@@ -4,12 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import es.developer.achambi.coreframework.utils.DateFormatUtils
+import es.developers.achambi.afines.utils.DateFormatUtils
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 import kotlinx.android.synthetic.main.trimester_header_view_layout.view.*
-import java.util.*
 
 class TrimesterHeaderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -27,12 +26,7 @@ class TrimesterHeaderView @JvmOverloads constructor(
     }
 
     fun setTrimester(trimester: Trimester) {
-        if(trimester == TrimesterUtils.getCurrentTrimester()) {
-            trimester_card_date_text.text = "Hasta el " + DateFormatUtils.formatTrimesterDate(trimester.end)
-        } else {
-            trimester_card_date_text.text = DateFormatUtils.formatDateRange(trimester.start,
-                trimester.end)
-        }
+        trimester_card_date_text.text = DateFormatUtils.formatDateRange(context, trimester)
         when(trimester) {
             Trimester.FIRST_TRIMESTER -> {
                 trimester_card_title_text.text = context.getText(R.string.upload_first_trimester_text)
