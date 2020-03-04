@@ -2,12 +2,14 @@ package es.developers.achambi.afines.invoices.usecase
 
 import android.net.Uri
 import es.developer.achambi.coreframework.threading.CoreError
+import es.developer.achambi.coreframework.utils.DateFormatUtils
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.invoices.model.DetailedInvoice
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.Trimester
+import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.InvoiceState
 import java.util.*
@@ -15,11 +17,17 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
-    private val invoices = ArrayList<Invoice>()
     private val cachedInvoices = HashMap<Trimester, ArrayList<Invoice>>()
 
+    init {
+        cachedInvoices[Trimester.FIRST_TRIMESTER] = ArrayList()
+        cachedInvoices[Trimester.SECOND_TRIMESTER] = ArrayList()
+        cachedInvoices[Trimester.THIRD_TRIMESTER] = ArrayList()
+        cachedInvoices[Trimester.FORTH_TRIMESTER] = ArrayList()
+    }
+
     fun clearCache() {
-        invoices.clear()
+        cachedInvoices.clear()
     }
 
     fun getDetailedInvoice(invoiceId: Long): DetailedInvoice? {
@@ -38,8 +46,10 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     @Throws(CoreError::class)
     fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload): ArrayList<Invoice>{
         val id = firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
-        fetchInvoice(id)?.let { invoices.add(it) }
-        return invoices
+        fetchInvoice(id)?.let {
+            cachedInvoices[it.trimester]?.add(it)
+        }
+        return cachedInvoices[TrimesterUtils.getTrimester(Date(id))]!!
     }
 
     @Throws(CoreError::class)
@@ -53,21 +63,22 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
                 InvoiceState.SENT.toString(), Date().time) }
             AfinesApplication.profileUseCase.clearProfileCache()
         }
-        invoices.remove(invoice)
+        cachedInvoices[invoiceUpload.trimester]?.remove(invoice)
         fetchInvoice(invoiceId)?.let {
-            invoices.add(it)
+            cachedInvoices[invoiceUpload.trimester]?.add(it)
         }
-        return invoices
+        return cachedInvoices[invoiceUpload.trimester]!!
     }
 
     @Throws(CoreError::class)
     fun deleteInvoice(invoiceId: Long): ArrayList<Invoice>{
+        /**TODO Check when the invoice trimester is null**/
         val invoice = getInvoice(invoiceId)
         invoice?.let {
             firebaseRepository.deleteInvoice(it)
         }
-        invoices.remove(invoice)
-        return invoices
+        cachedInvoices[invoice?.trimester]?.remove(invoice)
+        return cachedInvoices[invoice?.trimester]!!
     }
 
     fun getFileBytes(invoiceId: Long): ByteArray? {
@@ -80,12 +91,19 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return invoice?.fileReference?.let{ firebaseRepository.getDownloadUrl(it) }
     }
 
+    //TODO Here i was querying the whole list when the invoice wasn't found, check if it's really needed
+    //TODO Also check the trimester here
     fun getInvoice(invoiceId: Long): Invoice? {
-        val result = invoices.find { it.id == invoiceId }
-        if(result == null){
-            invoices.addAll(queryUserInvoices(false))
+        var result: Invoice? = null
+        for((_, v) in cachedInvoices) {
+            result = v.find { it.id == invoiceId }
+            if(  result != null ) { break }
         }
-        return invoices.find { it.id == invoiceId }
+        if(result == null){
+            result = fetchInvoice(invoiceId)
+            result?.let { cachedInvoices[result.trimester]?.add(it) }
+        }
+        return result
     }
 
     @Throws(CoreError::class)
@@ -96,7 +114,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
             invoice = Invoice(it.id,
                 it.name,
                 it.fileReference?: "",
-                resolveTrimester(it.trimester),
+                TrimesterUtils.getTrimester(Date(it.id)),
                 it.state?.let { InvoiceState.valueOf(it) },
                 resolveDate(it.deliveredDate, it.processedDate),
                 it.dbPath)
@@ -105,60 +123,23 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     @Throws(CoreError::class)
-    fun queryUserInvoices(refresh: Boolean): ArrayList<Invoice> {
-        if(refresh) {
-            invoices.clear()
-        }
-        if(invoices.isNotEmpty()) {
-            return invoices
-        }
-        val listResult = firebaseRepository.userInvoices()
-        listResult.forEach { firebaseInvoice ->
-            invoices.add(
-                Invoice(firebaseInvoice.id,
-                firebaseInvoice.name,
-                firebaseInvoice.fileReference?: "",
-                resolveTrimester(firebaseInvoice.trimester),
-                firebaseInvoice.state?.let { InvoiceState.valueOf(it) },
-                resolveDate(firebaseInvoice.deliveredDate, firebaseInvoice.processedDate),
-                firebaseInvoice.dbPath))
-        }
-        return invoices
-    }
-
-    @Throws(CoreError::class)
-    fun queryUserInvoices(query: String): ArrayList<Invoice> {
-        val filteredArray = ArrayList<Invoice>()
-        invoices.forEach { invoice ->
-            if(invoice.name.contains( query )) {
-                filteredArray.add(invoice)
-            }
-        }
-        return filteredArray
-    }
-
-    @Throws(CoreError::class)
-    fun queryUserInvoices(year: Int, trimester: Trimester, refresh: Boolean): ArrayList<Invoice> {
+    fun queryUserInvoices(trimester: Trimester, refresh: Boolean): ArrayList<Invoice> {
         var trimesterInvoices = cachedInvoices[trimester]
         if(refresh) {
             trimesterInvoices?.clear()
         }
-        if(trimesterInvoices != null) {
+        if(trimesterInvoices!!.isNotEmpty()) {
             return trimesterInvoices
         }
-        val calendar = Calendar.getInstance()
-        calendar.set(year, trimester.start, 1, 0 ,0)
-        val start = calendar.time
-        calendar.set(year, trimester.end, 1, 0, 0)
-        val end = calendar.time
-        val result = firebaseRepository.fetchInvoices(start.time, end.time)
+        val dates = DateFormatUtils.getStartAndEndDate(trimester.start, trimester.end)
+        val result = firebaseRepository.fetchInvoices(dates.first.time, dates.second.time)
         trimesterInvoices = ArrayList()
         result.forEach { firebaseInvoice ->
             trimesterInvoices.add(
                 Invoice(firebaseInvoice.id,
                     firebaseInvoice.name,
                     firebaseInvoice.fileReference?: "",
-                    resolveTrimester(firebaseInvoice.trimester),
+                    TrimesterUtils.getTrimester(Date(firebaseInvoice.id)),
                     firebaseInvoice.state?.let { InvoiceState.valueOf(it) },
                     firebaseInvoice.id,
                     firebaseInvoice.dbPath))
@@ -181,13 +162,5 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     private fun resolveDate(deliveredDate: Long, processedDate: Long?): Long {
         if(processedDate != null) return processedDate
         return deliveredDate
-    }
-
-    private fun resolveTrimester(trimester: String?): Trimester {
-        return if(trimester != null) {
-            Trimester.valueOf(trimester)
-        } else {
-            Trimester.EMPTY
-        }
     }
 }

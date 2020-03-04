@@ -1,5 +1,6 @@
 package es.developers.achambi.afines.invoices.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.transition.ChangeBounds
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import es.developer.achambi.coreframework.ui.BaseFragment
+import es.developers.achambi.afines.OverviewActivity
 import es.developers.achambi.afines.R
 import kotlinx.android.synthetic.main.invoices_fragment_layout.*
 
@@ -47,7 +49,6 @@ class InvoicesFragment: BaseFragment() {
     }
 
     override fun onViewSetup(view: View) {
-        invoices_tab_layout.selectTab(invoices_tab_layout.getTabAt(trimester))
         invoices_tab_layout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -69,11 +70,16 @@ class InvoicesFragment: BaseFragment() {
         invoices_view_pager.addOnPageChangeListener(
             TabLayout.TabLayoutOnPageChangeListener(invoices_tab_layout))
         invoices_view_pager.adapter = pagerAdapter
+        invoices_tab_layout.selectTab(invoices_tab_layout.getTabAt(trimester))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        invoices_tab_layout.selectTab(invoices_tab_layout.getTabAt(trimester))
+        if(requestCode == OverviewActivity.INVOICE_UPLOAD_DIALOG_CODE
+            && resultCode == Activity.RESULT_OK) {
+            val fragment = pagerAdapter.instantiateItem(invoices_view_pager, trimester) as Fragment
+            fragment.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }
 
@@ -84,7 +90,7 @@ class InvoicesPagerAdapter(fm: FragmentManager) :
     }
 
     override fun getCount(): Int {
-        return 4
+        return Trimester.values().size
     }
 
 }

@@ -60,11 +60,6 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
             trimester = Trimester.values()[it.getInt(TRIMESTER_EXTRA_KEY)]
         }
         presenter = AfinesApplication.invoicePresenterFactory.build(this, lifecycle)
-        activity?.intent?.let {
-            val invoice: InvoiceUpload? = it.getParcelableExtra(FILE_EXTRA_CODE)
-            val uri: Uri? = it.getParcelableExtra(URI_EXTRA_CODE)
-            uri?.let { invoice?.let { it1 -> presenter.uploadFile(it, it1) } }
-        }
     }
 
     override fun onStart() {
@@ -151,14 +146,6 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
     }
 
-    override fun onQueryTextSubmitted(query: String) {
-        presenter.queryInvoices(query)
-    }
-
-    override fun onSearchFinished() {
-        presenter.showInvoices(trimester)
-    }
-
     override fun onDataSetup() {
         super.onDataSetup()
         presenter.showInvoices(trimester)
@@ -166,7 +153,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
 
     override fun onRetry() {
         super.onRetry()
-        presenter.showInvoices(trimester)
+        presenter.refreshInvoices(trimester)
     }
 
     override fun provideAdapter(): SearchAdapterDecorator<InvoicePresentation, Holder> {

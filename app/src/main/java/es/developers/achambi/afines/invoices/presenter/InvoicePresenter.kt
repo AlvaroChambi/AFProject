@@ -18,7 +18,6 @@ import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.services.Notifications
 import es.developers.achambi.afines.utils.EventLogger
-import java.util.*
 import kotlin.collections.ArrayList
 
 class InvoicePresenter(screenInterface: InvoicesScreenInterface,
@@ -69,32 +68,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<ArrayList<Invoice>>{
             override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices(Calendar.getInstance().get(Calendar.YEAR),
-                    trimester, false )
-            }
-
-        }
-        request(request , responseHandler)
-    }
-
-    fun queryInvoices(query: String) {
-        screen.showProgress()
-        analytics.publishInvoiceQuery()
-        val responseHandler = object: ResponseHandler<ArrayList<Invoice>> {
-            override fun onSuccess(response: ArrayList<Invoice>) {
-                screen.showProgressFinished()
-                screen.showInvoices( presentationBuilder.build(response) )
-            }
-
-            override fun onError(error: CoreError) {
-                super.onError(error)
-                screen.showProgressFinished()
-                screen.showInvoicesLoadingError()
-            }
-        }
-        val request = object : Request<ArrayList<Invoice>>{
-            override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices(query)
+                return invoiceUseCase.queryUserInvoices(trimester, false)
             }
 
         }
@@ -163,8 +137,7 @@ class InvoicePresenter(screenInterface: InvoicesScreenInterface,
         }
         val request = object : Request<ArrayList<Invoice>>{
             override fun perform(): ArrayList<Invoice> {
-                return invoiceUseCase.queryUserInvoices(Calendar.getInstance().get(Calendar.YEAR),
-                    trimester, false )
+                return invoiceUseCase.queryUserInvoices(trimester, true)
             }
 
         }

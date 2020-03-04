@@ -438,7 +438,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun fetchInvoice(invoiceId: Long): FirebaseInvoice? {
         try {
             val userId = firebaseAuth.currentUser?.uid
-            val invoicesRef = firestore.collection("user/"+userId.toString()+"invoices/")
+            val invoicesRef = firestore.collection("user/"+userId.toString()+"/invoices/")
             val result = Tasks.await(invoicesRef.whereEqualTo("id", invoiceId).get(),
                 TIMEOUT, TimeUnit.SECONDS)
             if(result.isEmpty) {

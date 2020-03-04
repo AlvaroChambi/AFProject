@@ -1,5 +1,6 @@
 package es.developers.achambi.afines.repositories.model
 
+//TODO Delete trimester explicit reference
 data class FirebaseInvoice(var id: Long = 0,
                            var name: String = "",
                            var trimester: String? = null,

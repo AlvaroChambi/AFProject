@@ -20,7 +20,8 @@ import kotlinx.android.synthetic.main.overview_activity_layout.*
 class OverviewActivity : AppCompatActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener{
     companion object {
-        const val INVOICE_UPLOAD_DIALOG_CODE = 102
+        const val INVOICES_FRAGMENT_TAG = "INVOICES_FRAGMENT_TAG"
+        public const val INVOICE_UPLOAD_DIALOG_CODE = 102
         fun getStartIntent(context: Context): Intent {
             return Intent(context, OverviewActivity::class.java)
         }
@@ -52,6 +53,7 @@ class OverviewActivity : AppCompatActivity(),
             startActivityForResult(
                 UploadInvoiceActivity.getStartIntent( this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 , INVOICE_UPLOAD_DIALOG_CODE )
+            bottom_navigation.selectedItemId = R.id.navigation_menu_invoice
         }
         val filter = IntentFilter()
         filter.addAction(Navigation.PROFILE_DEEP_LINK.toString())
@@ -62,10 +64,8 @@ class OverviewActivity : AppCompatActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == INVOICE_UPLOAD_DIALOG_CODE && resultCode == Activity.RESULT_OK) {
-            val invoices = InvoicesFragment.newInstance()
-            supportFragmentManager.beginTransaction().replace(R.id.navigation_fragment_frame,
-                invoices)
-            data?.let { intent.putExtras(data) }
+            val fragment = supportFragmentManager.findFragmentByTag(INVOICES_FRAGMENT_TAG)
+            fragment?.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -85,9 +85,9 @@ class OverviewActivity : AppCompatActivity(),
                         .addSharedElement(findViewById(R.id.trimesterHeaderView),
                             getString(R.string.overview_to_invoices_transition_name))
                         .replace(R.id.navigation_fragment_frame,
-                            InvoicesFragment.newInstance(), null).commit()
+                            InvoicesFragment.newInstance(), INVOICES_FRAGMENT_TAG).commit()
                 } else {
-                    replaceFragment(InvoicesFragment.newInstance())
+                    replaceFragment(InvoicesFragment.newInstance(), INVOICES_FRAGMENT_TAG)
                 }
             }
             R.id.navigation_menu_home -> replaceFragment(OverviewFragment.newInstance())
@@ -95,10 +95,10 @@ class OverviewActivity : AppCompatActivity(),
         return true
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun replaceFragment(fragment: Fragment, tag: String? = null) {
         val manager = supportFragmentManager
         manager.beginTransaction().replace(R.id.navigation_fragment_frame,
-                fragment, null).commit()
+                fragment, tag).commit()
     }
 
     private fun provideEntryFragment(): Fragment {
