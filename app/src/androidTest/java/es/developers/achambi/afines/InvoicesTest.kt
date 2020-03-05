@@ -46,6 +46,8 @@ class InvoicesTest: BaseUITest() {
         MockSetup.setInvoices(null)
 
         onView(withId(R.id.navigation_menu_invoice)).perform(click())
-        onView(withText(R.string.invoices_overview_error_message)).check(matches(isDisplayed()))
+        onView(allOf(
+            isDisplayed(),withId(R.id.base_request_error_message),
+            withText(R.string.invoices_overview_error_message))).check(matches(isDisplayed()))
     }
 }
