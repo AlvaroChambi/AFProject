@@ -29,7 +29,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
 
     }
 
-    fun userInvoices(): List<FirebaseInvoice> {
+    @Throws(CoreError::class)
+    fun fetchInvoice(invoiceId: Long): FirebaseInvoice? {
+        return MockSetup.getInvoice()
+    }
+
+    fun fetchInvoices(start: Long, end: Long): List<FirebaseInvoice> {
         return MockSetup.getInvoices()
     }
 

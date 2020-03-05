@@ -27,7 +27,10 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     fun clearCache() {
-        cachedInvoices.clear()
+        cachedInvoices[Trimester.FIRST_TRIMESTER] = ArrayList()
+        cachedInvoices[Trimester.SECOND_TRIMESTER] = ArrayList()
+        cachedInvoices[Trimester.THIRD_TRIMESTER] = ArrayList()
+        cachedInvoices[Trimester.FORTH_TRIMESTER] = ArrayList()
     }
 
     fun getDetailedInvoice(invoiceId: Long): DetailedInvoice? {

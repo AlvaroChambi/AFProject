@@ -15,6 +15,15 @@ class MockSetup {
         private var retrievePassSuccess = false
         private var profile: FirebaseProfile? = null
         private var counters: InvoiceCounters? = null
+        private var invoice: FirebaseInvoice? = null
+
+        fun setInvoice(invoice: FirebaseInvoice) {
+            this.invoice = invoice
+        }
+
+        fun getInvoice(): FirebaseInvoice? {
+            return invoice
+        }
 
         fun setProfile(profile: FirebaseProfile?) {
             this.profile = profile

@@ -91,27 +91,24 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return firebaseInvoice.id
     }
 
-    fun userInvoices(): List<FirebaseInvoice> {
-        val user = firebaseAuth.currentUser
-        val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
-        val result = Tasks.await(listRef.get())
-        analytics.publishReadEvent(user?.uid)
-        if(result.isEmpty) {
-            return ArrayList()
-        }
-        return result.toObjects(FirebaseInvoice::class.java)
-    }
-
+    @Throws(CoreError::class)
     fun fetchInvoices(start: Long, end: Long): List<FirebaseInvoice> {
         val user = firebaseAuth.currentUser
         val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
-        val result = Tasks.await(listRef.whereGreaterThan("id", start)
-            .whereLessThan("id", end).get())
-        analytics.publishReadEvent(user?.uid)
-        if(result.isEmpty) {
-            return ArrayList()
-        }
-        return result.toObjects(FirebaseInvoice::class.java)
+        try {
+            val result = Tasks.await(listRef.whereGreaterThan("id", start)
+                .whereLessThan("id", end).get())
+            analytics.publishReadEvent(user?.uid)
+            if(result.isEmpty) {
+                return ArrayList()
+            }
+            return result.toObjects(FirebaseInvoice::class.java)
+        }catch (e: ExecutionException) {
+            throw CoreError(e.message)
+        }catch (e: InterruptedException) {
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
+        throw CoreError()
     }
 
     @Throws(CoreError::class)
