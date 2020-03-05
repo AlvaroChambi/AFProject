@@ -23,11 +23,11 @@ data class InvoicePresentation(
     : SearchListData, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
         parcel.readInt(),
-        parcel.readString(),
+        parcel.readString().toString(),
         parcel.readByte() != 0.toByte(),
         parcel.readLong()
     )
@@ -68,7 +68,7 @@ data class InvoicePresentation(
 
 data class InvoiceDetailsPresentation(val id: Long,
                                       val name: String,
-                                      val trimester: String,
+                                      val state: String,
                                       val stateMessage: String,
                                       val stateMessageColor: Int,
                                       val failed: Boolean,
@@ -79,11 +79,18 @@ class InvoiceDetailsPresentationBuilder(
     private val context: Context, private val invoicePresentationBuilder: InvoicePresentationBuilder){
     fun build(invoice: Invoice): InvoiceDetailsPresentation {
         val basePresentation = invoicePresentationBuilder.build(invoice)
+        val stateMessage = when(invoice.state) {
+            InvoiceState.SENT -> context.getString(R.string.invoice_details_sent_message)
+            InvoiceState.ACCEPTED -> context.getString(R.string.invoice_details_approved_message)
+            InvoiceState.REJECTED -> context.getString(R.string.invoice_details_rejected_message)
+            InvoiceState.ACCOUNTED -> context.getString(R.string.invoice_details_approved_message)
+            null -> ""
+        }
         return InvoiceDetailsPresentation(
             basePresentation.id,
             basePresentation.name,
-            basePresentation.trimester,
-            basePresentation.stateMessage + basePresentation.stateDetails,
+            basePresentation.stateMessage,
+            stateMessage,
             basePresentation.stateColor,
             basePresentation.showFailedDetails,
             (invoice.state == InvoiceState.ACCEPTED 
@@ -91,6 +98,7 @@ class InvoiceDetailsPresentationBuilder(
             false
         )
     }
+
     fun buildError(): InvoiceDetailsPresentation {
         return InvoiceDetailsPresentation(0,"", "", "",0, false,
             processed = false, error = true)
@@ -104,7 +112,7 @@ class InvoicePresentationBuilder(private val context: Context) {
             buildTrimesterText(context, invoice.trimester),
             buildStateMessage(context, invoice.state),
             buildStateMessageColor(context, invoice.state),
-            buildStateDetails(context, invoice.state, invoice.date),
+            buildStateDetails(context, invoice.state, invoice.id),
             invoice.state == InvoiceState.REJECTED,
             buildSortValue(invoice.state))
     }

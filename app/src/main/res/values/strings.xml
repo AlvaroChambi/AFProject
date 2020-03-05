@@ -134,5 +134,9 @@
     <string name="invoices_header_trimester_dates_from_to">Desde el %1$s hasta el %2$s</string>
     <string name="invoices_header_trimester_dates_from">Hasta el %1$s</string>
 
+    <string name="invoice_details_sent_message">Tu factura ha sido enviada y esta pendiente de ser revisada</string>
+    <string name="invoice_details_approved_message">Tu factura ha sido revisada y aprobada</string>
+    <string name="invoice_details_rejected_message">Tu factura ha sido rechazada, por favor comprueba que no se vea borrosa y que sea una factura.</string>
+
     <string name="overview_to_invoices_transition_name">header_transition</string>
 </resources>

@@ -21,14 +21,6 @@ object DateFormatUtils {
         return dateFormat.format(date)
     }
 
-    fun formatTrimesterDate(month: Int): String {
-        val dateFormat = SimpleDateFormat(RANGE_DATE_MONTH_DAY, Locale.getDefault())
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
-        return dateFormat.format(calendar.time)
-    }
-
     fun getStartAndEndDate(startMonth: Int, endMonth: Int): Pair<Date, Date>  {
         val calendar = Calendar.getInstance()
 

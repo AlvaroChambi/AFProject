@@ -10,17 +10,19 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SortedList
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
-import es.developers.achambi.afines.*
+import es.developers.achambi.afines.AfinesApplication
+import es.developers.achambi.afines.R
 import es.developers.achambi.afines.databinding.InvoiceMinimalItemLayoutBinding
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.presenter.InvoicePresenter
 
-class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
+class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface, InvoicesListener {
     private lateinit var progressBar : ProgressBar
     private lateinit var adapter: Adapter
     private lateinit var presenter: InvoicePresenter
@@ -86,11 +88,7 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
         }
 
         progressBar = view.findViewById(R.id.horizontal_progress_bar)
-        adapter.setListener { item ->
-            startActivityForResult(activity?.let {
-                InvoiceFullScreenActivity.getStartIntent(it, item.id, item.name) },
-                INVOICE_DETAILS_REQUEST_CODE)
-        }
+
     }
 
     override fun showInvoicesLoadingError() {
@@ -157,8 +155,20 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
     }
 
     override fun provideAdapter(): SearchAdapterDecorator<InvoicePresentation, Holder> {
-        adapter = Adapter()
+        adapter = Adapter(this)
         return adapter
+    }
+
+    override fun onMoreOptionSelected(item: InvoicePresentation) {
+        val dialog = InvoiceBottomSheetFragment.newInstance(item.id)
+        dialog.setTargetFragment(this, INVOICE_DETAILS_REQUEST_CODE)
+        parentFragment?.childFragmentManager.let { it?.let { it1 -> dialog.show(it1, null) } }
+    }
+
+    override fun onInvoiceSelected(item: InvoicePresentation) {
+        startActivityForResult(activity?.let {
+            InvoiceFullScreenActivity.getStartIntent(it, item.id, item.name) },
+            INVOICE_DETAILS_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -210,18 +220,37 @@ class InvoiceFragment: BaseSearchListFragment(), InvoicesScreenInterface {
 
 class Holder(val binding: InvoiceMinimalItemLayoutBinding): RecyclerView.ViewHolder(binding.root)
 
-class Adapter: SearchAdapterDecorator<InvoicePresentation, Holder>() {
+interface InvoicesListener {
+    fun onMoreOptionSelected(item: InvoicePresentation)
+    fun onInvoiceSelected(item: InvoicePresentation)
+}
+
+class Adapter(private val invoicesListener:InvoicesListener)
+    : SearchAdapterDecorator<InvoicePresentation, Holder>() {
+
     override fun getLayoutResource(): Int {
         return R.layout.invoice_minimal_item_layout
     }
 
-    override fun createViewHolder(rootView: View): Holder? {
+    override fun createViewHolder(rootView: View, rootData: SortedList<*>): Holder? {
         val binding = DataBindingUtil.bind<InvoiceMinimalItemLayoutBinding>(rootView)
-        return binding?.let { Holder(it) }
+        val holder =  binding?.let { Holder(it) }
+        binding?.minimalInvoiceMoreButton?.setOnClickListener {
+            val position = holder?.adapterPosition!!
+            if (position != RecyclerView.NO_POSITION) {
+                invoicesListener.onMoreOptionSelected(rootData.get(position) as InvoicePresentation)
+            }
+        }
+        binding?.minimalInvoiceContainer?.setOnClickListener {
+            val position = holder?.adapterPosition!!
+            if (position != RecyclerView.NO_POSITION) {
+                invoicesListener.onInvoiceSelected(rootData.get(position) as InvoicePresentation)
+            }
+        }
+        return holder
     }
 
     override fun bindViewHolder(holder: Holder, item: InvoicePresentation) {
         holder.binding.invoice = item
     }
-
 }
