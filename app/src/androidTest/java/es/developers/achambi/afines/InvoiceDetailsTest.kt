@@ -26,9 +26,7 @@ class InvoiceDetailsTest: BaseUITest() {
 
     @Test
     fun testPendingInvoice() {
-        val list = ArrayList<FirebaseInvoice>()
-        list.add(FirebaseInvoice(id = 1, name = "pending_invoice", state = InvoiceState.SENT.toString()))
-        MockSetup.setInvoices(list)
+        MockSetup.setInvoice(FirebaseInvoice(id = 1, name = "pending_invoice", state = InvoiceState.SENT.toString()))
 
         onView(withId(R.id.action_more_options)).perform(click())
 
@@ -50,9 +48,7 @@ class AcceptedInvoiceTest: BaseUITest() {
 
     @Test
     fun testApprovedInvoice() {
-        val list = ArrayList<FirebaseInvoice>()
-        list.add(FirebaseInvoice(id = 2, name = "accepted_invoice", state = InvoiceState.ACCEPTED.toString()))
-        MockSetup.setInvoices(list)
+        MockSetup.setInvoice(FirebaseInvoice(id = 2, name = "accepted_invoice", state = InvoiceState.ACCEPTED.toString()))
 
         onView(withId(R.id.action_more_options)).perform(click())
 
@@ -75,9 +71,7 @@ class RejectedInvoiceTest: BaseUITest() {
 
     @Test
     fun testRejectedInvoice() {
-        val list = ArrayList<FirebaseInvoice>()
-        list.add(FirebaseInvoice(id = 3, name = "rejected_invoice", state = InvoiceState.REJECTED.toString()))
-        MockSetup.setInvoices(list)
+        MockSetup.setInvoice(FirebaseInvoice(id = 3, name = "rejected_invoice", state = InvoiceState.REJECTED.toString()))
 
         onView(withId(R.id.action_more_options)).perform(click())
 

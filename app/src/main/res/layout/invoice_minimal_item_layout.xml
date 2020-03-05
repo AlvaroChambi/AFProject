@@ -12,14 +12,14 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/minimal_invoice_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
-        android:background="@color/text_primary"
-        android:orientation="vertical">
+        android:background="@color/text_primary">
 
         <TextView
-            android:id="@+id/textView28"
+            android:id="@+id/minimal_invoices_name"
             style="@style/Subtitle1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             android:background="@{invoice.stateColor}"
             app:layout_constraintBottom_toBottomOf="@+id/textView33"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView28"
+            app:layout_constraintTop_toTopOf="@+id/minimal_invoices_name"
             tools:background="@color/color_state_pending" />
 
         <TextView
@@ -53,8 +53,8 @@
             android:text="@{invoice.stateDetails}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline3"
-            app:layout_constraintStart_toStartOf="@+id/textView28"
-            app:layout_constraintTop_toBottomOf="@+id/textView28"
+            app:layout_constraintStart_toStartOf="@+id/minimal_invoices_name"
+            app:layout_constraintTop_toBottomOf="@+id/minimal_invoices_name"
             app:layout_constraintVertical_bias="0.0"
             tools:text="Creada el 10 de Enero del 2019" />
 
@@ -66,15 +66,15 @@
             android:layout_marginStart="8dp"
             android:gravity="end"
             android:text="@{invoice.stateMessage}"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView6"
-            app:layout_constraintEnd_toStartOf="@+id/imageView6"
+            app:layout_constraintBottom_toBottomOf="@+id/minimal_invoice_more_button"
+            app:layout_constraintEnd_toStartOf="@+id/minimal_invoice_more_button"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
-            app:layout_constraintTop_toTopOf="@+id/imageView6"
+            app:layout_constraintTop_toTopOf="@+id/minimal_invoice_more_button"
             tools:text="Enviada" />
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/minimal_invoice_more_button"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
