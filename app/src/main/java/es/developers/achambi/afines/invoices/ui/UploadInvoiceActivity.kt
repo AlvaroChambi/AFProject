@@ -9,8 +9,11 @@ import es.developers.achambi.afines.R
 
 class UploadInvoiceActivity: BaseActivity() {
     companion object {
-        fun getStartIntent(context: Context): Intent {
-            return Intent( context, UploadInvoiceActivity::class.java )
+        fun getStartIntent(context: Context, uploadOption: String): Intent {
+            val args = UploadInvoiceFragment.getArguments(uploadOption)
+            val intent = Intent( context, UploadInvoiceActivity::class.java )
+            intent.putExtra(BASE_ARGUMENTS, args)
+            return intent
         }
     }
     override fun getScreenTitle(): Int {

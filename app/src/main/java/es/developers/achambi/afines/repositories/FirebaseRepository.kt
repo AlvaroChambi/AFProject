@@ -242,13 +242,13 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun updateInvoiceMetadata(invoice: Invoice, name: String, trimester: String ) {
+    fun updateInvoiceMetadata(invoice: Invoice, name: String ) {
         try {
             val user = firebaseAuth.currentUser
             val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(
                 NAME_ATTRIBUTE_KEY, name,
-                TRIMESTER_ATTRIBUTE_KEY, trimester),
+                TRIMESTER_ATTRIBUTE_KEY ),
                 TIMEOUT, TimeUnit.SECONDS)
             analytics.publishWriteEvent(user?.uid)
         }catch (e: ExecutionException) {

@@ -9,18 +9,15 @@ import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 
 //TODO Trimester shouldn't be needed here
 data class InvoiceUpload(var uriMetadata: URIMetadata = URIMetadata(),
-                         var name: String = "",
-                         var trimester: Trimester = TrimesterUtils.getCurrentTrimester()) : Parcelable {
+                         var name: String = "") : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(URIMetadata::class.java.classLoader),
-        parcel.readString(),
-        ParcelUtil.readEnumFromParcel(parcel, Trimester::class.java)
+        parcel.readString().toString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(uriMetadata, flags)
         parcel.writeString(name)
-        ParcelUtil.writeEnumToParcel(parcel, trimester)
     }
 
     override fun describeContents(): Int {

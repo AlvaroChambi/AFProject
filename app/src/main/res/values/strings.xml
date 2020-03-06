@@ -138,5 +138,7 @@
     <string name="invoice_details_approved_message">Tu factura ha sido revisada y aprobada</string>
     <string name="invoice_details_rejected_message">Tu factura ha sido rechazada, por favor comprueba que no se vea borrosa y que sea una factura.</string>
 
+    <string name="invoice_upload_replace_text">Reemplazar\nfactura</string>
+
     <string name="overview_to_invoices_transition_name">header_transition</string>
 </resources>

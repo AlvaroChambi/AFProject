@@ -59,8 +59,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     fun updateInvoice(uri: Uri?, invoiceUpload: InvoiceUpload, invoiceId: Long): ArrayList<Invoice>{
         val invoice = getInvoice(invoiceId)
         val trimester = TrimesterUtils.getTrimester(Date(invoiceId))
-        invoice?.let { firebaseRepository.updateInvoiceMetadata(invoice, invoiceUpload.name,
-            invoiceUpload.trimester.toString()) }
+        invoice?.let { firebaseRepository.updateInvoiceMetadata(invoice, invoiceUpload.name) }
         if(uri != null) {
             invoice?.let { firebaseRepository.updateInvoiceFile(invoice, invoiceUpload, uri) }
             invoice?.let { firebaseRepository.updateRejectedInvoiceState(invoice,
@@ -156,7 +155,6 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         return FirebaseInvoice(
             id = Date().time,
             name = invoiceUpload.name,
-            trimester = invoiceUpload.trimester.toString(),
             fileReference = invoiceUpload.uriMetadata.displayName,
             state = InvoiceState.SENT.toString(),
             deliveredDate = Date().time
