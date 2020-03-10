@@ -65,7 +65,7 @@ class OverviewActivity : AppCompatActivity(),
 
     override fun onStart() {
         super.onStart()
-        findViewById<View>(R.id.floatingActionButton).setOnClickListener {
+        findViewById<View>(R.id.main_upload_invoice_button).setOnClickListener {
             BottomSheetUploadFragment(this).show(supportFragmentManager, null)
         }
         val filter = IntentFilter()

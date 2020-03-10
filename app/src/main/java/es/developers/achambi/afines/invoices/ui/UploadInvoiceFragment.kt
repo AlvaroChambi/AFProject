@@ -84,6 +84,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
     }
 
     private var uri: Uri? = null
+    private var tempUri: Uri? = null
     private var invoiceId: Long? = null
     private lateinit var presenter: UploadPresenter
 
@@ -236,11 +237,12 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
 
     override fun onURIUpdated(uri: Uri?, fileName: String) {
         this.uri = uri
+        this.tempUri = null
         upload_invoice_name_edit_text.setText(fileName)
     }
 
     override fun onPhotoUriCreated(uri: Uri) {
-        this.uri = uri
+        this.tempUri = uri
     }
 
     override fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload) {
@@ -293,21 +295,26 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
             val resultData: Uri? = data?.data
             activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
         } else if(requestCode == PHOTO_CAPTURE_RESULT_CODE) {
-            //An uri was previously created over a temp file and set before the picture was taken, if the result
-            // code is not ok, we'll just clear the uri value
             if(resultCode == Activity.RESULT_OK) {
-                activity?.let { uri?.let { it1 ->
+                activity?.let { tempUri?.let { it1 ->
                     startActivityForResult(ScanActivity.getStartIntent(it, it1.toString()),
                         SCANNER_REQUEST_CODE) } }
             } else {
-                this.uri = null
+                //Whenever an invoice is not available to be displayed, this activity will just be closed
+                //(This happens when the scan operation is started from the home menu and then cancelled by going back)
+                if(upload_invoice_name_edit_text.text.isEmpty()) activity?.finish()
+
+                //An uri was previously created over a temp file and set before the picture was taken,
+                // if the result code is not ok, we'll just clear the uri value
+                this.tempUri = null
             }
         } else if(requestCode == SCANNER_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
                 val uri: Uri? = data?.extras?.getParcelable(ScanConstants.SCANNED_RESULT)
                 activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
             } else {
-                this.uri = null
+                if(upload_invoice_name_edit_text.text.isEmpty()) activity?.finish()
+                this.tempUri = null
             }
         }
     }

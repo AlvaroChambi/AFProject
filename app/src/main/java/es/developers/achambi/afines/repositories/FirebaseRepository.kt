@@ -247,8 +247,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val user = firebaseAuth.currentUser
             val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/").document(invoice.dbReference)
             Tasks.await(databaseRef.update(
-                NAME_ATTRIBUTE_KEY, name,
-                TRIMESTER_ATTRIBUTE_KEY ),
+                NAME_ATTRIBUTE_KEY, name),
                 TIMEOUT, TimeUnit.SECONDS)
             analytics.publishWriteEvent(user?.uid)
         }catch (e: ExecutionException) {

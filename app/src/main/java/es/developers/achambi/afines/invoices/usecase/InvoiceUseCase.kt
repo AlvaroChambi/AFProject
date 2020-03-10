@@ -95,6 +95,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
     }
 
     //TODO Here i was querying the whole list when the invoice wasn't found, check if it's really needed
+    @Throws(CoreError::class)
     fun getInvoice(invoiceId: Long): Invoice? {
         var result: Invoice? = null
         val trimester = TrimesterUtils.getTrimester(Date(invoiceId))

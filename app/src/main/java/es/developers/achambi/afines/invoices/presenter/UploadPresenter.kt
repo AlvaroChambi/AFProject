@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.CoreError
@@ -35,7 +36,7 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
     : Presenter<UploadScreenInterface>(screenInterface, lifecycle, executor) {
 
     fun onDataSetup(invoiceId: Long?) {
-        if(invoiceId != null) {
+        if(invoiceId != null && invoiceId != 0L) {
             screen.showScreenProgress()
             val responseHandler = object: ResponseHandler<Invoice?> {
                 override fun onSuccess(response: Invoice?) {
@@ -90,19 +91,16 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
         //TODO Check in performance snapshots the cost of decoding in the main thread
         try {
             screen.showInvoiceBitmap(MediaStore.Images.Media.getBitmap(context.contentResolver, uri))
-        }catch (e: Exception){}
-    }
-
-    fun userClearedURI() {
-        screen.onURIUpdated(null, "")
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 
     fun userSaveSelected(context: Context, uri: Uri?, name: String) {
-        if( uri != null ) {
+        if( uri != null && name.isNotEmpty() ) {
             val invoiceUpload = InvoiceUpload(
                 uriUtils.retrieveFileMetadata(context, uri),
-                name
-            )
+                name)
             screen.onInvoicePreparedToSave(invoiceUpload)
         } else {
             screen.onCannotSaveInvoice()
@@ -110,9 +108,14 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
     }
 
     fun userOverrideSelected(context: Context, uri: Uri?, name: String) {
-        val invoiceUpload = InvoiceUpload(uriUtils.retrieveFileMetadata(context, uri),
-            name)
-        screen.onInvoicePreparedToEdit(invoiceUpload)
+        if(name.isNotEmpty()) {
+            //Uri will be ignored on the update if  it's null
+            val invoiceUpload = InvoiceUpload(uriUtils.retrieveFileMetadata(context, uri),
+                name)
+            screen.onInvoicePreparedToEdit(invoiceUpload)
+        } else {
+            screen.onCannotSaveInvoice()
+        }
     }
 
     fun userPhotoFileRequested(context: Context) {
@@ -134,4 +137,6 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
             screen.showPhotoCaptureError()
         }
     }
+
+
 }

@@ -25,7 +25,7 @@
     <string name="upload_empty_trimester_text">-</string>
 
     <string name="upload_name_error_title">¡Nos faltan datos!</string>
-    <string name="upload_name_error_message">Antes de guardar tienes que subir la factura.</string>
+    <string name="upload_name_error_message">Comprueba que hayas subido una factura y que el nombre sea válido.</string>
 
     <string name="invoice_state_delivered">Enviada</string>
     <string name="invoice_state_processed">Aprobada</string>
