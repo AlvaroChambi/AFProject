@@ -94,6 +94,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
 
     fun logout() {
         firebaseProfile = null
+        counters = null
         firebaseRepository.updateProfileToken("")
         invoicesUseCase.clearCache()
         firebaseRepository.logout()

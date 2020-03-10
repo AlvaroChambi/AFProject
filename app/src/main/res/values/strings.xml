@@ -60,11 +60,14 @@
 
     <string name="profile_email_hint_text">Email</string>
     <string name="profile_address_hint_text">Dirección</string>
-    <string name="profile_dni_hint_text">Dni</string>
+    <string name="profile_dni_hint_text">DNI</string>
     <string name="profile_naf_hint_text">NAF</string>
     <string name="profile_ccc_hint_text">CCC</string>
     <string name="profile_iban_hint_text">IBAN</string>
-    <string name="profile_bank_account_hint_text">Cuenta bancaria</string>
+
+    <string name="profile_naf_extended_text">NAF (Nº afiliación seg. social)</string>
+    <string name="profile_ccc_extended_text">CCC (Cód. cuenta de cotización)</string>
+    <string name="profile_iban_extended_text">IBAN (Nº cuenta bancaria)</string>
 
     <string name="overview_personal_card_naf_subtitle">Nº afiliación seg. social</string>
     <string name="overview_personal_card_ccc_subtitle">Cód. cuenta de cotización</string>
@@ -139,6 +142,7 @@
     <string name="invoice_details_rejected_message">Tu factura ha sido rechazada, por favor comprueba que no se vea borrosa y que sea una factura.</string>
 
     <string name="invoice_upload_replace_text">Reemplazar\nfactura</string>
+    <string name="profile_user_info_error">No se han podido recuperar los datos del usuario, por favor inténtelo otra vez mas tarde.</string>
 
     <string name="overview_to_invoices_transition_name">header_transition</string>
 </resources>

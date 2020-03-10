@@ -16,7 +16,7 @@ class ProfileUITest: BaseUITest() {
 
     override fun setup() {
         super.setup()
-        MockSetup.setProfile(FirebaseProfile(userId = "id", userName = "User",
+        MockSetup.setProfile(FirebaseProfile(userId = "id", name = "User",
             email = "test@gmail.com", iban = "ES9121000418450200051332", rejected = 1))
     }
 
@@ -39,8 +39,8 @@ class ProfileUITest: BaseUITest() {
         onView(withId(R.id.action_edit_profile)).perform(click())
         onView(withId(R.id.profile_address_edit_text)).perform(clearText(), typeText("addresss"))
         Espresso.closeSoftKeyboard()
-        onView(withId(R.id.profile_save_button)).perform(scrollTo(), click())
+        onView(withId(R.id.action_save_text)).perform(click())
 
-        onView(withText(R.string.profile_edit_success_message)).check(matches(isDisplayed()))
+        onView(withId(R.id.action_edit_profile)).check(matches(isDisplayed()))
     }
 }

@@ -32,9 +32,11 @@
             android:parentActivityName=".OverviewActivity">
         </activity>
 
-        <activity android:name=".profile.ui.UpdatePasswordActivity"/>
         <activity
-            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge"
+            android:name=".profile.ui.UpdatePasswordActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.Bridge"/>
+        <activity
+            android:theme="@style/Theme.MaterialComponents.Light.Bridge"
             android:name=".invoices.ui.InvoiceFullScreenActivity"/>
 
         <service android:name=".services.FirebaseNotificationService">

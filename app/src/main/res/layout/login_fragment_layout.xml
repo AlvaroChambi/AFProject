@@ -57,7 +57,6 @@
     <Button
         android:id="@+id/login_button"
         style="@style/Base.TextAppearance.MaterialComponents.Button"
-        android:backgroundTint="@color/colorAccent"
         android:textColor="@color/text_primary"
         android:layout_width="0dp"
         android:layout_height="64dp"
