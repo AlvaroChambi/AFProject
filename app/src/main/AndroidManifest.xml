@@ -22,12 +22,12 @@
             </activity>
         <activity android:name=".OverviewActivity"/>
         <activity
-            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge"
+            android:theme="@style/Theme.MaterialComponents.Light.Bridge"
             android:name=".invoices.ui.UploadInvoiceActivity"
             android:parentActivityName=".OverviewActivity">
         </activity>
         <activity
-            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge"
+            android:theme="@style/Theme.MaterialComponents.Light.Bridge"
             android:name=".invoices.ui.EditInvoiceActivity"
             android:parentActivityName=".OverviewActivity">
         </activity>

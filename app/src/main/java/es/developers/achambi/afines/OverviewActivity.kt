@@ -12,16 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import es.developers.achambi.afines.invoices.ui.InvoicesFragment
-import es.developers.achambi.afines.invoices.ui.UploadInvoiceActivity
+import es.developers.achambi.afines.invoices.ui.*
 import es.developers.achambi.afines.profile.ui.ProfileFragment
 import kotlinx.android.synthetic.main.overview_activity_layout.*
 
 class OverviewActivity : AppCompatActivity(),
-    BottomNavigationView.OnNavigationItemSelectedListener{
+    BottomNavigationView.OnNavigationItemSelectedListener, OptionListener{
     companion object {
         const val INVOICES_FRAGMENT_TAG = "INVOICES_FRAGMENT_TAG"
-        public const val INVOICE_UPLOAD_DIALOG_CODE = 102
+        const val INVOICE_UPLOAD_SELECT_OPTION_CODE = 103
+        const val INVOICE_UPLOAD_DIALOG_CODE = 102
         fun getStartIntent(context: Context): Intent {
             return Intent(context, OverviewActivity::class.java)
         }
@@ -47,13 +47,26 @@ class OverviewActivity : AppCompatActivity(),
         }
     }
 
+    override fun onScanSelected() {
+        startActivityForResult(
+                UploadInvoiceActivity.getStartIntent( this, UploadInvoiceFragment.SCAN_OPTION)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                , INVOICE_UPLOAD_DIALOG_CODE )
+        bottom_navigation.selectedItemId = R.id.navigation_menu_invoice
+    }
+
+    override fun onGallerySelected() {
+        startActivityForResult(
+            UploadInvoiceActivity.getStartIntent( this, UploadInvoiceFragment.GALLERY_OPTION)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            , INVOICE_UPLOAD_DIALOG_CODE )
+        bottom_navigation.selectedItemId = R.id.navigation_menu_invoice
+    }
+
     override fun onStart() {
         super.onStart()
-        findViewById<View>(R.id.floatingActionButton).setOnClickListener {
-            startActivityForResult(
-                UploadInvoiceActivity.getStartIntent( this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                , INVOICE_UPLOAD_DIALOG_CODE )
-            bottom_navigation.selectedItemId = R.id.navigation_menu_invoice
+        findViewById<View>(R.id.main_upload_invoice_button).setOnClickListener {
+            BottomSheetUploadFragment(this).show(supportFragmentManager, null)
         }
         val filter = IntentFilter()
         filter.addAction(Navigation.PROFILE_DEEP_LINK.toString())

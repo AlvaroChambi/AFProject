@@ -11,6 +11,9 @@ android {
         termsOfServiceUrl = "https://gradle.com/terms-of-service"
         termsOfServiceAgree = "yes"
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     dataBinding {
         enabled = true
     }

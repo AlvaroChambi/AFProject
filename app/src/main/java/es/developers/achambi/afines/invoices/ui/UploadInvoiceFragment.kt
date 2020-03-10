@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,6 +15,9 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
@@ -41,24 +45,35 @@ interface UploadScreenInterface : Screen {
     fun showPhotoCaptureError()
     fun showCamera(uri: Uri)
     fun onPhotoUriCreated(uri: Uri)
+    fun showInvoiceBitmap(bitmap: Bitmap)
+    fun showInvoiceUriImage(uri: Uri)
 
     fun showGallery()
 }
 
-class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
+class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListener {
     companion object {
         const val ANY_FILE = "*/*"
         const val MEDIA_SEARCH_RESULT_CODE = 101
         const val PHOTO_CAPTURE_RESULT_CODE = 102
         const val CAMERA_PERMISSION_REQUEST_CODE = 103
         const val SCANNER_REQUEST_CODE = 104
+        const val UPLOAD_OPTION_KEY = "upload_option_key"
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
+        const val SCAN_OPTION = "scan_option"
+        const val GALLERY_OPTION = "gallery_option"
         private const val INVOICE_ID_KEY = "invoice_id_key"
 
         fun newInstance(args: Bundle?): UploadInvoiceFragment {
             val fragment = UploadInvoiceFragment()
             fragment.arguments = args
             return fragment
+        }
+
+        fun getArguments(uploadOption: String): Bundle {
+            val bundle = Bundle()
+            bundle.putString(UPLOAD_OPTION_KEY, uploadOption)
+            return bundle
         }
 
         fun getArguments(invoiceId: Long): Bundle {
@@ -69,6 +84,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     }
 
     private var uri: Uri? = null
+    private var tempUri: Uri? = null
     private var invoiceId: Long? = null
     private lateinit var presenter: UploadPresenter
 
@@ -86,27 +102,61 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
         presenter.onDataSetup(invoiceId)
     }
 
-    override fun onViewSetup(view: View) {
-        pick_file_chip.setOnClickListener{
-            presenter.userSelectedFileChip()
+    override fun onScanSelected() {
+        activity?.let {
+            if (ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(it, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    CAMERA_PERMISSION_REQUEST_CODE)
+            }else {
+                presenter.userPhotoFileRequested(it)
+            }
         }
-        pick_file_chip.setOnCloseIconClickListener {
-            presenter.userClearedURI()
+    }
+
+    override fun showInvoiceBitmap(bitmap: Bitmap) {
+        upload_invoice_invoice_image.setImageBitmap(bitmap)
+    }
+
+    override fun showInvoiceUriImage(uri: Uri) {
+        val manager = Glide.with(this)
+        val circularProgressDrawable = CircularProgressDrawable(activity!!)
+        circularProgressDrawable.strokeWidth = 10f
+        circularProgressDrawable.centerRadius = 60f
+        circularProgressDrawable.start()
+        val requestOptions: RequestOptions by lazy {
+            RequestOptions()
+                .error(R.drawable.default_image_thumbnail)
+                .placeholder(circularProgressDrawable)
+        }
+        manager.load(uri)
+            .apply(requestOptions)
+            .into(upload_invoice_invoice_image)
+    }
+
+    override fun onGallerySelected() {
+        presenter.userSelectedGallery()
+    }
+
+    override fun onViewSetup(view: View) {
+        upload_invoice_replace_button.setOnClickListener {
+            activity?.supportFragmentManager?.let { it1 ->
+                BottomSheetUploadFragment(this).show(it1, null) }
         }
 
-        invoice_photo_button.setOnClickListener {
-            activity?.let {
-                if (ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(it, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        CAMERA_PERMISSION_REQUEST_CODE)
-                }else {
-                    presenter.userPhotoFileRequested(it)
-                }
+        when(arguments?.getString(UPLOAD_OPTION_KEY)) {
+            SCAN_OPTION -> {
+                onScanSelected()
+                arguments?.putString(UPLOAD_OPTION_KEY, "")
             }
+            GALLERY_OPTION -> {
+                presenter.userSelectedGallery()
+                arguments?.putString(UPLOAD_OPTION_KEY, "")
+            }
+            else -> {}
         }
     }
 
@@ -173,16 +223,13 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == R.id.action_save) {
-            activity?.let { presenter.userSaveSelected(
-                    it, uri, file_name_edit_text.text.toString(),
-                    invoice_trimester_selector.getChecked())
+            activity?.let {
+                presenter.userSaveSelected(it, uri, upload_invoice_name_edit_text.text.toString())
             }
             return true
         } else if(item.itemId == R.id.action_override) {
             activity?.let {
-                    presenter.userOverrideSelected(it, uri,
-                        file_name_edit_text.text.toString(),
-                        invoice_trimester_selector.getChecked())
+                presenter.userOverrideSelected(it, uri, upload_invoice_name_edit_text.text.toString())
             }
         }
         return super.onOptionsItemSelected(item)
@@ -190,12 +237,12 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
 
     override fun onURIUpdated(uri: Uri?, fileName: String) {
         this.uri = uri
-        pick_file_chip.text = fileName
-        file_name_edit_text.setText(fileName)
+        this.tempUri = null
+        upload_invoice_name_edit_text.setText(fileName)
     }
 
     override fun onPhotoUriCreated(uri: Uri) {
-        this.uri = uri
+        this.tempUri = uri
     }
 
     override fun onInvoicePreparedToSave(invoiceUpload: InvoiceUpload) {
@@ -224,9 +271,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
     }
 
     override fun showEditableInvoice(invoice: InvoiceUploadPresentation) {
-        pick_file_chip.text = invoice.file
-        file_name_edit_text.setText(invoice.name)
-        invoice_trimester_selector.setTrimester(invoice.trimester)
+        upload_invoice_name_edit_text.setText(invoice.name)
     }
 
     override fun showErrorRetrievingInvoice() {
@@ -250,21 +295,26 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface {
             val resultData: Uri? = data?.data
             activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
         } else if(requestCode == PHOTO_CAPTURE_RESULT_CODE) {
-            //An uri was previously created over a temp file and set before the picture was taken, if the result
-            // code is not ok, we'll just clear the uri value
             if(resultCode == Activity.RESULT_OK) {
-                activity?.let { uri?.let { it1 ->
+                activity?.let { tempUri?.let { it1 ->
                     startActivityForResult(ScanActivity.getStartIntent(it, it1.toString()),
                         SCANNER_REQUEST_CODE) } }
             } else {
-                this.uri = null
+                //Whenever an invoice is not available to be displayed, this activity will just be closed
+                //(This happens when the scan operation is started from the home menu and then cancelled by going back)
+                if(upload_invoice_name_edit_text.text.isEmpty()) activity?.finish()
+
+                //An uri was previously created over a temp file and set before the picture was taken,
+                // if the result code is not ok, we'll just clear the uri value
+                this.tempUri = null
             }
         } else if(requestCode == SCANNER_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
                 val uri: Uri? = data?.extras?.getParcelable(ScanConstants.SCANNED_RESULT)
                 activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
             } else {
-                this.uri = null
+                if(upload_invoice_name_edit_text.text.isEmpty()) activity?.finish()
+                this.tempUri = null
             }
         }
     }
