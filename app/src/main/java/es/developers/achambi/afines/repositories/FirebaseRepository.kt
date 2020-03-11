@@ -4,6 +4,7 @@ import android.net.Uri
 import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -16,6 +17,7 @@ import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.home.model.TaxDate
+import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import es.developers.achambi.afines.utils.EventLogger
 import java.util.*
@@ -47,9 +49,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val DEVICE_TOKEN_KEY = "token"
         const val PENDING_INVOICES_KEY = "pending"
         const val REJECTED_INVOICES_KEY = "rejected"
+        const val APPROVED_INVOICES_KEY = "approved"
         const val PASSWORD_CHANGED_FLAG = "passwordChanged"
         private const val TIMEOUT = 3L
     }
+
+    private var countersReference: String = ""
 
     @Throws(CoreError::class)
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice): Long {
@@ -73,16 +78,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }
 
         try {
-            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
+            val reference = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+            val databaseRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+                .document(countersReference)
             firebaseInvoice.fileReference = fileReference.path
             Tasks.await(firestore.runTransaction { transaction ->
-                val profileSnapshot = transaction.get(profileRef)
-                var pending = profileSnapshot.getLong(PENDING_INVOICES_KEY)
-                if(pending == null) pending = 0
+                if(countersReference.isEmpty()) {
+                    val countersReference = reference.document()
+                    val newCounters = InvoiceCounters(pending = 1,reference = countersReference.id)
+                    transaction.set(countersReference, newCounters)
+                } else {
+                    val countersSnapshot = transaction.get(databaseRef)
+                    var pending = countersSnapshot.getLong(PENDING_INVOICES_KEY)
+                    if(pending == null) pending = 0
+                    transaction.update(databaseRef, PENDING_INVOICES_KEY, ++pending)
+                }
                 transaction.set(invoiceReference, firebaseInvoice)
-                transaction.update(profileRef, PENDING_INVOICES_KEY, ++pending)
+
             }, TIMEOUT, TimeUnit.SECONDS)
-            analytics.publishTransaction(user.uid)
+            analytics.publishTransaction(user?.uid)
         }catch (e:ExecutionException) {
             throw CoreError(e.message)
         }catch (e:InterruptedException) {
@@ -420,6 +434,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             analytics.publishReadEvent(userId)
             result?.let {
                 val parsed = result.toObjects(InvoiceCounters::class.java)
+                countersReference = parsed[0].reference
                 return parsed[0]
             }
         }catch (e: ExecutionException) {

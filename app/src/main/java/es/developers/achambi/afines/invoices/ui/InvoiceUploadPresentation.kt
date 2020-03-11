@@ -1,6 +1,7 @@
 package es.developers.achambi.afines.invoices.ui
 
 import es.developers.achambi.afines.invoices.model.Invoice
+import java.time.Year
 import java.util.*
 
 data class InvoiceUploadPresentation(val id: Long,
@@ -37,6 +38,11 @@ class TrimesterUtils {
         fun getCurrentTrimester(): Trimester {
             return getTrimester(Date())
         }
+
+        fun getCurrentYear(): String {
+            return Calendar.getInstance().get(Calendar.YEAR).toString()
+        }
+
         fun getTrimester(date: Date): Trimester {
             val calendar = Calendar.getInstance()
             calendar.time = date
