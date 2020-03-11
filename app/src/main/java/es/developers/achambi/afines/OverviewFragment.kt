@@ -6,6 +6,7 @@ import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.ui.BaseRequestFragment
 import es.developer.achambi.coreframework.ui.Screen
 import es.developers.achambi.afines.home.OverviewPresenter
+import es.developers.achambi.afines.notifications.NotificationsActivity
 import es.developers.achambi.afines.repositories.model.NotificationType
 import kotlinx.android.synthetic.main.overview_card_item_invoices_layout.*
 import kotlinx.android.synthetic.main.overview_card_item_personal_layout.*
@@ -49,6 +50,9 @@ class OverviewFragment : BaseRequestFragment(), OverviewScreen {
         personal_card_action_text.setOnClickListener { presenter.navigateToProfile() }
         overview_notification_go_to_button.setOnClickListener {
             presenter.notificationGoToSelected(notificationType) }
+        overview_notification_watch_all_button.setOnClickListener {
+            startActivity(activity?.let { it1 -> NotificationsActivity.getStartIntent(it1) })
+        }
     }
 
     override fun showInvoicesCount(approved: String, sent: String, rejected: String) {

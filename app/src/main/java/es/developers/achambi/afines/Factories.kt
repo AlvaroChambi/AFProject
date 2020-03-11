@@ -17,11 +17,14 @@ import es.developers.achambi.afines.login.LoginScreenInterface
 import es.developers.achambi.afines.login.RetrievePasswordPresenter
 import es.developers.achambi.afines.login.RetrievePasswordScreen
 import es.developers.achambi.afines.login.usecase.LoginUseCase
+import es.developers.achambi.afines.notifications.NotificationsPresenter
+import es.developers.achambi.afines.notifications.NotificationsScreen
 import es.developers.achambi.afines.profile.presenter.ProfilePresenter
 import es.developers.achambi.afines.profile.presenter.UpdatePasswordPresenter
 import es.developers.achambi.afines.profile.ui.UpdatePasswordScreen
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.services.NotificationServicePresenter
+import es.developers.achambi.afines.ui.NotificationPresentationBuilder
 import es.developers.achambi.afines.ui.OverviewPresentationBuilder
 import es.developers.achambi.afines.utils.BaseUIPresenter
 import es.developers.achambi.afines.utils.EventLogger
@@ -121,6 +124,14 @@ class InvoiceFullScreenPresenterFactory(private val executor: MainExecutor,
     fun build(screen: InvoiceFullScreenInterface, lifecycle: Lifecycle)
             : InvoiceFullScreenPresenter {
         return InvoiceFullScreenPresenter(screen, lifecycle, executor, useCase)
+    }
+}
+
+class NotificationsPresenterFactory(private val executor: MainExecutor,
+                                    private val useCase: ProfileUseCase,
+                                    private val builder: NotificationPresentationBuilder) {
+    fun build(screen: NotificationsScreen, lifecycle: Lifecycle): NotificationsPresenter {
+        return NotificationsPresenter(useCase, builder, screen, lifecycle, executor)
     }
 }
 

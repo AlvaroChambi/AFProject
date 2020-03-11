@@ -11,7 +11,7 @@ data class UserOverview( var counters: InvoiceCounters?,
                          var notification: OverviewNotification?)
 
 data class OverviewNotification( var type: NotificationType,
-                                 var name: String = "", var date: Date? = null)
+                                 var name: String = "", var date: Date )
 
 enum class NotificationType {
     INVOICE_REJECTED,

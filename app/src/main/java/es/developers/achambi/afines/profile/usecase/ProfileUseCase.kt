@@ -3,6 +3,7 @@ package es.developers.achambi.afines.profile.usecase
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import es.developer.achambi.coreframework.threading.CoreError
+import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
@@ -10,6 +11,7 @@ import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.repositories.model.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
                      private val invoicesUseCase: InvoiceUseCase,
@@ -20,6 +22,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     }
     private var firebaseProfile: FirebaseProfile? = null
     private var counters: InvoiceCounters? = null
+    private var notifications = ArrayList<OverviewNotification>()
 
     @Throws(CoreError::class)
     fun getUserProfile(refresh: Boolean): FirebaseProfile? {
@@ -42,14 +45,34 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         }
         profile?.let {
             if(!profile.passwordChanged) notification = OverviewNotification(
-                NotificationType.PASS_NOT_UPDATED)
+                NotificationType.PASS_NOT_UPDATED, date = Date())
         }
         counters?.let {
             if(counters.rejected > 0) notification = OverviewNotification(
-                NotificationType.INVOICE_REJECTED)
+                NotificationType.INVOICE_REJECTED, date = Date())
         }
 
         return UserOverview(counters, profile, notification)
+    }
+
+    @Throws
+    fun getUserNotifications(): ArrayList<OverviewNotification> {
+        val profile = getUserProfile(false)
+        val counters = getUserInvoiceCounters()
+        val notifications = ArrayList<OverviewNotification>()
+        taxesUseCase.getTaxDates().forEach {
+            notifications.add(OverviewNotification(NotificationType.TAX_DATE_REMINDER, it.name,
+                it.date))
+        }
+        profile?.let {
+            if(!profile.passwordChanged) notifications.add(OverviewNotification(
+                NotificationType.PASS_NOT_UPDATED, date = Date()))
+        }
+        counters?.let {
+            if(counters.rejected > 0) notifications.add(OverviewNotification(
+                NotificationType.INVOICE_REJECTED, date = Date()))
+        }
+        return notifications
     }
 
     private fun getUserInvoiceCounters(): InvoiceCounters? {
@@ -93,8 +116,9 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     }
 
     fun logout() {
-        firebaseProfile = null
+        clearProfileCache()
         counters = null
+        notifications.clear()
         firebaseRepository.updateProfileToken("")
         invoicesUseCase.clearCache()
         firebaseRepository.logout()

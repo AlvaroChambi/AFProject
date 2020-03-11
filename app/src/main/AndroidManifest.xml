@@ -38,6 +38,10 @@
         <activity
             android:theme="@style/Theme.MaterialComponents.Light.Bridge"
             android:name=".invoices.ui.InvoiceFullScreenActivity"/>
+        <activity
+            android:name=".notifications.NotificationsActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.Bridge">
+        </activity>
 
         <service android:name=".services.FirebaseNotificationService">
             <intent-filter>
