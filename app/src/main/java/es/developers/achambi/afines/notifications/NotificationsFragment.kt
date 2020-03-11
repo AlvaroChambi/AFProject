@@ -19,8 +19,6 @@ import kotlinx.android.synthetic.main.notification_item_layout.view.*
 
 interface NotificationsScreen: Screen {
     fun showNotifications(notifications: ArrayList<NotificationPresentation>)
-    fun showProgress()
-    fun showProgressFinished()
 }
 
 class NotificationsFragment: BaseSearchListFragment(), AdapterListener, NotificationsScreen {
@@ -66,12 +64,6 @@ class NotificationsFragment: BaseSearchListFragment(), AdapterListener, Notifica
     override fun showNotifications(notifications: ArrayList<NotificationPresentation>) {
         adapter.data = notifications
         presentAdapterData()
-    }
-
-    override fun showProgress() {
-    }
-
-    override fun showProgressFinished() {
     }
 }
 

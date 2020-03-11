@@ -22,7 +22,6 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     }
     private var firebaseProfile: FirebaseProfile? = null
     private var counters: InvoiceCounters? = null
-    private var notifications = ArrayList<OverviewNotification>()
 
     @Throws(CoreError::class)
     fun getUserProfile(refresh: Boolean): FirebaseProfile? {
@@ -119,7 +118,6 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     fun logout() {
         clearProfileCache()
         counters = null
-        notifications.clear()
         firebaseRepository.updateProfileToken("")
         invoicesUseCase.clearCache()
         firebaseRepository.logout()
