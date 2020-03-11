@@ -64,6 +64,7 @@ class OverviewErrorTest: BaseUITest() {
 
     @Test
     fun testOverviewError() {
+        onView(withId(R.id.navigation_menu_home)).perform(click())
         onView(withId(R.id.base_request_error_message)).check(matches(isDisplayed()))
     }
 }
