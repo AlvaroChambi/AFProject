@@ -18,13 +18,11 @@ import es.developers.achambi.afines.ui.NotificationPresentationBuilder
 
 class NotificationsPresenter(private val profileUseCase: ProfileUseCase,
                              private val presentationBuilder: NotificationPresentationBuilder,
-                             private val broadcastManager: LocalBroadcastManager,
                              screen: NotificationsScreen,
                              lifecycle: Lifecycle,
                              executor: ExecutorInterface)
     : Presenter<NotificationsScreen>(screen, lifecycle, executor) {
     fun onDataSetup() {
-        screen.showProgress()
         val request = object : Request<ArrayList<OverviewNotification>> {
             override fun perform(): ArrayList<OverviewNotification> {
                 return profileUseCase.getUserNotifications()
@@ -32,17 +30,11 @@ class NotificationsPresenter(private val profileUseCase: ProfileUseCase,
         }
         val handler = object : ResponseHandler<ArrayList<OverviewNotification>> {
             override fun onSuccess(response: ArrayList<OverviewNotification>) {
-                screen.showProgressFinished()
                 val presentations = ArrayList<NotificationPresentation>()
                 response.forEach {
                     presentations.add(presentationBuilder.build(it))
                 }
                 screen.showNotifications(presentations)
-            }
-
-            override fun onError(error: CoreError) {
-                super.onError(error)
-                screen.showProgressFinished()
             }
         }
 

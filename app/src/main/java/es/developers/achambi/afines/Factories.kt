@@ -5,8 +5,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import es.developer.achambi.coreframework.threading.MainExecutor
 import es.developer.achambi.coreframework.utils.URIUtils
 import es.developers.achambi.afines.home.OverviewPresenter
-import es.developers.achambi.afines.home.ui.TaxPresentationBuilder
-import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.invoices.presenter.*
 import es.developers.achambi.afines.invoices.ui.*
 import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
@@ -29,7 +27,6 @@ import es.developers.achambi.afines.ui.OverviewPresentationBuilder
 import es.developers.achambi.afines.utils.BaseUIPresenter
 import es.developers.achambi.afines.utils.EventLogger
 import java.util.regex.Pattern
-import kotlin.math.log
 
 class InvoicePresenterFactory(private val executor: MainExecutor,
                               private val invoiceUseCase: InvoiceUseCase,
@@ -129,10 +126,9 @@ class InvoiceFullScreenPresenterFactory(private val executor: MainExecutor,
 
 class NotificationsPresenterFactory(private val executor: MainExecutor,
                                     private val useCase: ProfileUseCase,
-                                    private val builder: NotificationPresentationBuilder,
-                                    private val broadcastManager: LocalBroadcastManager) {
+                                    private val builder: NotificationPresentationBuilder) {
     fun build(screen: NotificationsScreen, lifecycle: Lifecycle): NotificationsPresenter {
-        return NotificationsPresenter(useCase, builder, broadcastManager,screen, lifecycle, executor)
+        return NotificationsPresenter(useCase, builder,screen, lifecycle, executor)
     }
 }
 
