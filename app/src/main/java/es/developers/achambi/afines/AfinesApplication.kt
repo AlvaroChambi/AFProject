@@ -19,6 +19,7 @@ import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentation
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.login.usecase.LoginUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
+import es.developers.achambi.afines.ui.NotificationPresentationBuilder
 import es.developers.achambi.afines.ui.OverviewPresentationBuilder
 import es.developers.achambi.afines.utils.EventLogger
 
@@ -33,6 +34,7 @@ class AfinesApplication : Application() {
         lateinit var loginPresenterFactory: LoginPresenterFactory
         lateinit var retrievePasswordPresenterFactory: RetrievePasswordPresenterFactory
         lateinit var invoiceFullScreenPresenterFactory: InvoiceFullScreenPresenterFactory
+        lateinit var notificationsPresenterFactory: NotificationsPresenterFactory
 
         lateinit var messagingServicePresenterFactory: MessagingServicePresenterFactory
         lateinit var baseTestPresenterFactory: BaseTestPresenterFactory
@@ -57,6 +59,7 @@ class AfinesApplication : Application() {
         profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, taxesUseCase ,preferences)
         val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
         val broadcastManager = LocalBroadcastManager.getInstance(this)
+        val notificationsPresentationBuilder = NotificationPresentationBuilder(this)
 
         invoicePresenterFactory = InvoicePresenterFactory(executor, invoicesUseCase,
             presentationBuilder, broadcastManager, analytics)
@@ -69,7 +72,8 @@ class AfinesApplication : Application() {
         profilePresenterFactory = ProfilePresenterFactory(executor, profileUseCase, profilePresentationBuilder,
             Patterns.EMAIL_ADDRESS, analytics)
         overviewPresenterFactory = OverviewPresenterFactory(executor, profileUseCase,
-            broadcastManager, OverviewPresentationBuilder(this), analytics)
+            broadcastManager, OverviewPresentationBuilder(this,
+                notificationsPresentationBuilder), analytics)
 
         updatePasswordPresenterFactory = UpdatePasswordPresenterFactory(executor, profileUseCase, analytics)
         loginPresenterFactory = LoginPresenterFactory(executor, loginUseCase, analytics)
@@ -78,5 +82,7 @@ class AfinesApplication : Application() {
             profileUseCase, broadcastManager)
         invoiceFullScreenPresenterFactory = InvoiceFullScreenPresenterFactory(executor, invoicesUseCase)
         baseTestPresenterFactory = BaseTestPresenterFactory(profileUseCase)
+        notificationsPresenterFactory = NotificationsPresenterFactory(executor, profileUseCase,
+            notificationsPresentationBuilder)
     }
 }

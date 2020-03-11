@@ -291,9 +291,12 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if( requestCode == MEDIA_SEARCH_RESULT_CODE && resultCode == Activity.RESULT_OK ) {
+        if( requestCode == MEDIA_SEARCH_RESULT_CODE ) {
             val resultData: Uri? = data?.data
-            activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
+            if(resultCode == Activity.RESULT_OK ) {
+                activity?.let { resultData?.let { it1 -> presenter.userSelectedURI(it, it1) } }
+            } else if(upload_invoice_name_edit_text.text.isEmpty()) activity?.finish()
+
         } else if(requestCode == PHOTO_CAPTURE_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK) {
                 activity?.let { tempUri?.let { it1 ->

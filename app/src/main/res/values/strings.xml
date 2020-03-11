@@ -112,8 +112,8 @@
     <string name="profile_invalid_iban_message">El IBAN proporcionado no es correcto.</string>
 
     <plurals name="taxes_days_left_text">
-        <item quantity="one">Queda %1$s día para presentar: %2$s</item>
-        <item quantity="other">Quedan %1$s días para presentar: %2$s</item>
+        <item quantity="one">Queda %1$s día para presentar:\n%2$s</item>
+        <item quantity="other">Quedan %1$s días para presentar:\n%2$s</item>
     </plurals>
     <string name="overview_taxes_header_text">Calendario de impuestos</string>
     <string name="overview_rejected_invoices_message_text">Alguna de tus facturas ha sido rechazada, por favor comprueba tus facturas y actualizalas si es necesario.</string>
