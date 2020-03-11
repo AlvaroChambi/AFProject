@@ -4,13 +4,11 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
-import java.util.*
 import kotlin.collections.ArrayList
 
 class OverviewTest: BaseUITest() {
@@ -57,8 +55,16 @@ class OverviewErrorTest: BaseUITest() {
         OverviewActivity::class.java, this
     )
 
+    override fun setup() {
+        super.setup()
+        MockSetup.setProfile(null)
+        MockSetup.setCOunters(null)
+        MockSetup.setTaxDates(null)
+    }
+
     @Test
     fun testOverviewError() {
+        onView(withId(R.id.navigation_menu_home)).perform(click())
         onView(withId(R.id.base_request_error_message)).check(matches(isDisplayed()))
     }
 }
@@ -79,7 +85,7 @@ class RejectedNotification: BaseUITest() {
     @Test
     fun testRejectedNotificationNavigation() {
         onView(withId(R.id.overview_notification_go_to_button)).perform(click())
-        onView(withId(R.id.base_search_recycler_view)).check(matches(isDisplayed()))
+        onView(withId(R.id.invoices_trimester_header_view)).check(matches(isDisplayed()))
     }
 }
 

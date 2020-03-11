@@ -40,7 +40,7 @@ object DateFormatUtils {
         val dates = getStartAndEndDate(trimester.start, trimester.end)
         return if(trimester == TrimesterUtils.getCurrentTrimester()) {
             context.getString(R.string.invoices_header_trimester_dates_from,
-                dateFormat.format(dates.first.time))
+                dateFormat.format(dates.second.time))
         } else {
             context.getString(R.string.invoices_header_trimester_dates_from_to,
                 dateFormat.format(dates.first.time),

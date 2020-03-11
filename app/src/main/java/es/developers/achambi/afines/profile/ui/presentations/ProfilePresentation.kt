@@ -13,7 +13,7 @@ data class ProfilePresentation(val userName: String,
 class ProfilePresentationBuilder{
     fun buildPresentation(profile: FirebaseProfile): ProfilePresentation {
         return ProfilePresentation(
-            userName = profile.userName,
+            userName = profile.name + " " + profile.lastName1 + " " + profile.lastName2,
             email = profile.email,
             address = profile.address,
             dni = profile.dni,

@@ -20,6 +20,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     private lateinit var presenter: ProfilePresenter
     private var editActionButton : MenuItem? = null
     private var cancelEditActionButton: MenuItem? = null
+    private var saveActionButton: MenuItem? = null
     private var editEnabled = false
 
     override val layoutResource: Int
@@ -43,17 +44,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     }
 
     override fun onViewSetup(view: View) {
-        activity?.setTitle(R.string.profile_menu_text)
-        profile_save_button.setOnClickListener {
-            presenter.saveProfile(
-                email = email_edit_text.text.toString(),
-                address = profile_address_edit_text.text.toString(),
-                dni = dni_edit_text.text.toString(),
-                naf = naf_edit_text.text.toString(),
-                ccc = ccc_edit_text.text.toString(),
-                account = account_edit_text.text.toString()
-            )
-        }
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
         account_edit_text.addTextChangedListener( object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 presenter.validateFields(s.toString(), email_edit_text.text.toString())
@@ -87,7 +78,8 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     }
 
     override fun showProfileFieldsError() {
-        full_screen_progress.showError()
+        editActionButton?.isVisible = false
+        full_screen_progress.showError(getString(R.string.profile_user_info_error))
     }
 
     override fun showFullScreenProgress() {
@@ -99,7 +91,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     }
 
     override fun showSaveAvailability(available: Boolean) {
-        profile_save_button.isEnabled = available
+        saveActionButton?.isEnabled = available
     }
 
     override fun showProfileUpdateSuccess() {
@@ -130,10 +122,9 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.profile_navigation_menu, menu)
-        val compatActivity = activity as AppCompatActivity
-        compatActivity.supportActionBar?.elevation = 0.0f
         editActionButton = menu.findItem(R.id.action_edit_profile)
         cancelEditActionButton = menu.findItem(R.id.action_cancel_edit_profile)
+        saveActionButton = menu.findItem(R.id.action_save_text)
         /*Restore pass is performed before this step, so we have to apply the restored state here*/
         showEditState()
     }
@@ -162,6 +153,15 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
                 dialog?.setContentView(rootView)
                 dialog?.show()
             }
+            R.id.action_save_text -> {
+                presenter.saveProfile(
+                    email = email_edit_text.text.toString(),
+                    address = profile_address_edit_text.text.toString(),
+                    dni = dni_edit_text.text.toString(),
+                    naf = naf_edit_text.text.toString(),
+                    ccc = ccc_edit_text.text.toString(),
+                    account = account_edit_text.text.toString())
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -177,7 +177,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         if(editEnabled) {
             editActionButton?.isVisible = false
             cancelEditActionButton?.isVisible = true
-            profile_save_button.visibility = View.VISIBLE
+            saveActionButton?.isVisible = true
             profile_email_edit_frame.isEnabled = true
             profile_address_edit_frame.isEnabled = true
             profile_dni_edit_frame.isEnabled = true
@@ -187,7 +187,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         } else {
             editActionButton?.isVisible = true
             cancelEditActionButton?.isVisible = false
-            profile_save_button.visibility = View.GONE
+            saveActionButton?.isVisible = false
             profile_email_edit_frame.isEnabled = false
             profile_address_edit_frame.isEnabled = false
             profile_dni_edit_frame.isEnabled = false

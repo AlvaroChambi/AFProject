@@ -2,23 +2,25 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/action_save_text"
+        android:title="Guardar"
+        android:visible="false"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/action_edit_profile"
         android:icon="@drawable/round_edit_24"
-        android:iconTint="@color/text_primary"
         android:title="edit"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_cancel_edit_profile"
-        android:title="edit"
+        android:title="cancel"
         android:visible="false"
         android:icon="@drawable/outline_close_24"
-        android:iconTint="@color/text_primary"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_more_options"
         android:title="more"
         android:icon="@drawable/baseline_more_vert_24"
-        android:iconTint="@color/text_primary"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

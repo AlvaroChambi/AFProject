@@ -27,7 +27,7 @@ class LoginTest: BaseUITest() {
         Espresso.closeSoftKeyboard()
         onView(withId(R.id.login_button)).perform(click())
 
-        onView(withText(R.string.app_name)).check(matches(isDisplayed()))
+        onView(withId(R.id.main_upload_invoice_button)).check(matches(isDisplayed()))
     }
 
     @Test

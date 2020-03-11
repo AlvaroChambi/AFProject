@@ -88,7 +88,7 @@ class MockSetup {
             }
         }
 
-        fun setCOunters(counters: InvoiceCounters) {
+        fun setCOunters(counters: InvoiceCounters?) {
             this.counters = counters
         }
     }
