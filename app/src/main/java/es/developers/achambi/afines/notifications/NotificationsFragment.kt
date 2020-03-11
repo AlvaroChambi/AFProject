@@ -1,15 +1,20 @@
 package es.developers.achambi.afines.notifications
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import es.developer.achambi.coreframework.ui.BaseSearchListFragment
 import es.developer.achambi.coreframework.ui.Screen
 import es.developer.achambi.coreframework.ui.SearchAdapterDecorator
 import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.home.NotificationPresentation
+import es.developers.achambi.afines.repositories.model.NotificationType
 import kotlinx.android.synthetic.main.notification_item_layout.view.*
 
 interface NotificationsScreen: Screen {
@@ -32,6 +37,14 @@ class NotificationsFragment: BaseSearchListFragment(), AdapterListener, Notifica
         presenter = AfinesApplication.notificationsPresenterFactory.build(this, lifecycle)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {}
+
+    override fun onViewSetup(view: View) {
+        super.onViewSetup(view)
+        (activity as AppCompatActivity).supportActionBar?.elevation = 0F
+        activity?.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh_layout)?.isEnabled = false
+    }
+
     override fun onDataSetup() {
         super.onDataSetup()
         presenter.onDataSetup()
@@ -43,7 +56,11 @@ class NotificationsFragment: BaseSearchListFragment(), AdapterListener, Notifica
     }
 
     override fun onNotificationGoToSelected(item: NotificationPresentation) {
-
+        when(item.type) {
+            NotificationType.INVOICE_REJECTED -> activity?.let { presenter.navigateToInvoices(it) }
+            NotificationType.PASS_NOT_UPDATED -> activity?.let { presenter.navigateToProfile(it) }
+            else -> {}
+        }
     }
 
     override fun showNotifications(notifications: ArrayList<NotificationPresentation>) {
@@ -81,6 +98,7 @@ class Adapter(val listener: AdapterListener): SearchAdapterDecorator<Notificatio
     }
 
     override fun bindViewHolder(holder: Holder, item: NotificationPresentation) {
+        holder.itemView.notification_item_go_to.visibility = item.goToVisibility
         holder.itemView.notification_item_textview.text = item.message
     }
 

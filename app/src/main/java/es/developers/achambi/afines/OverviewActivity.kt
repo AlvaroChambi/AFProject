@@ -20,10 +20,12 @@ class OverviewActivity : AppCompatActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener, OptionListener{
     companion object {
         const val INVOICES_FRAGMENT_TAG = "INVOICES_FRAGMENT_TAG"
-        const val INVOICE_UPLOAD_SELECT_OPTION_CODE = 103
+        const val DEEPLINK_OPTION_KEY = "DEEPLINK_OPTION_KEY"
         const val INVOICE_UPLOAD_DIALOG_CODE = 102
-        fun getStartIntent(context: Context): Intent {
-            return Intent(context, OverviewActivity::class.java)
+        fun getStartIntent(context: Context, action: String = ""): Intent {
+            val intent = Intent(context, OverviewActivity::class.java)
+            intent.action = action
+            return intent
         }
     }
 
@@ -38,12 +40,17 @@ class OverviewActivity : AppCompatActivity(),
         bottom_navigation.setOnNavigationItemSelectedListener(this)
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if(intent?.action == Navigation.PROFILE_DEEP_LINK.toString()) {
-                    bottom_navigation.selectedItemId = R.id.navigation_menu_profile
-                } else if(intent?.action == Navigation.INVOICES_DEEP_LINK.toString()) {
-                    bottom_navigation.selectedItemId = R.id.navigation_menu_invoice
-                }
+                intent?.let { handleDeeplink(it) }
             }
+        }
+        handleDeeplink(intent)
+    }
+
+    private fun handleDeeplink(intent: Intent) {
+        if(intent.action == Navigation.PROFILE_DEEP_LINK.toString()) {
+            bottom_navigation.selectedItemId = R.id.navigation_menu_profile
+        } else if(intent.action == Navigation.INVOICES_DEEP_LINK.toString()) {
+            bottom_navigation.selectedItemId = R.id.navigation_menu_invoice
         }
     }
 
@@ -92,7 +99,7 @@ class OverviewActivity : AppCompatActivity(),
             R.id.navigation_menu_profile -> replaceFragment(ProfileFragment.newInstance())
             R.id.navigation_menu_invoice -> {
                 //Transition will only be performed between OverviewFragment and Invoices Fragment
-                if(bottom_navigation.selectedItemId == R.id.navigation_menu_home) {
+                if(findViewById<View>(R.id.trimesterHeaderView) != null) {
                     val manager = supportFragmentManager
                     manager.beginTransaction()
                         .addSharedElement(findViewById(R.id.trimesterHeaderView),

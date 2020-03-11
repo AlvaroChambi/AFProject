@@ -66,11 +66,12 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         }
         profile?.let {
             if(!profile.passwordChanged) notifications.add(OverviewNotification(
-                NotificationType.PASS_NOT_UPDATED, date = Date()))
+                //TODO Add ids that makes any sense
+                NotificationType.PASS_NOT_UPDATED, date = Date(1)))
         }
         counters?.let {
             if(counters.rejected > 0) notifications.add(OverviewNotification(
-                NotificationType.INVOICE_REJECTED, date = Date()))
+                NotificationType.INVOICE_REJECTED, date = Date(0)))
         }
         return notifications
     }

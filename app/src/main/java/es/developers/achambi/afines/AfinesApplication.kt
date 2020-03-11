@@ -83,6 +83,6 @@ class AfinesApplication : Application() {
         invoiceFullScreenPresenterFactory = InvoiceFullScreenPresenterFactory(executor, invoicesUseCase)
         baseTestPresenterFactory = BaseTestPresenterFactory(profileUseCase)
         notificationsPresenterFactory = NotificationsPresenterFactory(executor, profileUseCase,
-            notificationsPresentationBuilder)
+            notificationsPresentationBuilder, broadcastManager)
     }
 }

@@ -129,9 +129,10 @@ class InvoiceFullScreenPresenterFactory(private val executor: MainExecutor,
 
 class NotificationsPresenterFactory(private val executor: MainExecutor,
                                     private val useCase: ProfileUseCase,
-                                    private val builder: NotificationPresentationBuilder) {
+                                    private val builder: NotificationPresentationBuilder,
+                                    private val broadcastManager: LocalBroadcastManager) {
     fun build(screen: NotificationsScreen, lifecycle: Lifecycle): NotificationsPresenter {
-        return NotificationsPresenter(useCase, builder, screen, lifecycle, executor)
+        return NotificationsPresenter(useCase, builder, broadcastManager,screen, lifecycle, executor)
     }
 }
 
