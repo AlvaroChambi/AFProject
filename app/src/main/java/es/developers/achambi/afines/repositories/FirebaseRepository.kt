@@ -4,7 +4,6 @@ import android.net.Uri
 import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -13,11 +12,9 @@ import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
-import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.home.model.TaxDate
-import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import es.developers.achambi.afines.utils.EventLogger
 import java.util.*
@@ -426,6 +423,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val countersReference = databaseRef.document()
             val newCounters = InvoiceCounters(reference = countersReference.id, year = year,
                 trimester = trimester)
+            analytics.publishWriteEvent(userId)
             Tasks.await(countersReference.set(newCounters))
             return newCounters
         }catch (e: ExecutionException) {
@@ -446,6 +444,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             if(result.isEmpty) {
                 return null
             }
+            analytics.publishReadEvent(userId)
             return result.toObjects(FirebaseInvoice::class.java)[0]
         }catch (e: ExecutionException) {
             throw CoreError(e.message)
