@@ -5,6 +5,7 @@ import java.util.*
 data class InvoiceCounters(var pending: Int = 0,
                            var approved: Int = 0,
                            var rejected: Int = 0,
+                           var accounted: Int = 0,
                            var reference: String = "",
                            var year: String = "",
                            var trimester: String = "")

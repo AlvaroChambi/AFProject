@@ -79,6 +79,10 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
         firebaseRepository.updateUserProfile(profileUpload)
     }
 
+    fun updateCountersReference(countersReference: String) {
+        firebaseRepository.updateProfileCountersReference(countersReference)
+    }
+
     fun updatePassword(currentPassword: String, newPassword: String) {
         firebaseRepository.updateUserPassword(currentPassword, newPassword)
         firebaseProfile?.let {

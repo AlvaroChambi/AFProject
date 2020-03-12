@@ -42,6 +42,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val INVOICE_STATE_KEY = "state"
 
         const val DEVICE_TOKEN_KEY = "token"
+        const val COUNTERS_REFERENCE_KEY = "countersReference"
         const val PENDING_INVOICES_KEY = "pending"
         const val REJECTED_INVOICES_KEY = "rejected"
         const val APPROVED_INVOICES_KEY = "approved"
@@ -73,17 +74,21 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             //TODO operation will fail if the counters reference is not available, we may need to
             //finish the operation before the file upload...
-            val countersRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
+            val countersRef = firestore.collection("user/"+ user.uid + "/counters/")
                 .document(countersReference!!)
             firebaseInvoice.fileReference = fileReference.path
             Tasks.await(firestore.runTransaction { transaction ->
                 val countersSnapshot = transaction.get(countersRef)
                 var pending = countersSnapshot.getLong(PENDING_INVOICES_KEY)
                 if(pending == null) pending = 0
+                var approved = countersSnapshot.getLong(APPROVED_INVOICES_KEY)
+                if(approved == null) approved = 0
                 transaction.update(countersRef, PENDING_INVOICES_KEY, ++pending)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, pending + approved)
                 transaction.set(invoiceReference, firebaseInvoice)
             }, TIMEOUT, TimeUnit.SECONDS)
-            analytics.publishTransaction(user?.uid)
+            analytics.publishTransaction(user.uid)
         }catch (e:ExecutionException) {
             throw CoreError(e.message)
         }catch (e:InterruptedException) {
@@ -96,16 +101,20 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun deleteInvoice(invoice: Invoice, countersReference: String?) {
         val user = firebaseAuth.currentUser
         try {
-            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
+            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
+            val databaseRef = firestore.collection("user/"+ user.uid + "/invoices/")
                 .document(invoice.dbReference)
-            val countersRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+            val countersRef = firestore.collection("user/"+ user.uid + "/counters/")
                 .document(countersReference!!)
             Tasks.await(firestore.runTransaction { transaction ->
-                val profileSnapshot = transaction.get(countersRef)
-                var pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)
+                val countersSnapshot = transaction.get(countersRef)
+                var pendingCount = countersSnapshot.getLong(PENDING_INVOICES_KEY)
                 if(pendingCount == null) pendingCount = 0
+                var approved = countersSnapshot.getLong(APPROVED_INVOICES_KEY)
+                if(approved == null) approved = 0
                 transaction.delete(databaseRef)
                 transaction.update(countersRef, PENDING_INVOICES_KEY, --pendingCount)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, pendingCount + approved)
             }, TIMEOUT ,TimeUnit.SECONDS)
             analytics.publishTransaction(user?.uid)
         }catch (e: ExecutionException) {
@@ -156,20 +165,25 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val user = firebaseAuth.currentUser
             val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
                 .document(invoice.dbReference)
-            val countersRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
+            val countersRef = firestore.collection("user/"+ user.uid + "/counters/")
                 .document(countersReference!!)
             Tasks.await(firestore.runTransaction { transaction ->
-                val profileSnapshot = transaction.get(countersRef)
-                var pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)
-                var rejectedCount = profileSnapshot.getLong(REJECTED_INVOICES_KEY)
+                val countersSnapshot = transaction.get(countersRef)
+                var pendingCount = countersSnapshot.getLong(PENDING_INVOICES_KEY)
+                var rejectedCount = countersSnapshot.getLong(REJECTED_INVOICES_KEY)
+                var approvedCount = countersSnapshot.getLong(APPROVED_INVOICES_KEY)
                 if(pendingCount == null) pendingCount = 0
                 if(rejectedCount == null) rejectedCount = 0
+                if(approvedCount == null) approvedCount = 0
                 transaction.update(databaseRef, PROCESSED_DATE_KEY, timestamp,
                     INVOICE_STATE_KEY, state)
                 transaction.update(countersRef, PENDING_INVOICES_KEY, ++pendingCount)
                 transaction.update(countersRef, REJECTED_INVOICES_KEY, --rejectedCount)
+                transaction.update(profileRef, PENDING_INVOICES_KEY, pendingCount + approvedCount)
+                transaction.update(profileRef, REJECTED_INVOICES_KEY, rejectedCount)
             }, TIMEOUT, TimeUnit.SECONDS)
-            analytics.publishTransaction(user?.uid)
+            analytics.publishTransaction(user.uid)
         }catch (e: ExecutionException) {
             throw CoreError(e.message)
         }catch (e: InterruptedException) {
@@ -232,12 +246,26 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws
-    fun updateProfileToken(deviceToken: String) {
-        updateProfileToken(deviceToken, firebaseAuth.currentUser?.uid)
+    fun updateProfileCountersReference(reference: String) {
+        val uid = firebaseAuth.currentUser?.uid
+        val databaseRef = uid?.let { firestore.collection(PROFILES_PATH).document(it) }
+        try {
+            databaseRef?.let {
+                Tasks.await( databaseRef.update(
+                    COUNTERS_REFERENCE_KEY, reference
+                ), TIMEOUT, TimeUnit.SECONDS )
+            }
+            analytics.publishWriteEvent(uid)
+        }catch (e: ExecutionException) {
+            throw CoreError(e.message)
+        }catch (e: InterruptedException) {
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
     }
 
     @Throws
-    fun updateProfileToken(deviceToken: String, uid: String?) {
+    fun updateProfileToken(deviceToken: String) {
+        val uid = firebaseAuth.currentUser?.uid
         val databaseRef = uid?.let { firestore.collection(PROFILES_PATH).document(it) }
         try {
             databaseRef?.let {

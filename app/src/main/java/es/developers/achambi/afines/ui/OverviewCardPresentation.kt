@@ -34,7 +34,7 @@ class OverviewPresentationBuilder(val context: Context,
         var rejected = "-"
         var pending = "-"
         overview.counters?.let {
-            approved = it.approved.toString()
+            approved = (it.approved + it.accounted).toString()
             rejected = it.rejected.toString()
             pending = it.pending.toString()
         }

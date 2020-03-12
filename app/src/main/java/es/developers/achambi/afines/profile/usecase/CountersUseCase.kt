@@ -11,13 +11,14 @@ class CountersUseCase(private val respository: FirebaseRepository) {
 
     /** Fetch counters if available and creates them with default values when they're not **/
     @Throws(CoreError::class)
-    fun setupCounters() {
+    fun setupCounters(): InvoiceCounters? {
         val trimester = TrimesterUtils.getCurrentTrimester().toString()
         val year = Calendar.getInstance().get(Calendar.YEAR).toString()
         counters = respository.getCounters(trimester = trimester, year = year)
         if(counters == null) {
             counters = respository.createCounters(trimester = trimester, year = year)
         }
+        return counters
     }
 
     @Throws(CoreError::class)
