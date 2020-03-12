@@ -15,13 +15,13 @@ import kotlin.collections.ArrayList
 
 class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
                      private val invoicesUseCase: InvoiceUseCase,
+                     private val countersUseCase: CountersUseCase,
                      private val taxesUseCase: TaxesUseCase,
                      private val preferences: SharedPreferences) {
     companion object {
         const val DEVICE_TOKEN_KEY = "DEVICE_TOKEN"
     }
     private var firebaseProfile: FirebaseProfile? = null
-    private var counters: InvoiceCounters? = null
 
     @Throws(CoreError::class)
     fun getUserProfile(refresh: Boolean): FirebaseProfile? {
@@ -34,7 +34,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     @Throws(CoreError::class)
     fun getUserOverview(): UserOverview {
         val profile = getUserProfile(false)
-        val counters = getUserInvoiceCounters()
+        val counters = countersUseCase.getCounters()
 
         var notification: OverviewNotification? = null
         if(taxesUseCase.getTaxDates().isNotEmpty()) {
@@ -57,7 +57,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     @Throws
     fun getUserNotifications(): ArrayList<OverviewNotification> {
         val profile = getUserProfile(false)
-        val counters = getUserInvoiceCounters()
+        val counters = countersUseCase.getCounters()
         val notifications = ArrayList<OverviewNotification>()
         taxesUseCase.getTaxDates().forEach {
             notifications.add(OverviewNotification(NotificationType.TAX_DATE_REMINDER, it.name,
@@ -73,15 +73,6 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
                 NotificationType.INVOICE_REJECTED, date = Date(0)))
         }
         return notifications
-    }
-
-    private fun getUserInvoiceCounters(): InvoiceCounters? {
-        if(counters == null) {
-            val trimester = TrimesterUtils.getCurrentTrimester()
-            val year = Calendar.getInstance().get(Calendar.YEAR)
-            counters = firebaseRepository.getCounters(trimester.toString(), year.toString())
-        }
-        return counters
     }
 
     fun updateProfile(profileUpload: ProfileUpload) {
@@ -117,7 +108,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
 
     fun logout() {
         clearProfileCache()
-        counters = null
+        countersUseCase.clearCache()
         firebaseRepository.updateProfileToken("")
         invoicesUseCase.clearCache()
         firebaseRepository.logout()

@@ -33,7 +33,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     companion object {
         const val INVOICES_PATH = "invoices/"
         const val PROFILES_PATH = "profiles"
-        const val NOTIFICATIONS_PATH = "notifications"
         const val ADDRESS_ATTRIBUTE_KEY = "address"
         const val CCC_ATTRIBUTE_KEY = "ccc"
         const val DNI_ATTRIBUTE_KEY = "dni"
@@ -41,7 +40,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val IBAN_ATTRIBUTE_KEY = "iban"
         const val NAF_ATTRIBUTE_KEY = "naf"
         const val NAME_ATTRIBUTE_KEY = "name"
-        const val TRIMESTER_ATTRIBUTE_KEY = "trimester"
         const val FILE_ATTRIBUTE_KEY = "fileReference"
         const val PROCESSED_DATE_KEY = "processedDate"
         const val INVOICE_STATE_KEY = "state"
@@ -54,10 +52,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         private const val TIMEOUT = 3L
     }
 
-    private var countersReference: String = ""
-
     @Throws(CoreError::class)
-    fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice): Long {
+    fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice, countersReference: String?): Long {
         val storageReference = firestorage.reference
         val user = firebaseAuth.currentUser
         val fileReference = storageReference.child(INVOICES_PATH + "${user?.uid + "/"}/${firebaseInvoice.name}")
@@ -78,23 +74,17 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }
 
         try {
-            val reference = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
-            val databaseRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
-                .document(countersReference)
+            //TODO operation will fail if the counters reference is not available, we may need to
+            //finish the operation before the file upload...
+            val countersRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+                .document(countersReference!!)
             firebaseInvoice.fileReference = fileReference.path
             Tasks.await(firestore.runTransaction { transaction ->
-                if(countersReference.isEmpty()) {
-                    val countersReference = reference.document()
-                    val newCounters = InvoiceCounters(pending = 1,reference = countersReference.id)
-                    transaction.set(countersReference, newCounters)
-                } else {
-                    val countersSnapshot = transaction.get(databaseRef)
-                    var pending = countersSnapshot.getLong(PENDING_INVOICES_KEY)
-                    if(pending == null) pending = 0
-                    transaction.update(databaseRef, PENDING_INVOICES_KEY, ++pending)
-                }
+                val countersSnapshot = transaction.get(countersRef)
+                var pending = countersSnapshot.getLong(PENDING_INVOICES_KEY)
+                if(pending == null) pending = 0
+                transaction.update(countersRef, PENDING_INVOICES_KEY, ++pending)
                 transaction.set(invoiceReference, firebaseInvoice)
-
             }, TIMEOUT, TimeUnit.SECONDS)
             analytics.publishTransaction(user?.uid)
         }catch (e:ExecutionException) {
@@ -106,40 +96,21 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun fetchInvoices(start: Long, end: Long): List<FirebaseInvoice> {
-        val user = firebaseAuth.currentUser
-        val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
-        try {
-            val result = Tasks.await(listRef.whereGreaterThan("id", start)
-                .whereLessThan("id", end).get())
-            analytics.publishReadEvent(user?.uid)
-            if(result.isEmpty) {
-                return ArrayList()
-            }
-            return result.toObjects(FirebaseInvoice::class.java)
-        }catch (e: ExecutionException) {
-            throw CoreError(e.message)
-        }catch (e: InterruptedException) {
-            throw CoreError(e.message)
-        }catch (e: TimeoutException) {Crashlytics.logException(e)}
-        throw CoreError()
-    }
-
-    @Throws(CoreError::class)
-    fun deleteInvoice(invoice: Invoice) {
+    fun deleteInvoice(invoice: Invoice, countersReference: String?) {
         val user = firebaseAuth.currentUser
         try {
             val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
                 .document(invoice.dbReference)
-            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
+            val countersRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+                .document(countersReference!!)
             Tasks.await(firestore.runTransaction { transaction ->
-                val profileSnapshot = transaction.get(profileRef)
+                val profileSnapshot = transaction.get(countersRef)
                 var pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)
                 if(pendingCount == null) pendingCount = 0
                 transaction.delete(databaseRef)
-                transaction.update(profileRef, PENDING_INVOICES_KEY, --pendingCount)
+                transaction.update(countersRef, PENDING_INVOICES_KEY, --pendingCount)
             }, TIMEOUT ,TimeUnit.SECONDS)
-            analytics.publishTransaction(user.uid)
+            analytics.publishTransaction(user?.uid)
         }catch (e: ExecutionException) {
             throw CoreError(e.message)
         }catch (e: InterruptedException) {
@@ -179,6 +150,54 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         }catch (e: InterruptedException) {
             throw CoreError(e.message)
         }catch (e: TimeoutException) {Crashlytics.logException(e)}
+    }
+
+    @Throws(CoreError::class)
+    fun updateRejectedInvoiceState(invoice: Invoice, state: String, timestamp: Long,
+                                   countersReference: String?) {
+        try {
+            val user = firebaseAuth.currentUser
+            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
+                .document(invoice.dbReference)
+            val countersRef = firestore.collection("user/"+ user?.uid.toString() + "/counters/")
+                .document(countersReference!!)
+            Tasks.await(firestore.runTransaction { transaction ->
+                val profileSnapshot = transaction.get(countersRef)
+                var pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)
+                var rejectedCount = profileSnapshot.getLong(REJECTED_INVOICES_KEY)
+                if(pendingCount == null) pendingCount = 0
+                if(rejectedCount == null) rejectedCount = 0
+                transaction.update(databaseRef, PROCESSED_DATE_KEY, timestamp,
+                    INVOICE_STATE_KEY, state)
+                transaction.update(countersRef, PENDING_INVOICES_KEY, ++pendingCount)
+                transaction.update(countersRef, REJECTED_INVOICES_KEY, --rejectedCount)
+            }, TIMEOUT, TimeUnit.SECONDS)
+            analytics.publishTransaction(user?.uid)
+        }catch (e: ExecutionException) {
+            throw CoreError(e.message)
+        }catch (e: InterruptedException) {
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
+    }
+
+    @Throws(CoreError::class)
+    fun fetchInvoices(start: Long, end: Long): List<FirebaseInvoice> {
+        val user = firebaseAuth.currentUser
+        val listRef = firestore.collection("user/"+ user?.uid + "/invoices/")
+        try {
+            val result = Tasks.await(listRef.whereGreaterThan("id", start)
+                .whereLessThan("id", end).get())
+            analytics.publishReadEvent(user?.uid)
+            if(result.isEmpty) {
+                return ArrayList()
+            }
+            return result.toObjects(FirebaseInvoice::class.java)
+        }catch (e: ExecutionException) {
+            throw CoreError(e.message)
+        }catch (e: InterruptedException) {
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
+        throw CoreError()
     }
 
     @Throws(CoreError::class)
@@ -272,31 +291,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun updateRejectedInvoiceState(invoice: Invoice, state: String, timestamp: Long) {
-        try {
-            val user = firebaseAuth.currentUser
-            val databaseRef = firestore.collection("user/"+ user?.uid + "/invoices/")
-                .document(invoice.dbReference)
-            val profileRef = firestore.collection(PROFILES_PATH).document(user!!.uid)
-            Tasks.await(firestore.runTransaction { transaction ->
-                val profileSnapshot = transaction.get(profileRef)
-                var pendingCount = profileSnapshot.getLong(PENDING_INVOICES_KEY)
-                var rejectedCount = profileSnapshot.getLong(REJECTED_INVOICES_KEY)
-                if(pendingCount == null) pendingCount = 0
-                if(rejectedCount == null) rejectedCount = 0
-                transaction.update(databaseRef, PROCESSED_DATE_KEY, timestamp,
-                    INVOICE_STATE_KEY, state)
-                transaction.update(profileRef, PENDING_INVOICES_KEY, ++pendingCount)
-                transaction.update(profileRef, REJECTED_INVOICES_KEY, --rejectedCount)
-            }, TIMEOUT, TimeUnit.SECONDS)
-            analytics.publishTransaction(user.uid)
-        }catch (e: ExecutionException) {
-            throw CoreError(e.message)
-        }catch (e: InterruptedException) {
-            throw CoreError(e.message)
-        }catch (e: TimeoutException) {Crashlytics.logException(e)}
-    }
-    @Throws(CoreError::class)
     fun retrieveCurrentUser(): FirebaseProfile? {
         try {
             val userId = firebaseAuth.currentUser?.uid
@@ -308,27 +302,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 return result.toObject(FirebaseProfile::class.java)
             }
         } catch (e: ExecutionException) {
-            throw CoreError(e.message)
-        }catch (e: InterruptedException) {
-            throw CoreError(e.message)
-        }catch (e: TimeoutException) {Crashlytics.logException(e)}
-        throw CoreError()
-    }
-
-    @Throws(CoreError::class)
-    fun retrieveNotifications(): List<FirebaseNotification> {
-        try {
-            val userId = firebaseAuth.currentUser?.uid
-            val databaseRef = userId?.let { firestore.collection("user")
-                .document(userId).collection(NOTIFICATIONS_PATH) }
-            val result = databaseRef?.let {
-                Tasks.await(it.get(), TIMEOUT, TimeUnit.SECONDS)
-            }
-            analytics.publishReadEvent(userId)
-            result?.let {
-                return result.toObjects(FirebaseNotification::class.java)
-            }
-        }catch (e: ExecutionException) {
             throw CoreError(e.message)
         }catch (e: InterruptedException) {
             throw CoreError(e.message)
@@ -425,7 +398,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun getCounters(trimester: String, year: String): InvoiceCounters {
+    fun getCounters(trimester: String, year: String): InvoiceCounters? {
         try {
             val userId = firebaseAuth.currentUser?.uid
             val databaseRef = firestore.collection("user/"+ userId.toString() + "/counters/")
@@ -434,9 +407,27 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             analytics.publishReadEvent(userId)
             result?.let {
                 val parsed = result.toObjects(InvoiceCounters::class.java)
-                countersReference = parsed[0].reference
                 return parsed[0]
             }
+            return null
+        }catch (e: ExecutionException) {
+            throw CoreError(e.message)
+        }catch (e: InterruptedException) {
+            throw CoreError(e.message)
+        }catch (e: TimeoutException) {Crashlytics.logException(e)}
+        throw CoreError()
+    }
+
+    @Throws(CoreError::class)
+    fun createCounters(trimester: String, year: String): InvoiceCounters {
+        try {
+            val userId = firebaseAuth.currentUser?.uid
+            val databaseRef = firestore.collection("user/"+ userId.toString() + "/counters/")
+            val countersReference = databaseRef.document()
+            val newCounters = InvoiceCounters(reference = countersReference.id, year = year,
+                trimester = trimester)
+            Tasks.await(countersReference.set(newCounters))
+            return newCounters
         }catch (e: ExecutionException) {
             throw CoreError(e.message)
         }catch (e: InterruptedException) {
