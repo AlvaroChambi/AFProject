@@ -99,7 +99,7 @@ class ProfileUseCase(private val firebaseRepository: FirebaseRepository,
     }
 
     @SuppressLint("ApplySharedPref")
-    fun updateProfileToken(userToken: String) {
+    fun updateProfileToken(userToken: String?) {
         val preferenceToken = preferences.getString(DEVICE_TOKEN_KEY, "")
         if(!preferenceToken.isNullOrEmpty() && userToken != preferenceToken) {
             firebaseRepository.updateProfileToken(preferenceToken)

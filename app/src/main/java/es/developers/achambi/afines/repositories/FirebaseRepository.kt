@@ -432,7 +432,9 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             analytics.publishReadEvent(userId)
             result?.let {
                 val parsed = result.toObjects(InvoiceCounters::class.java)
-                return parsed[0]
+                if(parsed.isNotEmpty()) {
+                    return parsed[0]
+                }
             }
             return null
         }catch (e: ExecutionException) {

@@ -11,7 +11,7 @@ class LoginUseCase(private val firebaseRepository: FirebaseRepository,
     @Throws(CoreError::class)
     fun login(email: String, password: String) {
         firebaseRepository.login(email, password)
-        profileUseCase.updateProfileToken(profileUseCase.getUserProfile(false)!!.token)
+        profileUseCase.updateProfileToken(profileUseCase.getUserProfile(false)?.token)
         val counters = countersUseCase.setupCounters()
         counters?.reference?.let { profileUseCase.updateCountersReference(it) }
     }
