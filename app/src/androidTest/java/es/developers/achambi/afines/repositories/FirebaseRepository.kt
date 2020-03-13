@@ -133,6 +133,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return MockSetup.getCounters()
     }
 
+    fun updateProfileCountersReference(reference: String) {}
+
     fun getCurrentUser(): FirebaseUser? {
         return null
     }
