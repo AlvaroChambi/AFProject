@@ -34,7 +34,7 @@ class OverviewPresentationBuilder(val context: Context,
         var rejected = "-"
         var pending = "-"
         overview.counters?.let {
-            approved = it.approved.toString()
+            approved = (it.approved + it.accounted).toString()
             rejected = it.rejected.toString()
             pending = it.pending.toString()
         }
@@ -60,7 +60,7 @@ class NotificationPresentationBuilder(private val context: Context) {
                     context.getString(R.string.overview_password_change_message)
                 NotificationType.TAX_DATE_REMINDER -> {
                     goToVisibility = View.GONE
-                    val left = notification.date!!.time - Date().time
+                    val left = notification.date.time - Date().time
                     val daysLeft = TimeUnit.MILLISECONDS.toDays(left)
                     context.resources.getQuantityString(R.plurals.taxes_days_left_text,
                         daysLeft.toInt(), daysLeft.toString(), notification.name)

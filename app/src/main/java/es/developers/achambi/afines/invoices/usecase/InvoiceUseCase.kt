@@ -10,13 +10,15 @@ import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.TrimesterUtils
+import es.developers.achambi.afines.profile.usecase.CountersUseCase
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
 import es.developers.achambi.afines.repositories.model.InvoiceState
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
+class InvoiceUseCase(private val firebaseRepository: FirebaseRepository,
+                     private val countersUseCase: CountersUseCase) {
     private val cachedInvoices = HashMap<Trimester, ArrayList<Invoice>>()
 
     init {
@@ -48,7 +50,8 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
 
     @Throws(CoreError::class)
     fun uploadUserFiles(uri: Uri, invoiceUpload: InvoiceUpload): ArrayList<Invoice>{
-        val id = firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload))
+        val id = firebaseRepository.uploadUserFile(uri, buildPostInvoice(invoiceUpload),
+            countersUseCase.countersReference())
         fetchInvoice(id)?.let {
             cachedInvoices[it.trimester]?.add(it)
         }
@@ -63,7 +66,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         if(uri != null) {
             invoice?.let { firebaseRepository.updateInvoiceFile(invoice, invoiceUpload, uri) }
             invoice?.let { firebaseRepository.updateRejectedInvoiceState(invoice,
-                InvoiceState.SENT.toString(), Date().time) }
+                InvoiceState.SENT.toString(), Date().time, countersUseCase.countersReference()) }
             AfinesApplication.profileUseCase.clearProfileCache()
         }
         cachedInvoices[trimester]?.remove(invoice)
@@ -78,7 +81,7 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository) {
         val invoice = getInvoice(invoiceId)
         val trimester = TrimesterUtils.getTrimester(Date(invoiceId))
         invoice?.let {
-            firebaseRepository.deleteInvoice(it)
+            firebaseRepository.deleteInvoice(it, countersUseCase.countersReference())
         }
         cachedInvoices[trimester]?.remove(invoice)
         return cachedInvoices[trimester]!!

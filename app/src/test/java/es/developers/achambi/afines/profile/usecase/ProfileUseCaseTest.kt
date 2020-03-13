@@ -26,13 +26,16 @@ class ProfileUseCaseTest {
     @Mock
     private lateinit var invoicesUseCase: InvoiceUseCase
     @Mock
+    private lateinit var countersUseCase: CountersUseCase
+    @Mock
     private lateinit var taxesUseCase: TaxesUseCase
     @Mock
     private lateinit var sharedPreferences: SharedPreferences
 
     @Before
     fun setUp() {
-        useCase = ProfileUseCase(repository, invoicesUseCase, taxesUseCase, sharedPreferences)
+        useCase = ProfileUseCase(repository, invoicesUseCase, countersUseCase,
+            taxesUseCase, sharedPreferences)
     }
 
     @Test
@@ -41,8 +44,7 @@ class ProfileUseCaseTest {
         taxes.add( TaxDate() )
         `when`(taxesUseCase.getTaxDates()).thenReturn(taxes)
         `when`(repository.retrieveCurrentUser()).thenReturn(FirebaseProfile(passwordChanged = false))
-        `when`(repository.getCounters(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(
-            InvoiceCounters(rejected = 1))
+        `when`(countersUseCase.getCounters()).thenReturn(InvoiceCounters(rejected = 1))
 
         val result = useCase.getUserOverview()
 

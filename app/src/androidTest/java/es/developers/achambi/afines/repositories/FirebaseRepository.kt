@@ -96,11 +96,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         return MockSetup.getProfile()
     }
 
-    @Throws(CoreError::class)
-    fun retrieveNotifications(): List<FirebaseNotification> {
-        return ArrayList()
-    }
-
     fun getFileMetadata(referencePath: String): StorageMetadata {
         return StorageMetadata()
     }
@@ -137,6 +132,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun getCounters(trimester: String, year: String): InvoiceCounters {
         return MockSetup.getCounters()
     }
+
+    fun updateProfileCountersReference(reference: String) {}
 
     fun getCurrentUser(): FirebaseUser? {
         return null

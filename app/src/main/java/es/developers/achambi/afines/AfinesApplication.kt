@@ -18,6 +18,7 @@ import es.developers.achambi.afines.invoices.ui.InvoiceUploadPresentationBuilder
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.login.usecase.LoginUseCase
+import es.developers.achambi.afines.profile.usecase.CountersUseCase
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
 import es.developers.achambi.afines.ui.NotificationPresentationBuilder
 import es.developers.achambi.afines.ui.OverviewPresentationBuilder
@@ -49,15 +50,17 @@ class AfinesApplication : Application() {
         val analytics = EventLogger(FirebaseAnalytics.getInstance(this))
         val firebaseRepository = FirebaseRepository(FirebaseFirestore.getInstance(),
             FirebaseStorage.getInstance(), FirebaseAuth.getInstance(), analytics)
-        val invoicesUseCase = InvoiceUseCase(firebaseRepository)
+        val countersUseCase = CountersUseCase(firebaseRepository)
+        val invoicesUseCase = InvoiceUseCase(firebaseRepository, countersUseCase)
         val presentationBuilder = InvoicePresentationBuilder(this)
         val uploadPresentationBuilder = InvoiceUploadPresentationBuilder()
         val uriUtils = URIUtils()
         val profilePresentationBuilder = ProfilePresentationBuilder()
         val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
         taxesUseCase = TaxesUseCase(firebaseRepository)
-        profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, taxesUseCase ,preferences)
-        val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase)
+        profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, countersUseCase,
+            taxesUseCase ,preferences)
+        val loginUseCase = LoginUseCase(firebaseRepository, profileUseCase, countersUseCase)
         val broadcastManager = LocalBroadcastManager.getInstance(this)
         val notificationsPresentationBuilder = NotificationPresentationBuilder(this)
 
