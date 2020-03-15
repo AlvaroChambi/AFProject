@@ -108,7 +108,7 @@ class InvoiceDetailsPresentationBuilder(
 class InvoicePresentationBuilder(private val context: Context) {
      fun build(invoice: Invoice): InvoicePresentation {
         return InvoicePresentation(invoice.id,
-            invoice.name,
+            invoice.name.substring(0, invoice.name.indexOf('.')),
             buildTrimesterText(context, invoice.trimester),
             buildStateMessage(context, invoice.state),
             buildStateMessageColor(context, invoice.state),

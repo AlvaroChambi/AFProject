@@ -1,6 +1,7 @@
 package es.developers.achambi.afines.invoices.ui
 
 import android.Manifest
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -57,6 +58,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
         const val MEDIA_SEARCH_RESULT_CODE = 101
         const val PHOTO_CAPTURE_RESULT_CODE = 102
         const val CAMERA_PERMISSION_REQUEST_CODE = 103
+        const val GALLERY_PERMISSION_REQUEST_CODE = 104
         const val SCANNER_REQUEST_CODE = 104
         const val UPLOAD_OPTION_KEY = "upload_option_key"
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
@@ -106,10 +108,10 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
         activity?.let {
             if (ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(it, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                ContextCompat.checkSelfPermission(it, WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
-                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    arrayOf(Manifest.permission.CAMERA, WRITE_EXTERNAL_STORAGE),
                     CAMERA_PERMISSION_REQUEST_CODE)
             }else {
                 presenter.userPhotoFileRequested(it)
@@ -138,7 +140,15 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
     }
 
     override fun onGallerySelected() {
-        presenter.userSelectedGallery()
+        activity?.let {
+            if (ContextCompat.checkSelfPermission(it, WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE),
+                    GALLERY_PERMISSION_REQUEST_CODE)
+            }else {
+                presenter.userSelectedGallery()
+            }
+        }
     }
 
     override fun onViewSetup(view: View) {
@@ -153,7 +163,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
                 arguments?.putString(UPLOAD_OPTION_KEY, "")
             }
             GALLERY_OPTION -> {
-                presenter.userSelectedGallery()
+                onGallerySelected()
                 arguments?.putString(UPLOAD_OPTION_KEY, "")
             }
             else -> {}
@@ -172,6 +182,15 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
                     }
                 }
                 activity?.let { presenter.userPhotoFileRequested(it) }
+            }
+            GALLERY_PERMISSION_REQUEST_CODE -> {
+                grantResults.forEach {
+                    if( it != PackageManager.PERMISSION_GRANTED ) {
+                        activity?.finish()
+                        return
+                    }
+                }
+                presenter.userSelectedGallery()
             }
         }
     }
