@@ -6,7 +6,7 @@ import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import es.developers.achambi.afines.repositories.model.InvoiceCounters
+import es.developers.achambi.afines.repositories.model.FirebaseCounters
 import es.developers.achambi.afines.repositories.model.NotificationType
 import junit.framework.Assert.assertEquals
 import org.junit.Before
@@ -43,7 +43,7 @@ class ProfileUseCaseTest {
         taxes.add(FirebaseTaxDate())
         `when`(taxesUseCase.getTaxDates()).thenReturn(taxes)
         `when`(repository.retrieveCurrentUser()).thenReturn(FirebaseProfile(passwordChanged = false))
-        `when`(countersUseCase.getCounters()).thenReturn(InvoiceCounters(rejected = 1))
+        `when`(countersUseCase.getCounters()).thenReturn(FirebaseCounters(rejected = 1))
 
         val result = useCase.getUserOverview()
 

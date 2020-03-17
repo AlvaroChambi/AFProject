@@ -16,7 +16,7 @@ android:
   - android-sdk-license-.+
   - ".+"
 script:
-- "./gradlew assembleRelease --scan -s assembleDebugAndroidTest assembleDebugUnitTest"
+- "./gradlew assembleRelease --scan -s assembleDebugAndroidTest testDebugUnitTest"
 after_success:
 - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
 - mkdir -p /opt
