@@ -4,8 +4,8 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
+import es.developers.achambi.afines.repositories.model.FirebaseCounters
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
@@ -18,7 +18,7 @@ class OverviewTest: BaseUITest() {
 
     override fun beforeActivity() {
         super.beforeActivity()
-        MockSetup.setCOunters(InvoiceCounters())
+        MockSetup.setCOunters(FirebaseCounters())
         MockSetup.setProfile(FirebaseProfile(iban = "iban", ccc = "ccc", naf = "naf"))
         MockSetup.setTaxDates(ArrayList())
     }
@@ -37,7 +37,7 @@ class OverviewEmptyTest: BaseUITest() {
 
     override fun beforeActivity() {
         super.beforeActivity()
-        MockSetup.setCOunters(InvoiceCounters())
+        MockSetup.setCOunters(FirebaseCounters())
         MockSetup.setProfile(FirebaseProfile())
         MockSetup.setTaxDates(ArrayList())
     }
@@ -77,7 +77,7 @@ class RejectedNotification: BaseUITest() {
 
     override fun beforeActivity() {
         super.beforeActivity()
-        MockSetup.setCOunters(InvoiceCounters(rejected = 1))
+        MockSetup.setCOunters(FirebaseCounters(rejected = 1))
         MockSetup.setProfile(FirebaseProfile())
         MockSetup.setTaxDates(ArrayList())
     }
@@ -97,7 +97,7 @@ class UpdatePassword: BaseUITest() {
 
     override fun beforeActivity() {
         super.beforeActivity()
-        MockSetup.setCOunters(InvoiceCounters())
+        MockSetup.setCOunters(FirebaseCounters())
         MockSetup.setProfile(FirebaseProfile(passwordChanged = false))
         MockSetup.setTaxDates(ArrayList())
     }

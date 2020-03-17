@@ -8,13 +8,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.MockSetup
-import es.developers.achambi.afines.repositories.model.FirebaseTaxDate
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
-import es.developers.achambi.afines.repositories.model.FirebaseInvoice
-import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import es.developers.achambi.afines.repositories.model.InvoiceCounters
+import es.developers.achambi.afines.repositories.model.*
 import es.developers.achambi.afines.utils.EventLogger
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
@@ -127,7 +124,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun getCounters(trimester: String, year: String): InvoiceCounters {
+    fun getCounters(trimester: String, year: String): FirebaseCounters {
         return MockSetup.getCounters()
     }
 
