@@ -1,7 +1,8 @@
 language: android
 dist: trusty
 before_install:
-- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv -in keys.tar.enc -out keys.tar -d
+- openssl aes-256-cbc -K $encrypted_53e97e8d963b_key -iv $encrypted_53e97e8d963b_iv
+  -in keys.tar.enc -out keys.tar -d
 - tar xvvf keys.tar
 - echo "sdk.dir=$ANDROID_HOME" > local.properties
 - mkdir "$ANDROID_HOME/licenses" || true
@@ -20,15 +21,14 @@ after_success:
 - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
 - mkdir -p /opt
 - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
-- /opt/google-cloud-sdk/install.sh --quiet
+- "/opt/google-cloud-sdk/install.sh --quiet"
 - source /opt/google-cloud-sdk/path.bash.inc
 - gcloud components update
-
-- "gcloud auth activate-service-account --key-file afproject-private-key.json"
-- "gcloud firebase test android run --async --type instrumentation
-  --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-  --device-ids sailfish  --os-version-ids 28 --locales en_US --orientations portrait
-  --project afproject-1ec94"
+- gcloud auth activate-service-account --key-file afproject-private-key.json
+- gcloud firebase test android run --async --type instrumentation --app app/build/outputs/apk/debug/app-debug.apk
+  --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --device-ids
+  sailfish  --os-version-ids 28 --locales en_US --orientations portrait --project
+  afproject-1ec94
 deploy:
   provider: releases
   api_key:
