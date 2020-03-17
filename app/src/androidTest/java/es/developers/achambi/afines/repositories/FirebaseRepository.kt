@@ -8,16 +8,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developers.achambi.afines.MockSetup
-import es.developers.achambi.afines.home.model.TaxDate
+import es.developers.achambi.afines.repositories.model.FirebaseTaxDate
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.model.FirebaseInvoice
-import es.developers.achambi.afines.repositories.model.FirebaseNotification
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developers.achambi.afines.repositories.model.InvoiceCounters
 import es.developers.achambi.afines.utils.EventLogger
-import kotlin.collections.ArrayList
 
 class FirebaseRepository(private val firestore: FirebaseFirestore,
                          private val firestorage: FirebaseStorage,
@@ -124,7 +122,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun getTaxDates(): List<TaxDate> {
+    fun getTaxDates(): List<FirebaseTaxDate> {
         return MockSetup.getTaxDates()
     }
 

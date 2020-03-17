@@ -16,4 +16,5 @@ openCVLibrary/
 scanlibrary/build
 scanlibrary/captures
 scanlibrary/.idea
+scanlibrary-release/build
 /app/google-services.json

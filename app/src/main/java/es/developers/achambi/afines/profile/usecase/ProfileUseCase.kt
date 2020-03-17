@@ -3,9 +3,7 @@ package es.developers.achambi.afines.profile.usecase
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import es.developer.achambi.coreframework.threading.CoreError
-import es.developers.achambi.afines.home.model.TaxDate
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
-import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
 import es.developers.achambi.afines.repositories.FirebaseRepository

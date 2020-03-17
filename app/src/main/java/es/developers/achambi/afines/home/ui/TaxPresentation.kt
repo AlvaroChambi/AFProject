@@ -3,7 +3,7 @@ package es.developers.achambi.afines.home.ui
 import android.content.Context
 import es.developers.achambi.afines.utils.DateFormatUtils
 import es.developers.achambi.afines.R
-import es.developers.achambi.afines.home.model.TaxDate
+import es.developers.achambi.afines.repositories.model.FirebaseTaxDate
 import es.developers.achambi.afines.invoices.ui.Trimester
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -17,7 +17,7 @@ class TaxPresentation(val name: String,
                       val id: String)
 
 class TaxPresentationBuilder(private val context: Context) {
-    fun build(taxes: List<TaxDate>): ArrayList<TaxPresentation> {
+    fun build(taxes: List<FirebaseTaxDate>): ArrayList<TaxPresentation> {
         val result = ArrayList<TaxPresentation>()
         taxes.forEach{
             if(it.date.after(Date())) {
@@ -26,7 +26,7 @@ class TaxPresentationBuilder(private val context: Context) {
         }
         return result
     }
-    fun build(taxDate: TaxDate): TaxPresentation {
+    fun build(taxDate: FirebaseTaxDate): TaxPresentation {
         val trimester = when(taxDate.trimester) {
             Trimester.FIRST_TRIMESTER -> context.getString(R.string.upload_first_trimester_text)
             Trimester.SECOND_TRIMESTER -> context.getString(R.string.upload_second_trimester_text)
