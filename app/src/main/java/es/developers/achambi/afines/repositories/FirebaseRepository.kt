@@ -54,7 +54,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     fun uploadUserFile(uri: Uri, firebaseInvoice: FirebaseInvoice, countersReference: String?): Long {
         val storageReference = firestorage.reference
         val user = firebaseAuth.currentUser
-        val fileReference = storageReference.child(INVOICES_PATH + "${user?.uid + "/"}/${firebaseInvoice.name}")
+        val fileReference = storageReference.child(INVOICES_PATH + "${user?.uid + "/"}/${firebaseInvoice.id}")
         val firebaseReference = firestore.collection("user/"+user?.uid + "/invoices/")
         val invoiceReference = firebaseReference.document()
         firebaseInvoice.dbPath = invoiceReference.id
