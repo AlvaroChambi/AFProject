@@ -178,6 +178,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
             CAMERA_PERMISSION_REQUEST_CODE -> {
                 grantResults.forEach {
                     if( it != PackageManager.PERMISSION_GRANTED ) {
+                        activity?.finish()
                         return
                     }
                 }

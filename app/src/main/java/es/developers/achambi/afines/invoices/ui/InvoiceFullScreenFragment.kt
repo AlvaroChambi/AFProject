@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -16,6 +17,7 @@ import es.developers.achambi.afines.AfinesApplication
 import es.developers.achambi.afines.R
 import es.developers.achambi.afines.invoices.presenter.InvoiceFullScreenPresenter
 import kotlinx.android.synthetic.main.invoice_full_screen_layout.*
+import kotlinx.android.synthetic.main.user_profile_layout.*
 
 class InvoiceFullScreenFragment: BaseFragment(), InvoiceFullScreenInterface {
     private var invoiceId: Long? = 0
@@ -42,6 +44,7 @@ class InvoiceFullScreenFragment: BaseFragment(), InvoiceFullScreenInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.elevation = 0F
         presenter = AfinesApplication.invoiceFullScreenPresenterFactory.build(this, lifecycle)
         invoiceId = arguments?.getLong(INVOICE_ID_EXTRA)
     }

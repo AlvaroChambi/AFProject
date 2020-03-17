@@ -5,6 +5,8 @@ data class FirebaseProfile(var userId: String = "",
                            var name: String = "",
                            var lastName1: String = "",
                            var lastName2: String = "",
+                           var businessName: String = "",
+                           var clientType: String = "",
                            var address: String = "",
                            var dni: String = "",
                            var naf: String = "",
@@ -15,3 +17,8 @@ data class FirebaseProfile(var userId: String = "",
                            var pending: Int = 0,
                            var rejected: Int = 0,
                            var approved: Int = 0)
+
+enum class ClientType {
+    EMPRESA,
+    AUTONOMO
+}

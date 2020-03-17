@@ -1,5 +1,6 @@
 package es.developers.achambi.afines.profile.ui.presentations
 
+import es.developers.achambi.afines.repositories.model.ClientType
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
 
 data class ProfilePresentation(val userName: String,
@@ -12,8 +13,12 @@ data class ProfilePresentation(val userName: String,
 
 class ProfilePresentationBuilder{
     fun buildPresentation(profile: FirebaseProfile): ProfilePresentation {
+        var name = profile.name + " " + profile.lastName1 + " " + profile.lastName2
+        if(profile.clientType == ClientType.EMPRESA.toString()) {
+            name = profile.businessName
+        }
         return ProfilePresentation(
-            userName = profile.name + " " + profile.lastName1 + " " + profile.lastName2,
+            userName = name,
             email = profile.email,
             address = profile.address,
             dni = profile.dni,

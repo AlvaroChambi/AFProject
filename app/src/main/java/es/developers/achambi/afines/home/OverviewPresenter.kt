@@ -36,9 +36,9 @@ class OverviewPresenter(notificationsScreen: OverviewScreen,
                 screen.showInvoicesCount( presentation.approvedCount,
                     presentation.pendingCount,
                     presentation.rejectedCount)
-                if(presentation.ccc.isNotEmpty()) screen.showCCCValue(presentation.ccc)
-                if(presentation.naf.isNotEmpty()) screen.showNAFValue(presentation.naf)
-                if(presentation.iban.isNotEmpty()) screen.showIbanValue(presentation.iban)
+                if(presentation.ccc.trim().isNotEmpty()) screen.showCCCValue(presentation.ccc)
+                if(presentation.naf.trim().isNotEmpty()) screen.showNAFValue(presentation.naf)
+                if(presentation.iban.trim().isNotEmpty()) screen.showIbanValue(presentation.iban)
 
                 if(presentation.notification.isNotEmpty()) {
                     screen.showNotification(presentation.notification, presentation.type)
