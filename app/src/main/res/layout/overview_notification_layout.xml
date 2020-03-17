@@ -18,17 +18,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/overview_notification_watch_all_button"
-        style="@style/Button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:text="@string/my_invoices_button_text"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/textView29"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView29" />
+        app:layout_constraintTop_toTopOf="@+id/textView29"/>
 
     <View
         android:id="@+id/view8"
@@ -57,18 +55,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view8" />
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/overview_notification_go_to_button"
-        style="@style/Button"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
         android:text="@string/overview_notification_go_to_text"
-        android:textStyle="bold"
-        android:visibility="invisible"
-        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/overview_notification_message_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/overview_notification_message_text" />
