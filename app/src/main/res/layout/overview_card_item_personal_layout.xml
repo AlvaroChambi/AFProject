@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="MIS DATOS"
+        android:text="@string/my_profile_header_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,19 +90,19 @@
         app:layout_constraintTop_toTopOf="@+id/personal_card_iban_text"
         tools:text="ES4587654445654" />
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/personal_card_action_text"
-        style="@style/Button"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
+        android:padding="16dp"
         android:text="@string/my_profile_button_text"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+        app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+    </com.google.android.material.button.MaterialButton>
 
     <TextView
         android:id="@+id/personal_card_naf_text"

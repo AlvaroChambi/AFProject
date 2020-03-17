@@ -65,6 +65,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     override fun showProfileFields(presentation: ProfilePresentation) {
         profile_user_name_text.text = presentation.userName
 
+        profile_dni_edit_frame.hint = presentation.dniLabel
         profile_email_edit_frame.editText?.setText(presentation.email)
         profile_address_edit_frame.editText?.setText(presentation.address)
         profile_dni_edit_frame.editText?.setText(presentation.dni)

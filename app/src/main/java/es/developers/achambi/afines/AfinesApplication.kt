@@ -55,7 +55,7 @@ class AfinesApplication : Application() {
         val presentationBuilder = InvoicePresentationBuilder(this)
         val uploadPresentationBuilder = InvoiceUploadPresentationBuilder()
         val uriUtils = URIUtils()
-        val profilePresentationBuilder = ProfilePresentationBuilder()
+        val profilePresentationBuilder = ProfilePresentationBuilder(this)
         val preferences = getSharedPreferences(DEFAULT_PREFERENCE, Context.MODE_PRIVATE)
         taxesUseCase = TaxesUseCase(firebaseRepository)
         profileUseCase = ProfileUseCase(firebaseRepository, invoicesUseCase, countersUseCase,

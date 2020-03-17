@@ -104,7 +104,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:enabled="false"
-                        android:hint="@string/profile_dni_hint_text"
+                        tools:hint="@string/profile_dni_hint_text"
                         tools:text="43255195H" />
 
                 </com.google.android.material.textfield.TextInputLayout>
