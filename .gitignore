@@ -18,3 +18,4 @@ scanlibrary/captures
 scanlibrary/.idea
 scanlibrary-release/build
 /app/google-services.json
+/app/release

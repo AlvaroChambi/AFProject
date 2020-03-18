@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path name="my_images" path="Android/data/es.developers.achambi.afines/files/Pictures" />
+    <external-path name="debug_images" path="Android/data/es.developers.achambi.afines/files/Pictures" />
+    <external-path name="release_images" path="Android/data/es.developers.achambi.afines.release/files/Pictures" />
 </paths>
