@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
+import com.crashlytics.android.core.CrashlyticsCore
 import es.developer.achambi.coreframework.threading.CoreError
 import es.developer.achambi.coreframework.threading.ExecutorInterface
 import es.developer.achambi.coreframework.threading.Request
@@ -124,7 +125,7 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
             // Create an image file name
             val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             val file = File.createTempFile(
-                "FACTURA_${DateFormatUtils.formatDateDetailed(Date())}_", /* prefix */
+                DateFormatUtils.formatDateDetailed(Date()), /* prefix */
                 ".jpg", /* suffix */
                 storageDir /* directory */
             )
@@ -135,6 +136,10 @@ class UploadPresenter(screenInterface: UploadScreenInterface,
             screen.showCamera(photoUri)
         } catch (e: IOException) {
             screen.showPhotoCaptureError()
+            CrashlyticsCore.getInstance().logException(e)
+        } catch (e: IllegalArgumentException) {
+            screen.showPhotoCaptureError()
+            CrashlyticsCore.getInstance().logException(e)
         }
     }
 

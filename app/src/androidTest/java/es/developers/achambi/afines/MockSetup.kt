@@ -1,20 +1,16 @@
 package es.developers.achambi.afines
 
 import es.developer.achambi.coreframework.threading.CoreError
-import es.developers.achambi.afines.home.model.TaxDate
-import es.developers.achambi.afines.invoices.model.Invoice
-import es.developers.achambi.afines.repositories.model.FirebaseInvoice
-import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import es.developers.achambi.afines.repositories.model.InvoiceCounters
+import es.developers.achambi.afines.repositories.model.*
 
 class MockSetup {
     companion object {
-        private var taxDates: ArrayList<TaxDate>? = null
+        private var taxDates: ArrayList<FirebaseTaxDate>? = null
         private var invoices: ArrayList<FirebaseInvoice>? = null
         private var loginSuccess = false
         private var retrievePassSuccess = false
         private var profile: FirebaseProfile? = null
-        private var counters: InvoiceCounters? = null
+        private var counters: FirebaseCounters? = null
         private var invoice: FirebaseInvoice? = null
 
         fun setInvoice(invoice: FirebaseInvoice) {
@@ -66,29 +62,29 @@ class MockSetup {
             }
         }
 
-        fun setTaxDates( dates: ArrayList<TaxDate>? ) {
+        fun setTaxDates( dates: ArrayList<FirebaseTaxDate>? ) {
             this.taxDates = dates
         }
 
         @Throws(CoreError::class)
-        fun getTaxDates(): ArrayList<TaxDate> {
+        fun getTaxDates(): ArrayList<FirebaseTaxDate> {
             if(taxDates == null) {
                 throw CoreError()
             } else {
-                return taxDates as ArrayList<TaxDate>
+                return taxDates as ArrayList<FirebaseTaxDate>
             }
         }
 
         @Throws(CoreError::class)
-        fun getCounters(): InvoiceCounters {
+        fun getCounters(): FirebaseCounters {
             if(counters == null) {
                 throw CoreError()
             } else {
-                return counters as InvoiceCounters
+                return counters as FirebaseCounters
             }
         }
 
-        fun setCOunters(counters: InvoiceCounters?) {
+        fun setCOunters(counters: FirebaseCounters?) {
             this.counters = counters
         }
     }

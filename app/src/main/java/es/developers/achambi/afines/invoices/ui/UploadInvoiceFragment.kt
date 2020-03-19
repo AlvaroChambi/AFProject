@@ -62,6 +62,7 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
         const val SCANNER_REQUEST_CODE = 104
         const val UPLOAD_OPTION_KEY = "upload_option_key"
         const val SAVED_URI_KEY = "SAVED_URI_KEY"
+        const val SAVED_TEMP_URI_KEY = "SAVED_TEMP_URI_KEY"
         const val SCAN_OPTION = "scan_option"
         const val GALLERY_OPTION = "gallery_option"
         private const val INVOICE_ID_KEY = "invoice_id_key"
@@ -217,15 +218,14 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
     override fun showGallery() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = ANY_FILE
-        startActivityForResult( intent,
-            MEDIA_SEARCH_RESULT_CODE
-        )
+        startActivityForResult(intent, MEDIA_SEARCH_RESULT_CODE)
     }
 
     override fun showPhotoCaptureError() {
         view?.let {
             Snackbar.make(it, R.string.photo_capture_error_message, Snackbar.LENGTH_SHORT).show()
         }
+        activity?.finish()
     }
 
     override fun showCamera(uri: Uri) {
@@ -346,11 +346,13 @@ class UploadInvoiceFragment: BaseFragment(), UploadScreenInterface, OptionListen
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(SAVED_URI_KEY, uri)
+        outState.putParcelable(SAVED_TEMP_URI_KEY, tempUri)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         uri = savedInstanceState.getParcelable(SAVED_URI_KEY)
+        tempUri = savedInstanceState.getParcelable(SAVED_TEMP_URI_KEY)
         activity?.let { uri?.let { it1 -> presenter.userSelectedURI(it, it1) } }
     }
 }

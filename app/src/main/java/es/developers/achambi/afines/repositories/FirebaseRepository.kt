@@ -11,11 +11,8 @@ import com.google.firebase.storage.StorageMetadata
 import es.developers.achambi.afines.invoices.model.Invoice
 import es.developers.achambi.afines.invoices.model.InvoiceUpload
 import es.developers.achambi.afines.profile.presenter.ProfileUpload
-import es.developers.achambi.afines.repositories.model.FirebaseInvoice
-import es.developers.achambi.afines.repositories.model.FirebaseProfile
 import es.developer.achambi.coreframework.threading.CoreError
-import es.developers.achambi.afines.home.model.TaxDate
-import es.developers.achambi.afines.repositories.model.InvoiceCounters
+import es.developers.achambi.afines.repositories.model.*
 import es.developers.achambi.afines.utils.EventLogger
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -402,7 +399,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun getTaxDates(): List<TaxDate> {
+    fun getTaxDates(): List<FirebaseTaxDate> {
         try {
             val databaseRef = firestore.collection("taxes")
             val result = databaseRef.let {
@@ -412,7 +409,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             }
             analytics.publishReadEvent(firebaseAuth.currentUser?.uid)
             result?.let {
-                return result.toObjects(TaxDate::class.java)
+                return result.toObjects(FirebaseTaxDate::class.java)
             }
         }catch (e: ExecutionException) {
             throw CoreError(e.message)
@@ -423,7 +420,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun getCounters(trimester: String, year: String): InvoiceCounters? {
+    fun getCounters(trimester: String, year: String): FirebaseCounters? {
         try {
             val userId = firebaseAuth.currentUser?.uid
             val databaseRef = firestore.collection("user/"+ userId.toString() + "/counters/")
@@ -431,7 +428,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                 .whereEqualTo("year", year).get(), TIMEOUT, TimeUnit.SECONDS)
             analytics.publishReadEvent(userId)
             result?.let {
-                val parsed = result.toObjects(InvoiceCounters::class.java)
+                val parsed = result.toObjects(FirebaseCounters::class.java)
                 if(parsed.isNotEmpty()) {
                     return parsed[0]
                 }
@@ -446,12 +443,12 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
     }
 
     @Throws(CoreError::class)
-    fun createCounters(trimester: String, year: String): InvoiceCounters {
+    fun createCounters(trimester: String, year: String): FirebaseCounters {
         try {
             val userId = firebaseAuth.currentUser?.uid
             val databaseRef = firestore.collection("user/"+ userId.toString() + "/counters/")
             val countersReference = databaseRef.document()
-            val newCounters = InvoiceCounters(reference = countersReference.id, year = year,
+            val newCounters = FirebaseCounters(reference = countersReference.id, year = year,
                 trimester = trimester)
             analytics.publishWriteEvent(userId)
             Tasks.await(countersReference.set(newCounters))

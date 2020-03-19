@@ -39,6 +39,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            applicationIdSuffix ".release"
         }
     }
 
@@ -60,7 +61,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':coreframework')
-    implementation project(':scanlibrary')
+    implementation project(':scanlibrary-release')
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.google.firebase:firebase-firestore:21.4.0'
     implementation 'com.google.firebase:firebase-auth:19.2.0'

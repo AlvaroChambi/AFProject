@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object DateFormatUtils {
-    private const val YEAR_MONTH_DAY_HOUR_MINUTE_SECONDS = "yyyyMMdd_HHmmss"
+    private const val YEAR_MONTH_DAY_HOUR_MINUTE_SECONDS = "yyyyMMddHHmmss"
     private const val DAY_MONTH_YEAR = "dd MMM yyyy"
     private const val RANGE_DATE_MONTH_DAY = "dd 'de' MMMM"
     fun formatDateDetailed(date: Date) : String {

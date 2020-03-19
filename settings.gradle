@@ -1,1 +1,1 @@
-include ':app', 'coreframework' , ':scanlibrary'
+include ':app', 'coreframework', ':scanlibrary-release'

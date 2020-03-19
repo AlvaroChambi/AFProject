@@ -1,19 +1,18 @@
 package es.developers.achambi.afines.profile.usecase
 
 import android.content.SharedPreferences
-import es.developers.achambi.afines.home.model.TaxDate
+import es.developers.achambi.afines.repositories.model.FirebaseTaxDate
 import es.developers.achambi.afines.home.usecase.TaxesUseCase
 import es.developers.achambi.afines.invoices.usecase.InvoiceUseCase
 import es.developers.achambi.afines.repositories.FirebaseRepository
 import es.developers.achambi.afines.repositories.model.FirebaseProfile
-import es.developers.achambi.afines.repositories.model.InvoiceCounters
+import es.developers.achambi.afines.repositories.model.FirebaseCounters
 import es.developers.achambi.afines.repositories.model.NotificationType
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
@@ -40,11 +39,11 @@ class ProfileUseCaseTest {
 
     @Test
     fun `test rejected notification priority`() {
-        val taxes = ArrayList<TaxDate>()
-        taxes.add( TaxDate() )
+        val taxes = ArrayList<FirebaseTaxDate>()
+        taxes.add(FirebaseTaxDate())
         `when`(taxesUseCase.getTaxDates()).thenReturn(taxes)
         `when`(repository.retrieveCurrentUser()).thenReturn(FirebaseProfile(passwordChanged = false))
-        `when`(countersUseCase.getCounters()).thenReturn(InvoiceCounters(rejected = 1))
+        `when`(countersUseCase.getCounters()).thenReturn(FirebaseCounters(rejected = 1))
 
         val result = useCase.getUserOverview()
 
@@ -53,8 +52,8 @@ class ProfileUseCaseTest {
 
     @Test
     fun `test pending update priority`() {
-        val taxes = ArrayList<TaxDate>()
-        taxes.add( TaxDate() )
+        val taxes = ArrayList<FirebaseTaxDate>()
+        taxes.add(FirebaseTaxDate())
         `when`(taxesUseCase.getTaxDates()).thenReturn(taxes)
         `when`(repository.retrieveCurrentUser()).thenReturn(FirebaseProfile(passwordChanged = false))
 
@@ -65,8 +64,8 @@ class ProfileUseCaseTest {
 
     @Test
     fun `test default notification`() {
-        val taxes = ArrayList<TaxDate>()
-        taxes.add( TaxDate() )
+        val taxes = ArrayList<FirebaseTaxDate>()
+        taxes.add(FirebaseTaxDate())
         `when`(taxesUseCase.getTaxDates()).thenReturn(taxes)
 
         val result = useCase.getUserOverview()
