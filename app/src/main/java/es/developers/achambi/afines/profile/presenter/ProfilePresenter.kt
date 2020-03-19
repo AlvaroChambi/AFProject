@@ -1,8 +1,12 @@
 package es.developers.achambi.afines.profile.presenter
 
+import android.content.Context
+import android.content.pm.PackageInfo
 import androidx.lifecycle.Lifecycle
 import es.developer.achambi.coreframework.threading.*
 import es.developer.achambi.coreframework.ui.Presenter
+import es.developers.achambi.afines.BuildConfig
+import es.developers.achambi.afines.R
 import es.developers.achambi.afines.profile.ui.ProfileScreenInterface
 import es.developers.achambi.afines.profile.ui.presentations.ProfilePresentationBuilder
 import es.developers.achambi.afines.profile.usecase.ProfileUseCase
@@ -44,6 +48,13 @@ class ProfilePresenter(screen: ProfileScreenInterface,
         }
 
         request(request, responseHandler)
+    }
+
+    fun getVersionInfo(context: Context) {
+        val version = context.getString(R.string.app_version,
+            BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE.toString(),
+            BuildConfig.BUILD_TYPE)
+        screen.showAppVersion(version)
     }
 
     fun validateFields(iban: String, email: String) {

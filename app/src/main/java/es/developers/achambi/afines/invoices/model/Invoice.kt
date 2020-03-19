@@ -16,12 +16,12 @@ data class Invoice(val id: Long,
     : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
-        parcel.readString(),
-        parcel.readString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
         ParcelUtil.readEnumFromParcel(parcel, Trimester::class.java),
         ParcelUtil.readEnumFromParcel(parcel, InvoiceState::class.java),
         parcel.readLong(),
-        parcel.readString()
+        parcel.readString().toString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

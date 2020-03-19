@@ -41,6 +41,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
     override fun onDataSetup() {
         super.onDataSetup()
         presenter.onDataSetup()
+        activity?.let { presenter.getVersionInfo(it) }
     }
 
     override fun onViewSetup(view: View) {
@@ -223,6 +224,10 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         super.onRestoreInstanceState(savedInstanceState)
         editEnabled = savedInstanceState.getBoolean(EDIT_SAVED_STATE_KEY)
     }
+
+    override fun showAppVersion(version: String) {
+        profile_app_version_text.text = version
+    }
 }
 
 interface ProfileScreenInterface: Screen {
@@ -248,4 +253,6 @@ interface ProfileScreenInterface: Screen {
 
     fun showShowEmailValidated()
     fun showEmailRejected()
+
+    fun showAppVersion(version: String)
 }

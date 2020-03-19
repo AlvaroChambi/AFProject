@@ -4,9 +4,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
+def version_major = 0
+def version_minor = 0
+def version_micro = 2
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildScan {
         termsOfServiceUrl = "https://gradle.com/terms-of-service"
         termsOfServiceAgree = "yes"
@@ -20,9 +23,9 @@ android {
     defaultConfig {
         applicationId "es.developers.achambi.afines"
         minSdkVersion 24
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 29
+        versionCode version_major * 1000000 + version_minor * 10000 + version_micro * 100
+        versionName version_major + "." + version_minor + "." + version_micro
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         def fileProvider = "\"${applicationId}.fileprovider\""

@@ -7,11 +7,10 @@ import es.developer.achambi.coreframework.utils.URIMetadata
 import es.developers.achambi.afines.invoices.ui.Trimester
 import es.developers.achambi.afines.invoices.ui.TrimesterUtils
 
-//TODO Trimester shouldn't be needed here
 data class InvoiceUpload(var uriMetadata: URIMetadata = URIMetadata(),
                          var name: String = "") : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readParcelable(URIMetadata::class.java.classLoader),
+        parcel.readParcelable(URIMetadata::class.java.classLoader)!!,
         parcel.readString().toString()
     )
 

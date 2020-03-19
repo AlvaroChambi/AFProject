@@ -146,4 +146,6 @@
     <string name="profile_user_info_error">No se han podido recuperar los datos del usuario, por favor inténtelo otra vez mas tarde.</string>
 
     <string name="overview_to_invoices_transition_name">header_transition</string>
+
+    <string name="app_version">versión %1$s(%2$s)-%3$s</string>
 </resources>
