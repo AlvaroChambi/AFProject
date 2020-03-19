@@ -4,9 +4,9 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
-def version_major = 0
+def version_major = 1
 def version_minor = 0
-def version_micro = 3
+def version_micro = 0
 
 android {
     compileSdkVersion 29
