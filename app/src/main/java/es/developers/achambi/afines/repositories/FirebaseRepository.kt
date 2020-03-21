@@ -195,10 +195,10 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         try {
             val result = Tasks.await(listRef.whereGreaterThan("id", start)
                 .whereLessThan("id", end).get())
-            analytics.publishReadEvent(user?.uid)
             if(result.isEmpty) {
                 return ArrayList()
             }
+            analytics.publishReadInvoicesEvent(user?.uid)
             return result.toObjects(FirebaseInvoice::class.java)
         }catch (e: ExecutionException) {
             throw CoreError(e.message)
@@ -407,7 +407,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                     .orderBy("date", Query.Direction.ASCENDING)
                     .get(), TIMEOUT, TimeUnit.SECONDS)
             }
-            analytics.publishReadEvent(firebaseAuth.currentUser?.uid)
+            analytics.publishReadTaxDatesEvent(firebaseAuth.currentUser?.uid)
             result?.let {
                 return result.toObjects(FirebaseTaxDate::class.java)
             }
@@ -426,7 +426,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
             val databaseRef = firestore.collection("user/"+ userId.toString() + "/counters/")
             val result = Tasks.await(databaseRef.whereEqualTo("trimester", trimester)
                 .whereEqualTo("year", year).get(), TIMEOUT, TimeUnit.SECONDS)
-            analytics.publishReadEvent(userId)
+            analytics.publishReadCountersEvent(userId)
             result?.let {
                 val parsed = result.toObjects(FirebaseCounters::class.java)
                 if(parsed.isNotEmpty()) {

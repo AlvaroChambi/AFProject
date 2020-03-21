@@ -19,6 +19,9 @@ class EventLogger(private val analytics: FirebaseAnalytics) {
         const val PASSWORD_UPDATED_EVENT = "PASSWORD_UPDATED"
         const val PASSWORD_RETRIEVED_EVENT = "PASSWORD_RETRIEVED"
         const val FIRESTORE_READ_EVENT = "READ_EVENT"
+        const val FIRESTORE_READ_INVOICES_EVENT = "READ_INVOICES_EVENT"
+        const val FIRESTORE_READ_TAX_DATES_EVENT = "READ_TAX_DATES_EVENT"
+        const val FIRESTORE_READ_COUNTERS_EVENT = "READ_COUNTERS_EVENT"
         const val FIRESTORE_WRITE_EVENT = "WRITE_EVENT"
         const val FIRESTORE_TRANSACTION_EVENT = "TRANSACTION_EVENT"
     }
@@ -84,6 +87,24 @@ class EventLogger(private val analytics: FirebaseAnalytics) {
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.CHARACTER, uid)
         analytics.logEvent(FIRESTORE_READ_EVENT, bundle)
+    }
+
+    fun publishReadInvoicesEvent(uid: String?) {
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.CHARACTER, uid)
+        analytics.logEvent(FIRESTORE_READ_INVOICES_EVENT, bundle)
+    }
+
+    fun publishReadTaxDatesEvent(uid: String?) {
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.CHARACTER, uid)
+        analytics.logEvent(FIRESTORE_READ_TAX_DATES_EVENT, bundle)
+    }
+
+    fun publishReadCountersEvent(uid: String?) {
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.CHARACTER, uid)
+        analytics.logEvent(FIRESTORE_READ_COUNTERS_EVENT, bundle)
     }
 
     fun publishWriteEvent(uid: String?) {
