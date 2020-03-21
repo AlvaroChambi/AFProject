@@ -91,7 +91,7 @@ class ProfilePresenter(screen: ProfileScreenInterface,
     }
 
     fun saveProfile( email: String, address: String, dni: String,
-                     naf: String, ccc: String, account: String) {
+                     naf: String, ccc: String, account: String, phone: String) {
         screen.showUpdateProgress()
         analytics.publishProfileUpdated()
         screen.showSaveAvailability(false)
@@ -101,7 +101,8 @@ class ProfilePresenter(screen: ProfileScreenInterface,
             .dni(dni)
             .naf(naf)
             .ccc(ccc)
-            .account(account).build()
+            .account(account)
+            .phone(phone).build()
         val responseHandler = object : ResponseHandler<Any?> {
             override fun onSuccess(response: Any?) {
                 screen.showUpdateProgressFinished()
@@ -159,20 +160,23 @@ data class ProfileUpload(val email: String,
                          val dni: String,
                          val naf: String,
                          val ccc: String,
-                         val account: String) {
+                         val account: String,
+                         val phone: String) {
     data class Builder(var email: String = "",
                        var address: String = "",
                        var dni: String = "",
                        var naf: String = "",
                        var ccc: String = "",
-                       var account: String = ""){
+                       var account: String = "",
+                       var phone: String = ""){
         fun email(email: String) = apply { this.email = email }
         fun address(address: String) = apply { this.address = address }
         fun dni(dni: String) = apply { this.dni = dni }
         fun naf(naf: String) = apply { this.naf = naf }
         fun ccc(ccc: String) = apply { this.ccc = ccc }
         fun account(account: String) = apply { this.account = account }
+        fun phone(phone: String) = apply { this.phone = phone }
         fun build() =
-            ProfileUpload(email, address, dni, naf, ccc, account)
+            ProfileUpload(email, address, dni, naf, ccc, account, phone)
     }
 }

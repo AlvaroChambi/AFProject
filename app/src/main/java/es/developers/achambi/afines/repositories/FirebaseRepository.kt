@@ -32,6 +32,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val DNI_ATTRIBUTE_KEY = "dni"
         const val EMAIL_ATTRIBUTE_KEY = "email"
         const val IBAN_ATTRIBUTE_KEY = "iban"
+        const val PHONE_ATTRIBUTE_KEY = "phone1"
         const val NAF_ATTRIBUTE_KEY = "naf"
         const val NAME_ATTRIBUTE_KEY = "name"
         const val FILE_ATTRIBUTE_KEY = "fileReference"
@@ -231,7 +232,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
                     DNI_ATTRIBUTE_KEY, profileUpload.dni,
                     EMAIL_ATTRIBUTE_KEY, profileUpload.email,
                     IBAN_ATTRIBUTE_KEY, profileUpload.account,
-                    NAF_ATTRIBUTE_KEY, profileUpload.naf
+                    NAF_ATTRIBUTE_KEY, profileUpload.naf,
+                    PHONE_ATTRIBUTE_KEY, profileUpload.phone
                 ), TIMEOUT, TimeUnit.SECONDS )
             }
             analytics.publishWriteEvent(userId)

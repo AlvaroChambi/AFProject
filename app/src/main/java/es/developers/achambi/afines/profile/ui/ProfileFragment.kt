@@ -75,6 +75,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         profile_naf_edit_frame.editText?.setText(presentation.naf)
         profile_ccc_edit_frame.editText?.setText(presentation.ccc)
         profile_account_edit_frame.editText?.setText(presentation.bankAccount)
+        profile_phone_edit_frame.editText?.setText(presentation.phone)
     }
 
     override fun showEditAvailable() {
@@ -164,7 +165,8 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
                     dni = dni_edit_text.text.toString(),
                     naf = naf_edit_text.text.toString(),
                     ccc = ccc_edit_text.text.toString(),
-                    account = account_edit_text.text.toString())
+                    account = account_edit_text.text.toString(),
+                    phone = profile_phone_edit_text.text.toString())
             }
         }
         return super.onOptionsItemSelected(item)
@@ -188,6 +190,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
             profile_naf_edit_frame.isEnabled = true
             profile_ccc_edit_frame.isEnabled = true
             profile_account_edit_frame.isEnabled = true
+            profile_phone_edit_frame.isEnabled = true
         } else {
             editActionButton?.isVisible = true
             cancelEditActionButton?.isVisible = false
@@ -198,6 +201,7 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
             profile_naf_edit_frame.isEnabled = false
             profile_ccc_edit_frame.isEnabled = false
             profile_account_edit_frame.isEnabled = false
+            profile_phone_edit_frame.isEnabled = false
         }
     }
 

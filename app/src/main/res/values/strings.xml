@@ -65,6 +65,7 @@
     <string name="profile_naf_hint_text">NAF</string>
     <string name="profile_ccc_hint_text">CCC</string>
     <string name="profile_iban_hint_text">IBAN</string>
+    <string name="profile_phone_hint_text">Teléfono</string>
 
     <string name="profile_naf_extended_text">NAF (Nº afiliación seg. social)</string>
     <string name="profile_ccc_extended_text">CCC (Cód. cuenta de cotización)</string>
