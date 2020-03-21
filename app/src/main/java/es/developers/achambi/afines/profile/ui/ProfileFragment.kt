@@ -48,7 +48,8 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         account_edit_text.addTextChangedListener( object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                presenter.validateFields(s.toString(), email_edit_text.text.toString())
+                presenter.validateFields(
+                    iban= s.toString(),email = email_edit_text.text.toString())
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -56,7 +57,8 @@ class ProfileFragment: BaseFragment(), ProfileScreenInterface {
 
         email_edit_text.addTextChangedListener( object : TextWatcher{
             override fun afterTextChanged(s: Editable?) {
-                presenter.validateFields(s.toString(), account_edit_text.text.toString())
+                presenter.validateFields(
+                    email = s.toString(), iban = account_edit_text.text.toString())
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
