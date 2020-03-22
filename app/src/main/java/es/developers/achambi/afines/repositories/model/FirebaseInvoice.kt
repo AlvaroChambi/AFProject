@@ -6,4 +6,5 @@ data class FirebaseInvoice(var id: Long = 0,
                            var deliveredDate: Long = 0,
                            var processedDate: Long? = null,
                            var state: String? = null,
-                           var dbPath: String = "")
+                           var dbPath: String = "",
+                           var rejectReason: String = "")

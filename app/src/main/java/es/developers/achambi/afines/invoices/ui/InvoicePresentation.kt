@@ -82,7 +82,13 @@ class InvoiceDetailsPresentationBuilder(
         val stateMessage = when(invoice.state) {
             InvoiceState.SENT -> context.getString(R.string.invoice_details_sent_message)
             InvoiceState.ACCEPTED -> context.getString(R.string.invoice_details_approved_message)
-            InvoiceState.REJECTED -> context.getString(R.string.invoice_details_rejected_message)
+            InvoiceState.REJECTED -> {
+                if(invoice.rejectReason != null && invoice.rejectReason.isNotEmpty()) {
+                    invoice.rejectReason
+                } else {
+                    context.getString(R.string.invoice_details_rejected_message)
+                }
+            }
             InvoiceState.ACCOUNTED -> context.getString(R.string.invoice_details_approved_message)
             null -> ""
         }

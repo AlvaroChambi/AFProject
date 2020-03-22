@@ -124,7 +124,8 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository,
                 TrimesterUtils.getTrimester(Date(it.id)),
                 it.state?.let { InvoiceState.valueOf(it) },
                 resolveDate(it.deliveredDate, it.processedDate),
-                it.dbPath)
+                it.dbPath,
+                rejectReason = firebaseInvoice.rejectReason)
         }
         return invoice
     }
@@ -149,7 +150,8 @@ class InvoiceUseCase(private val firebaseRepository: FirebaseRepository,
                     TrimesterUtils.getTrimester(Date(firebaseInvoice.id)),
                     firebaseInvoice.state?.let { InvoiceState.valueOf(it) },
                     firebaseInvoice.id,
-                    firebaseInvoice.dbPath))
+                    firebaseInvoice.dbPath,
+                    rejectReason = firebaseInvoice.rejectReason))
         }
         cachedInvoices[trimester] = trimesterInvoices
         return trimesterInvoices
