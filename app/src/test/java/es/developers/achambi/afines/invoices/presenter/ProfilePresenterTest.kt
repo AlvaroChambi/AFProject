@@ -43,7 +43,7 @@ class ProfilePresenterTest: BasePresenterTest() {
     fun `test initial profile load successful `() {
         val profile = FirebaseProfile()
         val presentation = ProfilePresentation("", "", "", "", "",
-            "", "", "")
+            "", "", "", "")
         `when`(profileUseCase.getUserProfile(false)).thenReturn(profile)
         `when`(profilePresentationBuilder.buildPresentation(profile)).thenReturn(presentation)
 
