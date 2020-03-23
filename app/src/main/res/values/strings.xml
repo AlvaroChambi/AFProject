@@ -54,12 +54,12 @@
     <string name="invoice_edit_error_message">No se ha podido actualizar la factura. Por favor intentelo otra vez mas tarde.</string>
 
     <string name="delete_invoice_alert_dialog_title">Borrar factura</string>
-    <string name="delete_invoice_alert_dialog_message">¿Estas seguro de que quieres borrar la factura?</string>
+    <string name="delete_invoice_alert_dialog_message">¿Estás seguro que quieres borrar la factura?</string>
     <string name="alert_dialog_continue_text">Continuar</string>
     <string name="alert_dialog_cancel_text">Cancelar</string>
 
     <string name="profile_email_hint_text">Email</string>
-    <string name="profile_address_hint_text">Dirección</string>
+    <string name="profile_address_hint_text">Dirección fiscal</string>
     <string name="profile_dni_hint_text">DNI</string>
     <string name="profile_cif_hint_text">CIF</string>
     <string name="profile_naf_hint_text">NAF</string>
@@ -118,7 +118,7 @@
         <item quantity="other">Quedan %1$s días para presentar:\n%2$s</item>
     </plurals>
     <string name="overview_taxes_header_text">Calendario de impuestos</string>
-    <string name="overview_rejected_invoices_message_text">Alguna de tus facturas ha sido rechazada, por favor comprueba tus facturas y actualizalas si es necesario.</string>
+    <string name="overview_rejected_invoices_message_text">Alguna de tus facturas ha sido rechazada. Por favor, comprueba tus facturas y actualízalas si es necesario.</string>
 
     <string name="overview_invoices_sent_text">Facturas enviadas</string>
     <string name="overview_invoices_approved_text">Facturas aprobadas</string>
@@ -139,9 +139,9 @@
     <string name="invoices_header_trimester_dates_from_to">Desde el %1$s hasta el %2$s</string>
     <string name="invoices_header_trimester_dates_from">Hasta el %1$s</string>
 
-    <string name="invoice_details_sent_message">Tu factura ha sido enviada y está pendiente de ser revisada</string>
-    <string name="invoice_details_approved_message">Tu factura ha sido revisada y aprobada</string>
-    <string name="invoice_details_rejected_message">Tu factura ha sido rechazada, por favor comprueba que no se vea borrosa y que sea una factura.</string>
+    <string name="invoice_details_sent_message">Tu factura ha sido enviada y está pendiente de ser revisada. En caso de que la factura pertenezca al trimestre pasado nuestro equipo se encargará de corregir su localización.</string>
+    <string name="invoice_details_approved_message">Tu factura ha sido revisada y contabilizada.</string>
+    <string name="invoice_details_rejected_message">Tu factura ha sido rechazada. Por favor, comprueba que no se vea borrosa y que cumpla los requisitos de una factura.</string>
 
     <string name="invoice_upload_replace_text">Reemplazar\nfactura</string>
     <string name="profile_user_info_error">No se han podido recuperar los datos del usuario, por favor inténtelo otra vez mas tarde.</string>
