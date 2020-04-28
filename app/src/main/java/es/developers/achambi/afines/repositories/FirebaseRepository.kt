@@ -45,7 +45,7 @@ class FirebaseRepository(private val firestore: FirebaseFirestore,
         const val REJECTED_INVOICES_KEY = "rejected"
         const val APPROVED_INVOICES_KEY = "approved"
         const val PASSWORD_CHANGED_FLAG = "passwordChanged"
-        private const val TIMEOUT = 3L
+        private const val TIMEOUT = 4L
     }
 
     @Throws(CoreError::class)
