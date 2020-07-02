@@ -49,7 +49,7 @@ class TrimesterUtils {
             return when(calendar.get(Calendar.MONTH)) {
                 in Trimester.FIRST_TRIMESTER.start..Trimester.FIRST_TRIMESTER.end -> Trimester.FIRST_TRIMESTER
                 in Trimester.SECOND_TRIMESTER.start..Trimester.SECOND_TRIMESTER.end -> Trimester.SECOND_TRIMESTER
-                in Trimester.THIRD_TRIMESTER.start..Trimester.SECOND_TRIMESTER.end -> Trimester.THIRD_TRIMESTER
+                in Trimester.THIRD_TRIMESTER.start..Trimester.THIRD_TRIMESTER.end -> Trimester.THIRD_TRIMESTER
                 in Trimester.FORTH_TRIMESTER.start..Trimester.FORTH_TRIMESTER.end -> Trimester.FORTH_TRIMESTER
                 else -> Trimester.EMPTY
             }
